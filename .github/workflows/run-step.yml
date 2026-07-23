@@ -1,5 +1,5 @@
 name: Run step manually
-
+ 
 # Invoke step 2 (research) or step 3 (contacts) directly from the Actions
 # tab, without the previous step having run. The HubSpot deal (keyed on
 # tender_notice_id) is the shared state, so any step can start from a deal
@@ -31,26 +31,26 @@ on:
         options: ["", lisa, aled, avi]
         required: false
         default: ""
-
+ 
 permissions:
   contents: write
-
+ 
 concurrency:
   group: tender-radar-state
   cancel-in-progress: false
-
+ 
 jobs:
   run-step:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+ 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
+ 
       - run: pip install -r requirements.txt
-
+ 
       - name: Run the step
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -70,3 +70,13 @@ jobs:
             [ -n "${{ github.event.inputs.company }}" ] && ARGS="$ARGS --company \"${{ github.event.inputs.company }}\""
             eval python contacts.py $ARGS
           fi
+ 
+      - name: Commit state
+        if: always()
+        run: |
+          git config user.name  "tender-radar-bot"
+          git config user.email "actions@github.com"
+          git pull --rebase --autostash || true
+          git add state/
+          git diff --staged --quiet || git commit -m "chore: update radar state [skip ci]"
+          git push
