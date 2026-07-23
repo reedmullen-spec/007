@@ -1,23 +1,23 @@
 """HubSpot CRM v3 client.
-
+ 
 Responsibilities:
   * ensure the tender_notice_id custom deal property exists (one-off bootstrap)
   * dedup pre-check: search deals on tender_notice_id (CRM = source of truth)
   * create deals in Sales Pipeline / Identified with the notice id stamped
   * company owner lookup for tier 1 of the AE resolver
-
+ 
 Private-app scopes needed:
   crm.objects.deals.read, crm.objects.deals.write,
   crm.schemas.deals.write (property bootstrap),
   crm.objects.companies.read (owner lookup)
 """
 from __future__ import annotations
-
+ 
 import requests
-
+ 
 BASE = "https://api.hubapi.com"
-
-
+ 
+ 
 class HubSpotClient:
     def __init__(self, token: str, cfg: dict):
         self.cfg = cfg["hubspot"]
@@ -26,7 +26,7 @@ class HubSpotClient:
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
         })
-
+ 
     # ------------------------------------------------------------ property
     def ensure_notice_property(self) -> None:
         """Create the tender_notice_id deal property if it doesn't exist."""
@@ -52,7 +52,7 @@ class HubSpotClient:
                 f"Either add the crm.schemas.deals.write scope to the private "
                 f"app, or create the property manually in HubSpot settings."
             )
-
+ 
     # --------------------------------------------------------------- dedup
     def find_deal_by_notice_id(self, notice_id: str) -> dict | None:
         """Return the existing deal (id + name) for this notice, or None."""
@@ -71,7 +71,7 @@ class HubSpotClient:
         r.raise_for_status()
         results = r.json().get("results", [])
         return results[0] if results else None
-
+ 
     # -------------------------------------------------------------- create
     def create_deal(self, name: str, notice_id: str, ae: str | None) -> dict:
         owners = self.cfg["owners"]
@@ -79,7 +79,7 @@ class HubSpotClient:
             owner_id = owners[ae]
         else:
             owner_id = owners["reed"]
-
+ 
         properties = {
             "dealname": name[:250],
             "pipeline": self.cfg["pipeline_id"],
@@ -100,7 +100,7 @@ class HubSpotClient:
             f"https://app.hubspot.com/contacts/{self.cfg['portal_id']}/deal/{deal_id}"
         )
         return deal
-
+ 
     # ---------------------------------------------------------- deal read
     def get_deal(self, deal_id: str) -> dict:
         r = self.session.get(
@@ -112,7 +112,7 @@ class HubSpotClient:
         if r.status_code != 200:
             raise RuntimeError(f"Deal fetch failed ({r.status_code}): {r.text[:300]}")
         return r.json()
-
+ 
     # --------------------------------------------------------------- notes
     def add_note(self, deal_id: str, body_html: str, pin: bool = True) -> str:
         """Create a note on the deal; attempt to pin it (best effort)."""
@@ -143,10 +143,17 @@ class HubSpotClient:
             except Exception:
                 pass
         return note_id
-
+ 
     # ------------------------------------------------------- owner lookup
     def find_company_owner(self, company_name: str) -> str | None:
-        """Tier-1 AE resolution: live owner of the company record, if any."""
+        """Tier-1 AE resolution: live owner of the company record, if any.
+        Cached per run — news runs look the same contractors up repeatedly."""
+        cache = getattr(self, "_owner_cache", None)
+        if cache is None:
+            cache = self._owner_cache = {}
+        key = company_name.lower().strip()
+        if key in cache:
+            return cache[key]
         body = {
             "query": company_name,
             "properties": ["name", "hubspot_owner_id"],
@@ -154,9 +161,13 @@ class HubSpotClient:
         }
         r = self.session.post(f"{BASE}/crm/v3/objects/companies/search", json=body, timeout=30)
         if r.status_code != 200:
+            cache[key] = None
             return None
+        found = None
         for result in r.json().get("results", []):
             owner = (result.get("properties") or {}).get("hubspot_owner_id")
             if owner:
-                return str(owner)
-        return None
+                found = str(owner)
+                break
+        cache[key] = found
+        return found
