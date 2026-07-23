@@ -1,5 +1,5 @@
 name: Tender digest
-
+ 
 on:
   schedule:
     - cron: "0 2 * * 1-5"   # 02:00 UTC — quiet cron slot, runs fire punctually
@@ -9,26 +9,26 @@ on:
         description: "Dry run (print matches, post nothing)"
         type: boolean
         default: false
-
+ 
 permissions:
   contents: write
-
+ 
 concurrency:
   group: tender-radar-state
   cancel-in-progress: false
-
+ 
 jobs:
   digest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+ 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
+ 
       - run: pip install -r requirements.txt
-
+ 
       - name: Run tender digest
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -40,8 +40,9 @@ jobs:
           else
             python digest.py
           fi
-
+ 
       - name: Commit state
+        if: always()
         run: |
           git config user.name  "tender-radar-bot"
           git config user.email "actions@github.com"
