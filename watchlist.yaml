@@ -1,0 +1,121 @@
+# ============================================================================
+# 007 watchlist — Tier-1 contractors only.
+#
+# news.py auto-generates a Google News RSS query for EVERY entry here,
+# combining the contractor name with the signal terms below (awarded /
+# breaking ground / starting construction / concrete pour). One entry = one
+# feed. Add a line to watch someone new; delete to drop them.
+#
+# Known projects are deliberately NOT tracked here — the watchlist exists to
+# surface NEW awards and starts, not news about projects already in Notion.
+#
+# region controls the Slack channel + mentions:
+#   uk | eu | us | us_east | us_west | ca | au
+# us_east tags Jamie, us_west and ca tag Alex, us (national firms) tags both.
+# North America deals still default to Reed as owner in HubSpot.
+# hl/gl/ceid override the Google News locale when the region default is wrong.
+# ============================================================================
+
+signal_query_template: >-
+  "{entity}" AND ("awarded" OR "contract award" OR "breaking ground" OR
+  "breaks ground" OR "starting construction" OR "construction begins" OR
+  "start on site" OR "first concrete" OR "concrete pour" OR "pouring concrete")
+
+contractors:
+  # ── UK Tier 1s (Aled default; European-owned override to Lisa applies) ────
+  - { name: "Balfour Beatty",        region: uk }
+  - { name: "Laing O'Rourke",        region: uk }
+  - { name: "Skanska UK",            region: uk }
+  - { name: "BAM UK",                region: uk }
+  - { name: "Kier Group",            region: uk }
+  - { name: "Morgan Sindall",        region: uk }
+  - { name: "Sir Robert McAlpine",   region: uk }
+  - { name: "Mace Group",            region: uk }
+  - { name: "Multiplex construction", region: uk }
+  - { name: "Galliford Try",         region: uk }
+  - { name: "Costain",               region: uk }
+  - { name: "J Murphy & Sons",       region: uk }
+  - { name: "Wates Group",           region: uk }
+  - { name: "Bouygues UK",           region: uk }
+  - { name: "VINCI Building UK",     region: uk }
+  - { name: "Renaker",               region: uk }
+  - { name: "RG Group construction", region: uk }
+  - { name: "HG Construction",       region: uk }
+  - { name: "Keltbray",              region: uk }
+  - { name: "Careys construction",   region: uk }
+
+  # ── EU Tier 1s (Lisa default; Italy → Aled) ───────────────────────────────
+  - { name: "BESIX",           region: eu, hl: en, gl: BE, ceid: "BE:en" }
+  - { name: "Jan de Nul",      region: eu, hl: en, gl: BE, ceid: "BE:en" }
+  - { name: "DEME Group",      region: eu, hl: en, gl: BE, ceid: "BE:en" }
+  - { name: "VolkerWessels",   region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
+  - { name: "BAM Infra",       region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
+  - { name: "Mobilis TBI",     region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
+  - { name: "Dura Vermeer",    region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
+  - { name: "Van Berlo",       region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
+  - { name: "Strabag",         region: eu, hl: de, gl: AT, ceid: "AT:de" }
+  - { name: "Hochtief",        region: eu, hl: de, gl: DE, ceid: "DE:de" }
+  - { name: "Züblin",          region: eu, hl: de, gl: DE, ceid: "DE:de" }
+  - { name: "Porr",            region: eu, hl: de, gl: AT, ceid: "AT:de" }
+  - { name: "Implenia",        region: eu, hl: de, gl: CH, ceid: "CH:de" }
+  - { name: "VINCI Construction", region: eu, hl: fr, gl: FR, ceid: "FR:fr" }
+  - { name: "Bouygues Construction", region: eu, hl: fr, gl: FR, ceid: "FR:fr" }
+  - { name: "Eiffage",         region: eu, hl: fr, gl: FR, ceid: "FR:fr" }
+  - { name: "Ferrovial",       region: eu, hl: es, gl: ES, ceid: "ES:es" }
+  - { name: "Dragados",        region: eu, hl: es, gl: ES, ceid: "ES:es" }
+  - { name: "Acciona Construcción", region: eu, hl: es, gl: ES, ceid: "ES:es" }
+  - { name: "FCC Construcción", region: eu, hl: es, gl: ES, ceid: "ES:es" }
+  - { name: "Webuild",         region: eu, hl: it, gl: IT, ceid: "IT:it" }
+  - { name: "Ghella",          region: eu, hl: it, gl: IT, ceid: "IT:it" }
+  - { name: "Itinera",         region: eu, hl: it, gl: IT, ceid: "IT:it" }
+  - { name: "Rizzani de Eccher", region: eu, hl: it, gl: IT, ceid: "IT:it" }
+  - { name: "NCC construction", region: eu, hl: en, gl: SE, ceid: "SE:en" }
+  - { name: "Per Aarsleff",    region: eu, hl: en, gl: DK, ceid: "DK:en" }
+
+  # ── US national Tier 1s (tag Alex + Jamie — award could land either side) ─
+  - { name: "Turner Construction",   region: us }
+  - { name: "Kiewit",                region: us }
+  - { name: "Bechtel",               region: us }
+  - { name: "Skanska USA",           region: us }
+  - { name: "Balfour Beatty US",     region: us }
+  - { name: "JE Dunn Construction",  region: us }
+  - { name: "Walsh Group construction", region: us }
+  - { name: "Clayco",                region: us }
+
+  # ── US East (tag Jamie) ────────────────────────────────────────────────────
+  - { name: "Suffolk Construction",  region: us_east }
+  - { name: "Whiting-Turner",        region: us_east }
+  - { name: "Clark Construction",    region: us_east }
+  - { name: "Gilbane Building",      region: us_east }
+  - { name: "Brasfield & Gorrie",    region: us_east }
+  - { name: "Holder Construction",   region: us_east }
+
+  # ── US West (tag Alex) ─────────────────────────────────────────────────────
+  - { name: "DPR Construction",      region: us_west }
+  - { name: "Swinerton",             region: us_west }
+  - { name: "Hensel Phelps",         region: us_west }
+  - { name: "McCarthy Building",     region: us_west }
+  - { name: "Mortenson construction", region: us_west }
+  - { name: "Flatiron Dragados",     region: us_west }
+
+  # ── Canada Tier 1s ─────────────────────────────────────────────────────────
+  - { name: "PCL Construction",      region: ca }
+  - { name: "EllisDon",              region: ca }
+  - { name: "Aecon",                 region: ca }
+  - { name: "Pomerleau",             region: ca }
+  - { name: "Ledcor",                region: ca }
+  - { name: "Graham Construction",   region: ca }
+  - { name: "Bird Construction",     region: ca }
+  - { name: "Kiewit Canada",         region: ca }
+
+  # ── Australia Tier 1s ──────────────────────────────────────────────────────
+  - { name: "CPB Contractors",           region: au }
+  - { name: "John Holland",              region: au }
+  - { name: "Lendlease construction",    region: au }
+  - { name: "Multiplex Australia",       region: au }
+  - { name: "Laing O'Rourke Australia",  region: au }
+  - { name: "BESIX Watpac",              region: au }
+  - { name: "Acciona Australia",         region: au }
+  - { name: "Hutchinson Builders",       region: au }
+  - { name: "Built construction",        region: au }
+  - { name: "Georgiou Group",            region: au }

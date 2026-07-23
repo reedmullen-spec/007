@@ -1,0 +1,10 @@
+# ============================================================================
+# 007 news radar — trade press feeds only.
+# Contractor signal feeds are auto-generated from watchlist.yaml, so entries
+# here are whole-site publications, gated by config.yaml news.gate_keywords.
+# ============================================================================
+
+feeds:
+  - { region: uk, entity: "New Civil Engineer", url: "https://www.newcivilengineer.com/feed", keyword_gate: true }
+  - { region: uk, entity: "Construction Enquirer", url: "https://www.constructionenquirer.com/feed/", keyword_gate: true }
+  - { region: us, entity: "Construction Dive", url: "https://www.constructiondive.com/feeds/news/", keyword_gate: true }

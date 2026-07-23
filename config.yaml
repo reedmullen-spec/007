@@ -1,0 +1,253 @@
+# ============================================================================
+# 007 / Tender Radar — main configuration
+# Fully configured — channels, people, HubSpot IDs, Notion, and Amplemarket
+# are all set. Edit watchlist.yaml to change news coverage.
+# ============================================================================
+
+# ---------------------------------------------------------------- Slack ----
+slack:
+  # Channel where tender cards are posted. TED + Find a Tender are all
+  # UK/EU, so these go to the EMEA channel.
+  tender_channel_id: "C0BGRLQ2BMH"   # t-emea-sales-project-annoucements
+
+  # News cards by region. A value can be a single channel ID or a list —
+  # national US contractors post to BOTH east and west.
+  news_channels:
+    uk: "C0BGRLQ2BMH"        # t-emea-sales-project-annoucements
+    eu: "C0BGRLQ2BMH"        # t-emea-sales-project-annoucements
+    us_east: "C0BJS20BUDB"   # t-east-us-sales-project-annoucements
+    us_west: "C0BJXLBT8RF"   # t-west-us-sales-project-annoucements
+    us: ["C0BJS20BUDB", "C0BJXLBT8RF"]   # national firms -> both
+    ca: "C0BK21UMHK3"        # t-canada-sales-project-annoucements
+    au: "C0BJX8B028Z"        # t-apac-sales-project-annoucements
+
+  # Only reactions from this Slack user count as approvals.
+  approver_user_id: "U0AS3P6EY80"   # Reed
+
+  # Optional: AE Slack member IDs, used to @-mention the owning AE on cards.
+  # Leave as "" to skip the mention.
+  ae_slack_ids:
+    lisa: "U05G8DX4B0A"
+    aled: "U07GNGNMQGZ"
+    avi: "UB96Q98T0"
+    alex: "U0AKM99CK08"   # Alex Groves
+    jamie: "U32ML88RE"    # Jamie Tew
+    jeremy: "U01FP4CRR8A" # Jeremy — APAC
+
+  # Who gets @-mentioned on news cards, by watchlist region.
+  # us = national contractors: award could land either side, so tag both.
+  region_mentions:
+    us_west: [alex]
+    ca: [alex]
+    us_east: [jamie]
+    us: [alex, jamie]
+    au: [jeremy]
+
+# -------------------------------------------------------------- HubSpot ----
+hubspot:
+  pipeline_id: "21257366"        # Sales Pipeline (confirmed)
+  dealstage_id: "1326060402"     # Identified stage (confirmed)
+  portal_id: "2061231"
+
+  owners:                        # confirmed owner IDs
+    reed: "90628877"
+    lisa: "465940403"
+    aled: "146637928"
+    avi:  "32656681"
+
+  # Who owns the deal on creation: "ae" = the resolved AE, "reed" = you.
+  deal_owner_mode: "ae"
+
+  # Custom deal property used as the stable dedup key. The first approvals
+  # run creates it automatically if it doesn't exist (needs the
+  # crm.schemas.deals.write scope on your private app).
+  notice_id_property: "tender_notice_id"
+
+# ------------------------------------------------------------ AE routing ----
+routing:
+  # Country -> AE. Anything in eu_countries not listed falls to eu_default.
+  country_ae_map:
+    GB: aled
+    IE: aled
+    IT: aled
+  eu_default: lisa
+
+  # Regions with no AE split defined yet: cards post without an AE
+  # suggestion and deals default to Reed as owner.
+  no_ae_countries: [US, CA, AU]
+
+  # Tier 1 of the resolver: if the buyer/contractor company exists in HubSpot,
+  # inherit its live hubspot_owner_id instead of the geography fallback.
+  use_hubspot_owner_lookup: true
+
+  # UK override: news about these European-owned contractors routes to Lisa
+  # even when the story is UK-located. Substring match, case-insensitive.
+  uk_european_owned_overrides:
+    - bam
+    - besix
+    - strabag
+    - volkerwessels
+    - jan de nul
+    - deme
+
+# ---------------------------------------------------------- Tender filter ----
+filters:
+  # CPV prefixes (your confirmed monitored codes).
+  cpv_prefixes:
+    - "45221"   # bridges, tunnels, shafts
+    - "45230"   # pipelines, roads, railways, airfields
+    - "45240"   # water projects / marine works
+    - "45200"   # whole/partial construction works
+    - "45112"   # excavation and earthmoving
+
+  # Countries to keep from TED (ISO alpha-2). UK comes via Find a Tender.
+  countries:
+    - BE
+    - NL
+    - LU
+    - FR
+    - DE
+    - IT
+    - IE
+    - DK
+    - SE
+    - NO
+    - FI
+    - AT
+    - PL
+    - ES
+    - PT
+    - CH
+
+  # Keep a notice if the title matches any include keyword...
+  include_keywords:
+    - concrete
+    - tunnel
+    - bridge
+    - viaduct
+    - metro
+    - rail
+    - reinforced
+    - foundation
+    - marine
+    - lock
+    - quay
+    - dam
+    - nuclear
+    - hospital
+    - substation
+    - precast
+    - modular
+    - dfma
+
+  # ...unless it also matches an exclude keyword.
+  exclude_keywords:
+    - cleaning
+    - maintenance only
+    - demolition only
+    - consultancy
+    - insurance
+    - security services
+    - catering
+    - software
+
+  # Value thresholds per currency. Notices below these are dropped — unless
+  # the value is unknown and keep_unknown_value is true (many notices omit it).
+  min_value_eur: 10000000
+  min_value_gbp: 10000000
+  min_value_aud: 10000000
+  min_value_usd: 10000000
+  keep_unknown_value: true
+
+  # AusTender uses UNSPSC classification (segment 72 = building/facility
+  # construction, 30 = structures & building components, 95 = land/buildings).
+  unspsc_prefixes:
+    - "72"
+    - "30"
+    - "95"
+
+  # SAM.gov uses NAICS. Concrete-heavy construction sectors:
+  naics_codes:
+    - "236210"   # industrial building construction
+    - "236220"   # commercial & institutional building construction
+    - "237110"   # water & sewer line construction
+    - "237310"   # highway, street & bridge construction
+    - "237990"   # other heavy & civil (dams, marine, locks)
+
+# --------------------------------------------------------------- Phase 2 ----
+enrichment:
+  # Model used for the background research pack (step 2).
+  anthropic_model: "claude-sonnet-4-6"
+  max_tokens: 4000
+  # Framework by AE: ConcreteDNA for Lisa/Aled, FieldAtlas for Avi.
+  framework_by_ae:
+    lisa: concretedna
+    aled: concretedna
+    avi: fieldatlas
+
+notion:
+  # Research packs live in a "007 Projects" database that 007 creates
+  # automatically inside this page on first run (one row per project, keyed
+  # on Notice ID). The page must be connected to the Notion integration:
+  # open it -> ... -> Connections -> add the integration.
+  parent_page_id: "3a6a315b1b0080bdb2b2fae4c805d40e"   # Background project research
+  database_name: "007 Projects"
+  title_property: "Name"
+  notice_id_property: "Notice ID"
+
+amplemarket:
+  # Lead lists require an owner email of an existing Amplemarket user.
+  owner_email: "Reed.mullen@converge.io"
+  list_shared: true
+  options:
+    enrich: true
+    validate_email: true
+    reveal_phone_numbers: false
+  buying_group_size: 20
+  # Persona titles by product framework (your product-to-persona mapping).
+  titles:
+    concretedna:
+      - Site Engineer
+      - Senior Site Engineer
+      - Section Engineer
+      - Site Manager
+      - Works Manager
+      - Project Manager
+      - Quality Manager
+      - QA Manager
+      - Technical Manager
+      - Sustainability Manager
+    fieldatlas:
+      - Project Director
+      - Design Manager
+      - DfMA Lead
+      - MMC Manager
+      - Logistics Manager
+      - Package Manager
+      - Digital Construction Manager
+      - Planning Manager
+
+# Belgium partner path: full research pack, but contact-building is skipped —
+# Lisa carries the pack to Hakron directly.
+hakron_skip_contacts_countries: [BE]
+
+# ------------------------------------------------------------------ News ----
+news:
+  # Only post a news item if the headline passes the keyword gate — but
+  # feeds marked keyword_gate: false in feeds.yaml (e.g. targeted Google
+  # News queries) bypass this.
+  gate_keywords:
+    - contract
+    - award
+    - appointed
+    - wins
+    - preferred bidder
+    - financial close
+    - breaks ground
+    - groundbreaking
+    - main works
+    - tunnel
+    - concrete
+    - modular
+    - dfma
+    - framework
