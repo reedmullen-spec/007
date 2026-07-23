@@ -37,6 +37,7 @@ slack:
   # Who gets @-mentioned on news cards, by watchlist region.
   # us = national contractors: award could land either side, so tag both.
   region_mentions:
+    uk: [aled, lisa]     # Aled and Lisa split the UK — both tagged
     us_west: [alex]
     ca: [alex]
     us_east: [jamie]
@@ -233,21 +234,45 @@ hakron_skip_contacts_countries: [BE]
 
 # ------------------------------------------------------------------ News ----
 news:
+  # Drop anything older than this many days (kills feed backlogs).
+  max_age_days: 7
+
+  # Safety valve: max cards posted per run (excess carries to the next run).
+  max_cards_per_run: 25
+
   # Only post a news item if the headline passes the keyword gate — but
-  # feeds marked keyword_gate: false in feeds.yaml (e.g. targeted Google
-  # News queries) bypass this.
+  # feeds marked keyword_gate: false in feeds.yaml (targeted Google News
+  # queries, already filtered by their query) bypass this.
+  # Matched on WORD BOUNDARIES: "contract" no longer matches "contractors".
+  # Award/start signals only — loose nouns like "concrete" let junk through.
   gate_keywords:
-    - contract
-    - award
+    - awarded
+    - contract award
+    - wins contract
+    - wins deal
+    - secures contract
     - appointed
-    - wins
     - preferred bidder
     - financial close
     - breaks ground
+    - breaking ground
     - groundbreaking
+    - starts construction
+    - construction begins
+    - start on site
     - main works
-    - tunnel
-    - concrete
-    - modular
-    - dfma
-    - framework
+    - first concrete
+    - concrete pour
+    - tops out
+
+  # Hard drops, even if the gate passes (word-boundary matched).
+  exclude_keywords:
+    - tariff
+    - tariffs
+    - prices
+    - opinion
+    - interview
+    - podcast
+    - webinar
+    - awards ceremony
+    - sponsored
