@@ -1,0 +1,72 @@
+name: Run step manually
+
+# Invoke step 2 (research) or step 3 (contacts) directly from the Actions
+# tab, without the previous step having run. The HubSpot deal (keyed on
+# tender_notice_id) is the shared state, so any step can start from a deal
+# id — or research can even create the deal itself from a bare title.
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: "Which step to run"
+        type: choice
+        options: [research, contacts]
+        required: true
+      deal_id:
+        description: "HubSpot deal ID (preferred way in)"
+        required: false
+      title:
+        description: "Research only: project title, if no deal exists yet"
+        required: false
+      company:
+        description: "Contacts only: contractor, if not in the deal name"
+        required: false
+      country:
+        description: "ISO country (e.g. BE, GB) — drives the Hakron skip"
+        required: false
+        default: ""
+      ae:
+        description: "AE override"
+        type: choice
+        options: ["", lisa, aled, avi]
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tender-radar-state
+  cancel-in-progress: false
+
+jobs:
+  run-step:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run the step
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          AMPLEMARKET_TOKEN: ${{ secrets.AMPLEMARKET_TOKEN }}
+        run: |
+          ARGS=""
+          [ -n "${{ github.event.inputs.deal_id }}" ] && ARGS="$ARGS --deal-id ${{ github.event.inputs.deal_id }}"
+          [ -n "${{ github.event.inputs.country }}" ] && ARGS="$ARGS --country ${{ github.event.inputs.country }}"
+          [ -n "${{ github.event.inputs.ae }}" ]      && ARGS="$ARGS --ae ${{ github.event.inputs.ae }}"
+          if [ "${{ github.event.inputs.step }}" = "research" ]; then
+            [ -n "${{ github.event.inputs.title }}" ] && ARGS="$ARGS --title \"${{ github.event.inputs.title }}\""
+            eval python enrich.py $ARGS
+          else
+            [ -n "${{ github.event.inputs.company }}" ] && ARGS="$ARGS --company \"${{ github.event.inputs.company }}\""
+            eval python contacts.py $ARGS
+          fi
