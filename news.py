@@ -126,8 +126,22 @@ def main() -> int:
     cfg = load_config()
     seen = state.load("seen")
  
-    items = [i for i in collect(cfg) if i.dedup_key not in seen]
-    print(f"{len(items)} new news items after gate + dedup")
+    fresh = [i for i in collect(cfg) if i.dedup_key not in seen]
+ 
+    # Near-duplicate collapse: same story worded differently across feeds.
+    items = []
+    for cand in fresh:
+        dup = False
+        for kept in items:
+            inter = cand.title_tokens & kept.title_tokens
+            union = cand.title_tokens | kept.title_tokens
+            if union and len(inter) / len(union) > 0.6:
+                dup = True
+                break
+        if not dup:
+            items.append(cand)
+    print(f"{len(items)} new news items after gate + dedup "
+          f"({len(fresh) - len(items)} near-duplicates collapsed)")
  
     if args.dry_run:
         for i in items:
@@ -148,7 +162,18 @@ def main() -> int:
         hubspot = HubSpotClient(os.environ["HUBSPOT_TOKEN"], cfg)
  
     import time as _time
+    import datetime as _dt
     cap = cfg["news"].get("max_cards_per_run", 25)
+    week = _dt.date.today().strftime("%d %b %Y")
+    parents: dict[str, str] = {}   # channel -> weekly parent ts
+ 
+    def parent_for(channel: str) -> str:
+        if channel not in parents:
+            parents[channel] = slack.post_parent(
+                channel, f"Weekly announced deals — w/c {week}")
+            _time.sleep(1)
+        return parents[channel]
+ 
     posted = 0
     for i in items:
         if posted >= cap:
@@ -184,7 +209,8 @@ def main() -> int:
         stamps = []
         for channel in targets:
             ts = slack.post_card(channel, f"[NEWS] {i.title}", lines, meta,
-                                 link=i.url, mention=mentions)
+                                 link=i.url, mention=mentions,
+                                 thread_ts=parent_for(channel))
             stamps.append(ts)
             posted += 1
             _time.sleep(1)   # stay under Slack's rate limit
@@ -197,3 +223,4 @@ def main() -> int:
  
 if __name__ == "__main__":
     raise SystemExit(main())
+ 
