@@ -29,7 +29,7 @@ def _fmt_value(p: Project) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--days-back", type=int, default=2)
+    parser.add_argument("--days-back", type=int, default=7)
     args = parser.parse_args()
  
     cfg = load_config()
@@ -81,6 +81,18 @@ def main() -> int:
         names = region_mentions.get(region, [])
         return chans, [ae_slack.get(n, "") for n in names]
  
+    import time as _time
+    import datetime as _dt
+    week = _dt.date.today().strftime("%d %b %Y")
+    parents: dict[str, str] = {}
+ 
+    def parent_for(channel: str) -> str:
+        if channel not in parents:
+            parents[channel] = slack.post_parent(
+                channel, f"Weekly announced deals — w/c {week}")
+            _time.sleep(1)
+        return parents[channel]
+ 
     posted = 0
     for p in candidates:
         # CRM pre-check: HubSpot is the source of truth for dedup.
@@ -112,10 +124,10 @@ def main() -> int:
         stamps = []
         for channel in chans:
             ts = slack.post_card(channel, f"[{p.source}] {p.title}", lines, meta,
-                                 link=p.url, mention=mentions)
+                                 link=p.url, mention=mentions,
+                                 thread_ts=parent_for(channel))
             stamps.append(ts)
             posted += 1
-            import time as _time
             _time.sleep(1)
         seen[p.dedup_key] = {"ts": stamps}
  
