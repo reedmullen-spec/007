@@ -1,35 +1,35 @@
 name: News radar
- 
+
 # News moves faster than tenders — runs several times across the working day.
 on:
   schedule:
-    - cron: "0 2,7,11,15 * * 1-5"
+    - cron: "0 6 * * 1"
   workflow_dispatch:
     inputs:
       dry_run:
         description: "Dry run (print matches, post nothing)"
         type: boolean
         default: false
- 
+
 permissions:
   contents: write
- 
+
 concurrency:
   group: tender-radar-state   # shares the state lock with the other jobs
   cancel-in-progress: false
- 
+
 jobs:
   news:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
- 
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
- 
+
       - run: pip install -r requirements.txt
- 
+
       - name: Run news radar
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -40,7 +40,7 @@ jobs:
           else
             python news.py
           fi
- 
+
       - name: Commit state
         if: always()
         run: |
@@ -50,4 +50,3 @@ jobs:
           git add state/
           git diff --staged --quiet || git commit -m "chore: update news state [skip ci]"
           git push
- 
