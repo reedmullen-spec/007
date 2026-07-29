@@ -1,12 +1,13 @@
 """Slack client for 007.
 
 GitHub Actions is outbound-only, so approvals work by emoji reaction:
-cards are posted with a hidden metadata line; the approvals job later reads
-channel history, finds bot messages with your white_check_mark reaction that
-aren't yet stamped with a checkered flag, and acts on the embedded metadata.
+every card the bot posts is recorded in state (channel + ts + metadata);
+the approvals job later asks reactions.get for each outstanding card and
+acts when your white_check_mark appears.
 
-Bot token scopes: chat:write, reactions:read, reactions:write,
-channels:history (plus groups:history for private channels).
+Bot token scopes: chat:write, reactions:read, reactions:write. The bot
+never reads channel history — approvals check reactions on its own posted
+cards (tracked in state) via reactions.get.
 """
 from __future__ import annotations
 
@@ -35,8 +36,25 @@ class SlackClient:
         return data
 
     # ------------------------------------------------------------ posting
+    def post_parent(self, channel: str, text: str) -> str:
+        """Post the weekly digest parent message; cards go in its thread."""
+        blocks = [
+            {"type": "section", "text": {"type": "mrkdwn", "text": f"*{text}*"}},
+            {"type": "context", "elements": [{
+                "type": "mrkdwn",
+                "text": f"Project cards are in this thread — react "
+                        f":{APPROVE_EMOJI}: on a card to create the HubSpot "
+                        f"deal · `{META_PREFIX}{{\"wp\":1}}`",
+            }]},
+        ]
+        data = self._call("chat.postMessage",
+                          json={"channel": channel, "text": text,
+                                "blocks": blocks, "unfurl_links": False})
+        return data["ts"]
+
     def post_card(self, channel: str, header: str, lines: list[str],
-                  meta: dict, link: str = "", mention: str | list[str] = "") -> str:
+                  meta: dict, link: str = "", mention: str | list[str] = "",
+                  thread_ts: str | None = None) -> str:
         """Post a Block Kit card; returns the message ts."""
         body_text = "\n".join(lines)
         mentions = [mention] if isinstance(mention, str) else list(mention)
@@ -60,11 +78,11 @@ class SlackClient:
                         f"`{META_PREFIX}{json.dumps(meta, separators=(',', ':'))}`",
             }],
         })
-        data = self._call(
-            "chat.postMessage",
-            json={"channel": channel, "text": header, "blocks": blocks,
-                  "unfurl_links": False, "unfurl_media": False},
-        )
+        payload = {"channel": channel, "text": header, "blocks": blocks,
+                   "unfurl_links": False, "unfurl_media": False}
+        if thread_ts:
+            payload["thread_ts"] = thread_ts
+        data = self._call("chat.postMessage", json=payload)
         return data["ts"]
 
     def reply_in_thread(self, channel: str, ts: str, text: str) -> None:
@@ -80,34 +98,24 @@ class SlackClient:
             if "already_reacted" not in str(exc):
                 raise
 
-    # ------------------------------------------------------------ polling
-    def iter_approvals(self, channel: str, approver: str, days_back: int = 7):
-        """Yield (ts, meta) for bot cards the approver ✅'d but aren't 🏁 yet."""
-        oldest = str(time.time() - days_back * 86400)
-        cursor = None
-        while True:
-            params = {"channel": channel, "oldest": oldest, "limit": 200}
-            if cursor:
-                params["cursor"] = cursor
-            data = self._call("conversations.history", params=params)
-
-            for msg in data.get("messages", []):
-                meta = self._extract_meta(msg)
-                if meta is None:
-                    continue
-                reactions = {r["name"]: r for r in msg.get("reactions", [])}
-                if DONE_EMOJI in reactions:
-                    continue
-                approve = reactions.get(APPROVE_EMOJI)
-                if not approve:
-                    continue
-                if approver and approver not in approve.get("users", []):
-                    continue
-                yield msg["ts"], meta
-
-            cursor = (data.get("response_metadata") or {}).get("next_cursor")
-            if not cursor:
-                break
+    # ------------------------------------------------------- approvals
+    def approval_on(self, channel: str, ts: str, approver: str) -> bool:
+        """True if the approver has ✅'d this specific bot message and it
+        isn't 🏁-stamped yet. Uses reactions.get (reactions:read scope) on
+        the bot's OWN messages only — no channel history is ever read."""
+        data = self._call("reactions.get",
+                          params={"channel": channel, "timestamp": ts,
+                                  "full": True})
+        msg = data.get("message", {}) or {}
+        reactions = {r["name"]: r for r in msg.get("reactions", [])}
+        if DONE_EMOJI in reactions:
+            return False
+        approve = reactions.get(APPROVE_EMOJI)
+        if not approve:
+            return False
+        if approver and approver not in approve.get("users", []):
+            return False
+        return True
 
     @staticmethod
     def _extract_meta(msg: dict) -> dict | None:
