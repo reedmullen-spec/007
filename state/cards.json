@@ -1,1 +1,18 @@
-{}
+{
+  "C0BGRLQ2BMH:1785336453.190469": {
+    "channel": "C0BGRLQ2BMH",
+    "done": false,
+    "meta": {
+      "ae": "aled",
+      "country": "GB",
+      "cp": 2,
+      "deal": "63242391725",
+      "k": "MANUAL:a328",
+      "nid": "MANUAL:a328",
+      "src": "CP2",
+      "t": "A328 "
+    },
+    "posted": 1785336453.2301428,
+    "ts": "1785336453.190469"
+  }
+}
