@@ -105,6 +105,8 @@ def enrich_deal(cfg: dict, hubspot: HubSpotClient, *, deal_id: str,
     )
 
     if slack is not None:
+        import time as _time
+        from src import state
         channel = cfg["slack"]["tender_channel_id"]
         skip = country.upper() in [c.upper() for c in cfg.get("hakron_skip_contacts_countries", [])]
         meta = {"k": notice_id, "nid": notice_id, "t": deal_name[:120],
@@ -117,7 +119,12 @@ def enrich_deal(cfg: dict, hubspot: HubSpotClient, *, deal_id: str,
                          "Lisa carries the pack to Hakron.")
         else:
             lines.append("React ✅ to build the 15–20 contact buying group in Amplemarket.")
-        slack.post_card(channel, f"[CHECKPOINT 2] {deal_name}", lines, meta)
+        ts = slack.post_card(channel, f"[CHECKPOINT 2] {deal_name}", lines, meta)
+        cards = state.load("cards")
+        cards[f"{channel}:{ts}"] = {"channel": channel, "ts": ts,
+                                    "meta": meta, "done": False,
+                                    "posted": _time.time()}
+        state.save("cards", cards)
     return page_url
 
 
