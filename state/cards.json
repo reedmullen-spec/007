@@ -31,6 +31,81 @@
     "posted": 1785336990.944169,
     "ts": "1785336990.874459"
   },
+  "C0BGRLQ2BMH:1785772715.873969": {
+    "channel": "C0BGRLQ2BMH",
+    "done": false,
+    "meta": {
+      "ae": "aled",
+      "country": "GB",
+      "cp": 1,
+      "k": "NEWS:c857c5c1746c03de",
+      "nid": "NEWS:c857c5c1746c03de",
+      "src": "NEWS",
+      "t": "Kier Group awarded £500m contract on redevelopment of Cambridgeshire hospital - TheBusinessDesk.com"
+    },
+    "posted": 1785772715.924424,
+    "ts": "1785772715.873969"
+  },
+  "C0BGRLQ2BMH:1785772717.089169": {
+    "channel": "C0BGRLQ2BMH",
+    "done": false,
+    "meta": {
+      "ae": "lisa",
+      "country": "GB",
+      "cp": 1,
+      "k": "NEWS:ce1ec14d4498e727",
+      "nid": "NEWS:ce1ec14d4498e727",
+      "src": "NEWS",
+      "t": "Bouygues awarded €1.2 billion data centre job - Construction Briefing"
+    },
+    "posted": 1785772717.134114,
+    "ts": "1785772717.089169"
+  },
+  "C0BGRLQ2BMH:1785772718.170929": {
+    "channel": "C0BGRLQ2BMH",
+    "done": false,
+    "meta": {
+      "ae": "lisa",
+      "country": "GB",
+      "cp": 1,
+      "k": "NEWS:7635cf9687af7054",
+      "nid": "NEWS:7635cf9687af7054",
+      "src": "NEWS",
+      "t": "Jersey government awards Bouygues Construction a contract for new Overdale Acute Hospital - Bouygues Construction"
+    },
+    "posted": 1785772718.2163467,
+    "ts": "1785772718.170929"
+  },
+  "C0BGRLQ2BMH:1785772719.660709": {
+    "channel": "C0BGRLQ2BMH",
+    "done": false,
+    "meta": {
+      "ae": "lisa",
+      "country": "GB",
+      "cp": 1,
+      "k": "NEWS:57fccdd0a7cec9c1",
+      "nid": "NEWS:57fccdd0a7cec9c1",
+      "src": "NEWS",
+      "t": "New Hospital Programme signs first Hospital 2.0 Alliance contracts for £14bn wave of new hospitals - Building Better Hea"
+    },
+    "posted": 1785772719.7040431,
+    "ts": "1785772719.660709"
+  },
+  "C0BGRLQ2BMH:1785772720.930639": {
+    "channel": "C0BGRLQ2BMH",
+    "done": false,
+    "meta": {
+      "ae": "aled",
+      "country": "",
+      "cp": 1,
+      "k": "NEWS:d6c72863f4240c57",
+      "nid": "NEWS:d6c72863f4240c57",
+      "src": "NEWS",
+      "t": "HOCHTIEF Hold (Jefferies & Company Inc.) 29.07.2026 | Analyse - Finanzen.net"
+    },
+    "posted": 1785772720.9828675,
+    "ts": "1785772720.930639"
+  },
   "C0BJS20BUDB:1785763422.123899": {
     "channel": "C0BJS20BUDB",
     "done": false,
@@ -3376,6 +3451,66 @@
     "posted": 1785763788.0918794,
     "ts": "1785763788.019979"
   },
+  "C0BJS20BUDB:1785772711.063979": {
+    "channel": "C0BJS20BUDB",
+    "done": false,
+    "meta": {
+      "ae": "",
+      "country": "US",
+      "cp": 1,
+      "k": "NEWS:6e694e55f05f0587",
+      "nid": "NEWS:6e694e55f05f0587",
+      "src": "NEWS",
+      "t": "Punch List: Sundt delivers $34M dam, NYC library reno breaks ground"
+    },
+    "posted": 1785772711.1103106,
+    "ts": "1785772711.063979"
+  },
+  "C0BJS20BUDB:1785772722.121799": {
+    "channel": "C0BJS20BUDB",
+    "done": false,
+    "meta": {
+      "ae": "",
+      "country": "US",
+      "cp": 1,
+      "k": "NEWS:3312739e0c8f6db9",
+      "nid": "NEWS:3312739e0c8f6db9",
+      "src": "NEWS",
+      "t": "Convention Center chief divests from $2B state contract awarded to company he co-owns with Ayanna Pressley's husband - B"
+    },
+    "posted": 1785772722.1636121,
+    "ts": "1785772722.121799"
+  },
+  "C0BJS20BUDB:1785772723.459269": {
+    "channel": "C0BJS20BUDB",
+    "done": false,
+    "meta": {
+      "ae": "",
+      "country": "US",
+      "cp": 1,
+      "k": "NEWS:9b8defd9539633f3",
+      "nid": "NEWS:9b8defd9539633f3",
+      "src": "NEWS",
+      "t": "USCG Awards $230M Contract for Base Charleston Expansion - Construction Equipment Guide"
+    },
+    "posted": 1785772723.5078955,
+    "ts": "1785772723.459269"
+  },
+  "C0BJX8B028Z:1785772728.057979": {
+    "channel": "C0BJX8B028Z",
+    "done": false,
+    "meta": {
+      "ae": "",
+      "country": "AU",
+      "cp": 1,
+      "k": "NEWS:31afa9a63d2af41c",
+      "nid": "NEWS:31afa9a63d2af41c",
+      "src": "NEWS",
+      "t": "Construction starts on The Stanley - Inside Construction"
+    },
+    "posted": 1785772728.1719465,
+    "ts": "1785772728.057979"
+  },
   "C0BJXLBT8RF:1785763419.283769": {
     "channel": "C0BJXLBT8RF",
     "done": false,
@@ -3840,5 +3975,35 @@
     },
     "posted": 1785763770.6351554,
     "ts": "1785763770.552879"
+  },
+  "C0BJXLBT8RF:1785772713.528299": {
+    "channel": "C0BJXLBT8RF",
+    "done": false,
+    "meta": {
+      "ae": "",
+      "country": "US",
+      "cp": 1,
+      "k": "NEWS:6e694e55f05f0587",
+      "nid": "NEWS:6e694e55f05f0587",
+      "src": "NEWS",
+      "t": "Punch List: Sundt delivers $34M dam, NYC library reno breaks ground"
+    },
+    "posted": 1785772713.5719788,
+    "ts": "1785772713.528299"
+  },
+  "C0BK21UMHK3:1785772725.775649": {
+    "channel": "C0BK21UMHK3",
+    "done": false,
+    "meta": {
+      "ae": "aled",
+      "country": "CA",
+      "cp": 1,
+      "k": "NEWS:74a73bde2900afd6",
+      "nid": "NEWS:74a73bde2900afd6",
+      "src": "NEWS",
+      "t": "GRAHAM awarded contract for new Airedale Hospital in UK - World Construction Network"
+    },
+    "posted": 1785772725.8186862,
+    "ts": "1785772725.775649"
   }
 }
