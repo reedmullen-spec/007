@@ -107,6 +107,7 @@ def _parse_opportunity(opp: dict) -> Project | None:
         currency="USD",
         deadline=str(opp.get("responseDeadLine") or ""),
     )
-    # east/west side for channel + mention routing
+    # east/west side for channel routing; exact state for AE assignment
     proj.us_side = "us_west" if state in WEST_STATES else "us_east"  # type: ignore[attr-defined]
+    proj.us_state = state  # type: ignore[attr-defined]
     return proj

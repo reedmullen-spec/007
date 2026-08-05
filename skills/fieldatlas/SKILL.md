@@ -70,6 +70,13 @@ a UK prison and a European gigafactory are both Avi if they're DfMA-led.
 - **Buying group size when contacts are built: 15–20 people** across the
   main contractor, the JV/alliance, and the module manufacturers.
 
+## Length discipline (added after AE feedback)
+The pack must be SCANNABLE. Hard rules: start with a **## TL;DR** section of
+exactly 5 bullets (what it is, who builds it, when concrete happens, why we
+fit, the one action to take). Total pack length under 600 words. One-line
+bullets over paragraphs everywhere. Depth belongs in the sources, not the
+pack — an AE should absorb this in 60 seconds.
+
 ## Required output — markdown, these headers, this order
 
 # {Project name}

@@ -42,8 +42,15 @@ def filter_projects(projects: list[Project], cfg: dict) -> list[Project]:
         # TED-only country gate (FTS=UK, AUSTENDER=AU, SAM=US by definition).
         if p.source == "TED" and countries and p.country not in countries:
             continue
+        if p.source == "SAM":
+            # NAICS matches by construction, so SAM must also hit a keyword
+            # and clear the small-works exclusion list.
+            if not _keyword_hit(p.title, f["include_keywords"]):
+                continue
+            if _keyword_hit(p.title, f.get("sam_exclude_keywords", [])):
+                continue
         # Relevance: classification match OR an include keyword in the title.
-        if not (_matches_codes(p, f) or _keyword_hit(p.title, f["include_keywords"])):
+        elif not (_matches_codes(p, f) or _keyword_hit(p.title, f["include_keywords"])):
             continue
         if _keyword_hit(p.title, f.get("exclude_keywords", [])):
             continue

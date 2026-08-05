@@ -33,13 +33,20 @@ slack:
     alex: "U0AKM99CK08"   # Alex Groves
     jamie: "U32ML88RE"    # Jamie Tew
     jeremy: "U01FP4CRR8A" # Jeremy — APAC
+    justin: "U0AS1A6JZ7Y"   # Justin — all of Canada
+    lawson: "U0BGLKVNG65"   # White Cap team — Pacific
+    alicia: "U0BA6PQB8CA"   # White Cap team — Mountain
+    ben: "U08H37C1Z9S"      # White Cap team — Plains/TX/HI
+    britain: "U08H37AMZ36"  # White Cap team — Midwest/South/DC
+    brady: "U0BMDES0YRW"    # White Cap team — Mid-Atlantic/New England
+    dan: "TODO_U..."      # Data Hub product line (not geographic)
 
   # Who gets @-mentioned on news cards, by watchlist region.
   # us = national contractors: award could land either side, so tag both.
   region_mentions:
     uk: [aled, lisa]     # Aled and Lisa split the UK — both tagged
     us_west: [alex]
-    ca: [alex]
+    ca: [justin]        # was Alex — Justin owns Canada now
     us_east: [jamie]
     us: [alex, jamie]
     au: [jeremy]
@@ -73,9 +80,26 @@ routing:
     IT: aled
   eu_default: lisa
 
-  # Regions with no AE split defined yet: cards post without an AE
-  # suggestion and deals default to Reed as owner.
-  no_ae_countries: [US, CA, AU]
+  # Regions with no AE assignment: no suggestion, deals default to Reed.
+  # (Canada moved out of this list — Justin owns all of Canada, Aug 2026.)
+  no_ae_countries: [US, AU]
+
+  # Canada: Justin, national.
+  country_ae_map_extra:
+    CA: justin
+
+  # US state -> White Cap-team AE (the "new American guidelines", Aug 2026).
+  # Confirmed Aug 2026: HI -> ben, DE -> brady, DC -> britain, AK -> lawson.
+  # NM is Ben's as stated, despite Alicia holding AZ.
+  # Dan is product-routed (Data Hub only), not geographic — filter the
+  # database on Product fit = "Data Hub" for his list.
+  us_state_ae:
+    lawson:  [CA, WA, OR, AK]
+    alicia:  [ID, MT, WY, CO, NV, UT, AZ]
+    ben:     [ND, SD, NE, OK, KS, NM, TX, HI]
+    brady:   [PA, MD, NJ, NY, CT, RI, MA, VT, NH, ME, DE]
+    britain: [MN, IA, MO, AR, LA, WI, IL, IN, MI, OH, MS, AL, TN, KY,
+              GA, FL, SC, NC, VA, WV, DC]
 
   # Tier 1 of the resolver: if the buyer/contractor company exists in HubSpot,
   # inherit its live hubspot_owner_id instead of the geography fallback.
@@ -116,6 +140,9 @@ filters:
     - FI
     - AT
     - PL
+    - EE
+    - LV
+    - LT
     - ES
     - PT
     - CH
@@ -167,6 +194,24 @@ filters:
     - "30"
     - "95"
 
+  # SAM.gov: NAICS alone passes everything (results match their own code by
+  # construction), so SAM notices ALSO require an include-keyword hit.
+  # These exclusions kill the small-works noise (lead abatement, lighting...).
+  sam_exclude_keywords:
+    - abatement
+    - lighting
+    - mech room
+    - hvac
+    - roof
+    - repair
+    - renovation
+    - painting
+    - paving
+    - fencing
+    - mowing
+    - janitorial
+    - elevator
+
   # SAM.gov uses NAICS. Concrete-heavy construction sectors:
   naics_codes:
     - "236210"   # industrial building construction
@@ -174,6 +219,53 @@ filters:
     - "237110"   # water & sewer line construction
     - "237310"   # highway, street & bridge construction
     - "237990"   # other heavy & civil (dams, marine, locks)
+
+# ---------------------------------------------------------- V1 ingest ------
+ingest:
+  # Cheap qualify pass: model reads the notice/headline and returns
+  # structured fields + a low/medium/high fit with a one-line reason.
+  qualify_model: "claude-sonnet-4-6"
+  max_rows_per_run: 60          # token/API safety valve per run
+  geocode: true                 # Nominatim (OpenStreetMap) — free, 1 req/sec
+  project_types:                # controlled list -> Notion select
+    - Hospital / healthcare
+    - Education
+    - Residential
+    - Commercial / office
+    - Industrial / manufacturing
+    - Data centre
+    - Energy / nuclear
+    - Water / wastewater
+    - Flood defence / marine
+    - Rail / metro
+    - Highways / bridges
+    - Stadium / leisure
+    - Prison / justice
+    - Defence
+    - Other
+  statuses:                     # lifecycle -> Notion select (map colours)
+    - New                       # grey
+    - This week                 # blue (set by Monday triage)
+    - Working on                # amber
+    - Recontact later           # hollow amber
+    - On the project            # green
+    - Disqualified              # red (never pursued)
+    - Lost                      # red (pursued, not won)
+
+# ------------------------------------------------------------- Triage ------
+triage:
+  # Monday morning: pick top-N New projects per region, mark them
+  # "This week", and post one Slack message per region with Notion links.
+  per_region:
+    uk: 10
+    eu: 10
+    us_east: 10
+    us_west: 10
+    ca: 5
+    au: 5
+  # Priority order: manually-added rows first (White Cap / AE intel beats
+  # scraped data), then fit (high>medium>low), then value.
+  manual_first: true
 
 # --------------------------------------------------------------- Phase 2 ----
 enrichment:
