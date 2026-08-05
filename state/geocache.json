@@ -209,6 +209,10 @@
     50.7386619,
     7.1245135
   ],
+  "bielefeld, north rhine-westphalia, germany|de": [
+    52.0191005,
+    8.531007
+  ],
   "birkelandsvatn, norway|no": null,
   "blarghour, scotland|gb": null,
   "bonn, north rhine-westphalia, germany|de": [
@@ -421,6 +425,10 @@
     52.847207,
     9.2299135
   ],
+  "düsseldorf, germany|de": [
+    51.2254018,
+    6.7763137
+  ],
   "e45, kløfta to alta, norway|no": null,
   "east of friesenbrücke, lower saxony, germany|de": null,
   "east west rail corridor, gb|gb": null,
@@ -515,6 +523,10 @@
   "farge, bremen, germany|de": [
     53.200157,
     8.528893
+  ],
+  "fedje, norway|no": [
+    60.7928865,
+    4.4788217
   ],
   "fernán núñez, montilla, puente genil, córdoba, andalusia, spain|es": null,
   "festung marienberg, würzburg, bavaria, germany|de": [
@@ -804,6 +816,10 @@
   "horten, norway|no": [
     59.4101728,
     10.4437392
+  ],
+  "houdain, pas-de-calais, france|fr": [
+    50.4524327,
+    2.5378571
   ],
   "hundem, sauerland, north rhine-westphalia, germany|de": null,
   "hérault, france|fr": [
@@ -1716,6 +1732,10 @@
     48.2405833,
     11.9699152
   ],
+  "utrecht, netherlands|nl": [
+    52.0907006,
+    5.1215634
+  ],
   "various locations, spain|es": null,
   "vaucluse, provence-alpes-côte d'azur, france|fr": [
     43.9938643,
@@ -1740,6 +1760,10 @@
   "via mitolo, bari, italy|it": [
     41.0912185,
     16.8614377
+  ],
+  "viinikankatu, tampere, finland|fi": [
+    61.4969421,
+    23.7862293
   ],
   "villeneuve d'ascq, métropole européenne de lille, france|fr": null,
   "villingen-schwenningen, baden-württemberg, germany|de": [
