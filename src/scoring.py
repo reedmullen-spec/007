@@ -100,9 +100,6 @@ CARBON_SIGNALS = ("net zero", "net-zero", "low carbon", "low-carbon", "carbon ne
 # Scope that isn't structural concrete work we can instrument.
 NON_STRUCTURAL_TYPES = {"Other"}
 
-# Work natures where concrete scope is usually absent unless proven otherwise.
-WEAK_WORK_NATURES = {"Refurbishment / retrofit"}
-
 # Project stages where the concrete is already gone.
 SPENT_STAGES = {"Finishing", "Complete"}
 
@@ -179,7 +176,6 @@ def _disqualify(fields: dict, cfg: dict) -> str | None:
     use_cases = set(fields.get("use_case") or [])
     ptype = fields.get("project_type", "")
     stage = fields.get("project_stage", "")
-    nature = fields.get("work_nature", "")
     months = _months_until(fields.get("expected_concrete_start", ""))
 
     if stage in SPENT_STAGES:
@@ -188,8 +184,12 @@ def _disqualify(fields: dict, cfg: dict) -> str | None:
         return "expected concrete start is in the past"
     if ptype in NON_STRUCTURAL_TYPES and not use_cases - {"Unknown"}:
         return "no identifiable structural concrete scope"
-    if nature in WEAK_WORK_NATURES and not use_cases - {"Unknown"}:
-        return f"{nature.lower()} with no structural concrete scope identified"
+    # NOTE: deliberately NOT disqualifying on work_nature alone (e.g.
+    # "Refurbishment / retrofit") when use_case is just Unknown — that's
+    # absence of information, not evidence of irrelevance (real misses:
+    # "Betonsanierung"/concrete-repair notices were getting caught here).
+    # has_structural_scope()'s activity gate already drops these to Low
+    # instead, which is the right call under uncertainty.
 
     floor = (cfg.get("scoring", {}) or {}).get("disqualify_below_value", 0)
     value = fields.get("value")
