@@ -46,26 +46,30 @@ def fetch(cfg: dict, days_back: int = 2,
     projects: list[Project] = []
     seen_ids: set[str] = set()
 
-    for naics in cfg["filters"].get("naics_codes", []):
-        params = {
-            "api_key": api_key,
-            "postedFrom": posted_from,
-            "postedTo": posted_to,
-            "ncode": naics,
-            "ptype": ",".join(PTYPES),
-            "limit": 100,
-        }
-        resp = session.get(SEARCH_URL, params=params, timeout=60)
-        if resp.status_code == 429:
-            print("SAM.gov: daily rate limit hit — partial results this run.")
-            break
-        if resp.status_code != 200:
-            raise RuntimeError(f"SAM.gov fetch failed ({resp.status_code}): {resp.text[:400]}")
-        for opp in resp.json().get("opportunitiesData", []):
-            proj = _parse_opportunity(opp)
-            if proj and proj.notice_id not in seen_ids:
-                seen_ids.add(proj.notice_id)
-                projects.append(proj)
+    # One request for all NAICS codes (comma-joined, same pattern ptype
+    # already uses) instead of one request per code — the daily quota on a
+    # non-federal account with no role is just 10 requests/day, so looping
+    # 5 codes burned half of it on a single fetch() call.
+    naics_codes = cfg["filters"].get("naics_codes", [])
+    params = {
+        "api_key": api_key,
+        "postedFrom": posted_from,
+        "postedTo": posted_to,
+        "ncode": ",".join(naics_codes),
+        "ptype": ",".join(PTYPES),
+        "limit": 1000,
+    }
+    resp = session.get(SEARCH_URL, params=params, timeout=60)
+    if resp.status_code == 429:
+        print("SAM.gov: daily rate limit hit — partial results this run.")
+        return projects
+    if resp.status_code != 200:
+        raise RuntimeError(f"SAM.gov fetch failed ({resp.status_code}): {resp.text[:400]}")
+    for opp in resp.json().get("opportunitiesData", []):
+        proj = _parse_opportunity(opp)
+        if proj and proj.notice_id not in seen_ids:
+            seen_ids.add(proj.notice_id)
+            projects.append(proj)
 
     return projects
 
