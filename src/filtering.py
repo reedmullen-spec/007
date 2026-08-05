@@ -49,8 +49,11 @@ def filter_projects(projects: list[Project], cfg: dict) -> list[Project]:
                 continue
             if _keyword_hit(p.title, f.get("sam_exclude_keywords", [])):
                 continue
-        # Relevance: classification match OR an include keyword in the title.
-        elif not (_matches_codes(p, f) or _keyword_hit(p.title, f["include_keywords"])):
+        # Relevance: classification match AND an include keyword in the
+        # title. OR was too loose — CPV 45200 ("whole/partial construction
+        # works") alone let anything construction-shaped through regardless
+        # of title (landscaping, road maintenance, general repair).
+        elif not (_matches_codes(p, f) and _keyword_hit(p.title, f["include_keywords"])):
             continue
         if _keyword_hit(p.title, f.get("exclude_keywords", [])):
             continue
