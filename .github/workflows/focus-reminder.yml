@@ -1,0 +1,51 @@
+name: Focus reminder
+
+# Friday evening: prompts each triage.lists person to submit their weekly
+# focus in Notion before Sunday 20:00 UTC (triage.focus_deadline_hour_utc),
+# so the ritual actually gets used.
+on:
+  schedule:
+    - cron: "0 17 * * 5"   # Friday 17:00 UTC (~6pm London during BST)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (print who would be messaged, send nothing)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tender-radar-state
+  cancel-in-progress: false
+
+jobs:
+  reminder:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run focus reminder
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python focus_reminder.py --dry-run
+          else
+            python focus_reminder.py
+          fi
+      - name: Commit state
+        if: always()
+        run: |
+          git config user.name  "tender-radar-bot"
+          git config user.email "actions@github.com"
+          git pull --rebase --autostash || true
+          git add state/
+          git diff --staged --quiet || git commit -m "chore: update radar state [skip ci]"
+          git push
