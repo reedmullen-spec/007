@@ -29,7 +29,7 @@ from src.focus import get_focus, mark_applied, rank_with_focus
 from src.notion_client import NotionClient
 from src.slack_client import SlackClient
 
-FIT_ORDER = {"high": 0, "medium": 1, "low": 2}
+FIT_ORDER = {"High": 0, "Medium": 1, "Low": 2, "Disqualified": 3}
 
 
 def _prop_select(row: dict, name: str) -> str:
@@ -84,8 +84,11 @@ def gather_for_list(notion: NotionClient, list_cfg: dict) -> tuple[list[dict], l
                 {"property": "Status", "select": {"equals": "Recontact later"}},
                 {"property": "Recontact date", "date": {"on_or_before": today}}]},
     ]})
+    # Fit=Disqualified means never, per the scorer's design — exclude it
+    # from fresh picks so it can't leak in as filler on a thin list.
     fresh = notion.query_rows({"and": [base,
-                              {"property": "Status", "select": {"equals": "New"}}]})
+                              {"property": "Status", "select": {"equals": "New"}},
+                              {"property": "Fit", "select": {"does_not_equal": "Disqualified"}}]})
     return carry, fresh
 
 

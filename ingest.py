@@ -3,7 +3,8 @@
 Pipeline per run:
   1. Fetch tenders (TED, FTS, AusTender, SAM) + news (trade press + watchlist)
   2. Filter and dedup (state + headline dedup + near-duplicate collapse)
-  3. Cheap-qualify each candidate (structured fields + low/med/high fit)
+  3. Cheap-qualify each candidate (structured observations, no fit — see
+     src/scoring.py, which computes fit deterministically afterward)
   4. Geocode the best-known location (Nominatim, cached)
   5. Create one structured row per project in the Notion database, status=New
 
@@ -29,6 +30,7 @@ from src.models import Project
 from src.notion_client import NotionClient
 from src.qualify import qualify
 from src.routing import resolve_ae
+from src.scoring import score_project
 from src.sources import austender, fts, sam, ted
 
 from news import collect as collect_news, REGION_COUNTRY
@@ -162,8 +164,7 @@ def main() -> int:
                  "use_case": ["Unknown"], "product_fit": [],
                  "concrete_opportunity": "Unknown",
                  "expected_concrete_start": "Unknown", "location": "",
-                 "competitor": "", "fit": "medium",
-                 "fit_reason": "Auto-qualify failed; review."}
+                 "competitor": ""}
 
         lat = lng = None
         if cfg["ingest"].get("geocode", True):
@@ -180,6 +181,17 @@ def main() -> int:
                    [x.upper() for x in cfg.get("hakron_skip_contacts_countries", [])]
                    else "White Cap" if c["region"].startswith(("us", "ca"))
                    else "TBD")
+
+        # Score AFTER ae/partner are resolved — the coverage/access
+        # dimensions need the real values, not "unassigned"/"TBD" placeholders.
+        scored = score_project({**q, "title": c["title"],
+                                "gc": q.get("general_contractor", ""),
+                                "value": c["value"], "ae": ae,
+                                "partner_route": partner}, cfg)
+        dimensions_str = "; ".join(
+            f"{k}: {'ok' if v['pass'] else 'off'} — {v['note']}"
+            for k, v in scored["dimensions"].items())
+
         try:
             notion.create_project_row({
                 "title": c["title"], "notice_id": c["notice_id"],
@@ -193,14 +205,16 @@ def main() -> int:
                 "competitor": q.get("competitor", ""),
                 "value": c["value"], "currency": c["currency"] or "EUR",
                 "concrete_start": q.get("expected_concrete_start", ""),
-                "fit": q.get("fit", "medium"),
-                "fit_reason": q.get("fit_reason", ""),
+                "fit": scored["fit"],
+                "fit_profile": scored["profile"],
+                "fit_reason": scored["reason"],
+                "fit_dimensions": dimensions_str,
                 "summary": q.get("summary", ""),
                 "url": c["url"], "lat": lat, "lng": lng,
                 "client": q.get("client", "") or c["buyer"],
                 "jv_parents": q.get("jv_parents", ""),
                 "use_case": q.get("use_case", []),
-                "product_fit": q.get("product_fit", []),
+                "product_fit": scored["products"] or q.get("product_fit", []),
                 "ae": ae, "partner_route": partner,
                 "deadline": c.get("deadline", ""), "announced": today,
             })
@@ -240,6 +254,17 @@ def sweep_manual_rows(cfg: dict, api_key: str, notion: NotionClient) -> int:
                   file=sys.stderr)
             continue
         slug = _re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:60]
+        # Manually-added rows have no resolved AE/partner/value at sweep
+        # time — score honestly against what's known; coverage/access will
+        # legitimately read as "off" until an AE or value is set by hand.
+        existing_value = (row.get("properties") or {}).get("Value", {}).get("number")
+        scored = score_project({**q, "title": title,
+                                "gc": q.get("general_contractor", ""),
+                                "value": existing_value, "ae": "unassigned",
+                                "partner_route": "TBD"}, cfg)
+        dimensions_str = "; ".join(
+            f"{k}: {'ok' if v['pass'] else 'off'} — {v['note']}"
+            for k, v in scored["dimensions"].items())
         props = {
             cfg["notion"]["notice_id_property"]: NotionClient._rt(f"MANUAL:{slug}"),
             "Source": {"select": {"name": "MANUAL"}},
@@ -248,10 +273,13 @@ def sweep_manual_rows(cfg: dict, api_key: str, notion: NotionClient) -> int:
             "Project stage": {"select": {"name": q.get("project_stage", "Unknown")}},
             "Work nature": {"select": {"name": q.get("work_nature", "Unknown")}},
             "Expected concrete start": NotionClient._rt(q.get("expected_concrete_start", "")),
-            "Fit": {"select": {"name": q.get("fit", "medium")}},
-            "Fit reason": NotionClient._rt(q.get("fit_reason", "")),
+            "Fit": {"select": {"name": scored["fit"]}},
+            "Fit reason": NotionClient._rt(scored["reason"]),
+            "Fit dimensions": NotionClient._rt(dimensions_str),
             "Location": NotionClient._rt(q.get("location", "")),
         }
+        if scored["profile"]:
+            props["Fit profile"] = {"select": {"name": scored["profile"]}}
         if q.get("project_type"):
             props["Project type"] = {"select": {"name": q["project_type"]}}
         coords = geocode(q.get("location", "")) if cfg["ingest"].get("geocode") else None

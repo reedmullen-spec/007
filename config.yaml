@@ -253,6 +253,13 @@ ingest:
     - Disqualified              # red (never pursued)
     - Lost                      # red (pursued, not won)
 
+# ------------------------------------------------------------ Scoring ------
+# Fit is computed by src/scoring.py, not by the model — same project in,
+# same band out. Profiles (and their timing windows / opportunity floors)
+# live in scoring.py PROFILES.
+scoring:
+  disqualify_below_value: 5000000   # currency-agnostic floor
+
 # ------------------------------------------------------------- Triage ------
 triage:
   # Monday morning: pick top-N New projects per list, mark them "This week",

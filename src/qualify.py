@@ -1,10 +1,14 @@
 """Cheap qualify pass — one small API call per candidate project.
 
-Reads the notice/headline data and returns structured fields: canonical GC,
-project type (from the controlled list), phase, expected concrete start,
-best-guess location, and a low/medium/high Converge fit with a one-line
-reason. No web search — it works from what the source gave us; the deep
-research step is where searching happens.
+Reads the notice/headline data and returns structured observations:
+canonical GC, project type, work nature, project stage, expected concrete
+start, best-guess location, use cases, and product fit. No web search — it
+works from what the source gave us; the deep research step is where
+searching happens.
+
+Fit is NOT decided here — src/scoring.py computes it deterministically from
+these observations, so the same project always lands in the same band. The
+model's job is accurate observation only.
 """
 from __future__ import annotations
 
@@ -39,10 +43,10 @@ concrete_opportunity: "Small" | "Medium" | "Large" | "Unknown" — the size of
 expected_concrete_start: best estimate like "Q3 2027" or "Live" or "Unknown".
 location: most specific place you can infer (site, town, or region). "" if none.
 competitor: any rival monitoring/curing system named or implied, else "".
-fit: "high" | "medium" | "low" — high = major in-situ concrete or DfMA scope
-  with the pour/manufacture window still ahead; low = fit-out, refurb, small
-  works, services-only, or concrete already finished.
-fit_reason: one sentence explaining the rating.
+
+Do NOT score the project — fit is computed downstream from these
+observations by src/scoring.py, so it stays reproducible. Your job is
+accurate observation only.
 
 Judge only from the given data. Unknown is a valid answer; never invent."""
 
@@ -87,14 +91,11 @@ def qualify(api_key: str, cfg: dict, *, title: str, source: str,
         data["project_stage"] = "Unknown"
     if data.get("concrete_opportunity") not in ("Small", "Medium", "Large", "Unknown"):
         data["concrete_opportunity"] = "Unknown"
-    if data.get("fit") not in ("high", "medium", "low"):
-        data["fit"] = "medium"
     data["use_case"] = [u for u in (data.get("use_case") or [])
                         if u in _N.USE_CASES] or ["Unknown"]
     data["product_fit"] = [p for p in (data.get("product_fit") or [])
                            if p in _N.PRODUCTS]
     for key in ("summary", "general_contractor", "client", "jv_parents",
-                "location", "competitor", "fit_reason",
-                "expected_concrete_start"):
+                "location", "competitor", "expected_concrete_start"):
         data.setdefault(key, "")
     return data
