@@ -87,7 +87,7 @@ def main() -> int:
         if scored["fit"] != old_fit:
             changed += 1
             print(f"  {title[:70]}: {old_fit or '(none)'} -> {scored['fit']} "
-                  f"({scored['profile'] or 'no profile'})")
+                  f"— {scored['reason']}")
         if scored["fit"] == "Disqualified":
             disqualified += 1
 
