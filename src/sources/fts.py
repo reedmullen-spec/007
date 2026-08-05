@@ -23,7 +23,8 @@ def fetch(cfg: dict, days_back: int = 2, max_pages: int = 6,
     params = {
         "updatedFrom": (now - dt.timedelta(days=days_back)).strftime("%Y-%m-%dT%H:%M:%S"),
         "updatedTo": now.strftime("%Y-%m-%dT%H:%M:%S"),
-        "stages": "tender,award",
+        "stages": ["tender", "award"],   # list, not a comma-joined string —
+        # FTS silently 200s with zero releases on "tender,award" as one value.
         "limit": 100,
     }
 

@@ -49,26 +49,27 @@ def fetch(cfg: dict, days_back: int = 2, max_pages: int = 5,
 
 
 def _parse_release(rel: dict) -> Project | None:
+    """AusTender's OCDS releases put the useful fields on `contracts[0]`,
+    not `tender` (id/procurementMethod only) or `awards[0]` (supplier/status
+    only, no value or items) — verified against the live API, Aug 2026."""
     awards = rel.get("awards") or []
-    tender = rel.get("tender") or {}
-    title = tender.get("title") or rel.get("description") or ""
+    contract = (rel.get("contracts") or [{}])[0]
+    title = contract.get("description") or rel.get("description") or ""
 
     supplier = ""
-    value = None
-    codes: list[str] = []
-
     if awards:
-        award = awards[0]
-        suppliers = award.get("suppliers") or []
+        suppliers = awards[0].get("suppliers") or []
         if suppliers:
             supplier = suppliers[0].get("name", "")
-        value = (award.get("value") or {}).get("amount")
-        for item in award.get("items", []) or []:
-            cid = (item.get("classification") or {}).get("id")
-            if cid:
-                codes.append(str(cid))
-            if not title:
-                title = item.get("description", "")
+
+    value = (contract.get("value") or {}).get("amount")
+    codes: list[str] = []
+    for item in contract.get("items", []) or []:
+        cid = (item.get("classification") or {}).get("id")
+        if cid:
+            codes.append(str(cid))
+        if not title:
+            title = item.get("description", "")
 
     if not title:
         return None
