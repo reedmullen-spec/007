@@ -24,7 +24,7 @@ FIELDS = [
     "buyer-country",
     "classification-cpv",
     "total-value",
-    "estimated-value",
+    "estimated-value-lot",
     "deadline-receipt-tender-date-lot",
     "publication-date",
 ]
@@ -127,7 +127,7 @@ def _parse_notice(n: dict) -> Project:
     buyer = _first_text(n.get("buyer-name") or n.get("organisation-name-buyer"))
     country = _first_text(n.get("buyer-country") or n.get("place-of-performance"))
     cpv = _all_strings(n.get("classification-cpv"))
-    value = _to_float(n.get("total-value") or n.get("estimated-value"))
+    value = _to_float(n.get("total-value") or n.get("estimated-value-lot"))
     deadline = _first_text(n.get("deadline-receipt-tender-date-lot"))
 
     return Project(
