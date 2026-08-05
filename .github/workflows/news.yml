@@ -2,8 +2,8 @@ name: News radar
 
 # News moves faster than tenders — runs several times across the working day.
 on:
-  schedule:
-    - cron: "0 6 * * 1"
+  # V1: Slack card schedules retired — ingest.yml builds the
+  # Notion database instead. Run manually if ever needed.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -21,6 +21,7 @@ concurrency:
 jobs:
   news:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 

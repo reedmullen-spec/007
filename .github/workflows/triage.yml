@@ -1,12 +1,15 @@
-name: Tender digest
+name: Monday triage
 
+# Picks top-N New projects per region, marks them "This week", posts one
+# Slack list per region with Notion links. Carry-over: unfinished
+# "This week" rows stay listed and count toward the cap.
 on:
-  # V1: Slack card schedules retired — ingest.yml builds the
-  # Notion database instead. Run manually if ever needed.
+  schedule:
+    - cron: "0 6 * * 1"   # Monday 06:00 UTC
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry run (print matches, post nothing)"
+        description: "Dry run (print picks, change nothing)"
         type: boolean
         default: false
 
@@ -18,30 +21,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  digest:
+  triage:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - run: pip install -r requirements.txt
-
-      - name: Run tender digest
+      - name: Run triage
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
-          SAM_API_KEY: ${{ secrets.SAM_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         run: |
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            python digest.py --dry-run
+            python triage.py --dry-run
           else
-            python digest.py
+            python triage.py
           fi
-
       - name: Commit state
         if: always()
         run: |

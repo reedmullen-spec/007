@@ -42,7 +42,8 @@ def _build_query(cfg: dict, days_back: int) -> str:
 
 
 def fetch(cfg: dict, days_back: int = 2, max_pages: int = 4,
-          session: requests.Session | None = None) -> list[Project]:
+          session: requests.Session | None = None,
+          scope: str = "ACTIVE") -> list[Project]:
     session = session or requests.Session()
     query = _build_query(cfg, days_back)
     projects: list[Project] = []
@@ -53,7 +54,7 @@ def fetch(cfg: dict, days_back: int = 2, max_pages: int = 4,
             "query": query,
             "fields": FIELDS,
             "limit": 250,
-            "scope": "ACTIVE",
+            "scope": scope,
             "paginationMode": "ITERATION",
             "checkQuerySyntax": False,
         }

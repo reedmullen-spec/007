@@ -95,6 +95,14 @@ def enrich_deal(cfg: dict, hubspot: HubSpotClient, *, deal_id: str,
     row = notion.find_or_create_row(deal_name, notice_id)
     notion.append_pack(row["id"], pack)
     page_url = row.get("url", "")
+    try:
+        notion.update_properties(row["id"], {
+            "HubSpot deal": {"url": f"https://app.hubspot.com/contacts/"
+                                    f"{cfg['hubspot']['portal_id']}/deal/{deal_id}"},
+            "Status": {"select": {"name": "Working on"}},
+        })
+    except Exception:
+        pass  # row may predate the extended schema; never block the pack
     print(f"Notion row: {page_url}")
 
     hubspot.add_note(
