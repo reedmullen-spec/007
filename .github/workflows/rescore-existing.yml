@@ -1,0 +1,34 @@
+name: Rescore existing
+
+# One-off / repeatable: re-runs the deterministic scorer (src/scoring.py)
+# against existing "New" rows scored before it existed. Dispatch only.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (print what would change, change nothing)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  rescore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run rescore
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python rescore_existing.py --dry-run
+          else
+            python rescore_existing.py
+          fi

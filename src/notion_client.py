@@ -130,6 +130,13 @@ class NotionClient:
     AES = ["lisa", "aled", "avi", "alex", "jamie", "jeremy", "justin",
            "lawson", "alicia", "ben", "britain", "brady", "dan", "unassigned"]
 
+    # Fit is computed deterministically by src/scoring.py — see its docstring
+    # for why (reproducibility: same project in, same band out).
+    FIT_BANDS = ["High", "Medium", "Low", "Disqualified"]
+    FIT_PROFILES = ["Mass-concrete civils", "Schedule-critical vertical build",
+                    "Industrialised construction / DfMA", "Low-carbon spec-in",
+                    "Precast & batching supply"]
+
     FOCUS_SCHEMA = {
         "Name": {"title": {}},
         "Person": {"select": {"options": [{"name": a} for a in AES if a != "unassigned"]}},
@@ -152,9 +159,10 @@ class NotionClient:
         "Master row": {"url": {}},
         "Why this project": {"rich_text": {}},
         "Fit": {"select": {"options": [
-            {"name": "high", "color": "green"},
-            {"name": "medium", "color": "yellow"},
-            {"name": "low", "color": "gray"}]}},
+            {"name": "High", "color": "green"},
+            {"name": "Medium", "color": "yellow"},
+            {"name": "Low", "color": "gray"},
+            {"name": "Disqualified", "color": "red"}]}},
         "GC": {"rich_text": {}},
         "Location": {"rich_text": {}},
         "Expected concrete start": {"rich_text": {}},
@@ -209,10 +217,13 @@ class NotionClient:
         "Use case": {"multi_select": {"options": [{"name": u} for u in USE_CASES]}},
         "Product fit": {"multi_select": {"options": [{"name": p} for p in PRODUCTS]}},
         "Fit": {"select": {"options": [
-            {"name": "high", "color": "green"},
-            {"name": "medium", "color": "yellow"},
-            {"name": "low", "color": "gray"}]}},
+            {"name": "High", "color": "green"},
+            {"name": "Medium", "color": "yellow"},
+            {"name": "Low", "color": "gray"},
+            {"name": "Disqualified", "color": "red"}]}},
+        "Fit profile": {"select": {"options": [{"name": p} for p in FIT_PROFILES]}},
         "Fit reason": {"rich_text": {}},
+        "Fit dimensions": {"rich_text": {}},
         "Competitor present": {"rich_text": {}},
         "Verified": {"checkbox": {}},
         "Status": {"select": {"options": [{"name": s, "color": c}
@@ -294,11 +305,14 @@ class NotionClient:
             "Competitor present": self._rt(fields.get("competitor", "")),
             "Verified": {"checkbox": False},
             "Expected concrete start": self._rt(fields.get("concrete_start", "")),
-            "Fit": {"select": {"name": fields.get("fit", "medium")}},
+            "Fit": {"select": {"name": fields.get("fit", "Medium")}},
             "Fit reason": self._rt(fields.get("fit_reason", "")),
+            "Fit dimensions": self._rt(fields.get("fit_dimensions", "")),
             "Status": {"select": {"name": "New"}},
             "Summary": self._rt(fields.get("summary", "")),
         }
+        if fields.get("fit_profile"):
+            props["Fit profile"] = {"select": {"name": fields["fit_profile"]}}
         if fields.get("project_type"):
             props["Project type"] = {"select": {"name": fields["project_type"]}}
         if fields.get("value") is not None:
