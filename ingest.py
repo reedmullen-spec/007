@@ -135,10 +135,14 @@ def main() -> int:
         except Exception as exc:
             print(f"WARNING: qualify failed for {c['title'][:60]}: {exc}",
                   file=sys.stderr)
-            q = {"summary": "", "general_contractor": c["buyer"],
-                 "project_type": "Other", "phase": "Unknown",
+            q = {"summary": "", "general_contractor": c["buyer"], "client": "",
+                 "jv_parents": "", "project_type": "Other",
+                 "work_nature": "Unknown", "project_stage": "Unknown",
+                 "use_case": ["Unknown"], "product_fit": [],
+                 "concrete_opportunity": "Unknown",
                  "expected_concrete_start": "Unknown", "location": "",
-                 "fit": "medium", "fit_reason": "Auto-qualify failed; review."}
+                 "competitor": "", "fit": "medium",
+                 "fit_reason": "Auto-qualify failed; review."}
 
         lat = lng = None
         if cfg["ingest"].get("geocode", True):
@@ -162,7 +166,10 @@ def main() -> int:
                 "country": c["country"], "location": q.get("location", ""),
                 "gc": q.get("general_contractor", ""),
                 "project_type": q.get("project_type", "Other"),
-                "phase": q.get("phase", "Unknown"),
+                "stage": q.get("project_stage", "Unknown"),
+                "work_nature": q.get("work_nature", "Unknown"),
+                "concrete_opportunity": q.get("concrete_opportunity", "Unknown"),
+                "competitor": q.get("competitor", ""),
                 "value": c["value"], "currency": c["currency"] or "EUR",
                 "concrete_start": q.get("expected_concrete_start", ""),
                 "fit": q.get("fit", "medium"),
@@ -171,7 +178,7 @@ def main() -> int:
                 "url": c["url"], "lat": lat, "lng": lng,
                 "client": q.get("client", "") or c["buyer"],
                 "jv_parents": q.get("jv_parents", ""),
-                "concrete_scope": q.get("concrete_scope", []),
+                "use_case": q.get("use_case", []),
                 "product_fit": q.get("product_fit", []),
                 "ae": ae, "partner_route": partner,
                 "deadline": c.get("deadline", ""), "announced": today,
@@ -217,7 +224,8 @@ def sweep_manual_rows(cfg: dict, api_key: str, notion: NotionClient) -> int:
             "Source": {"select": {"name": "MANUAL"}},
             "Summary": NotionClient._rt(q.get("summary", "")),
             "General contractor": NotionClient._rt(q.get("general_contractor", "")),
-            "Phase": {"select": {"name": q.get("phase", "Unknown")}},
+            "Project stage": {"select": {"name": q.get("project_stage", "Unknown")}},
+            "Work nature": {"select": {"name": q.get("work_nature", "Unknown")}},
             "Expected concrete start": NotionClient._rt(q.get("expected_concrete_start", "")),
             "Fit": {"select": {"name": q.get("fit", "medium")}},
             "Fit reason": NotionClient._rt(q.get("fit_reason", "")),

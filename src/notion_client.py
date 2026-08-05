@@ -72,66 +72,94 @@ class NotionClient:
         return resp.json()
 
     # ------------------------------------------------------- V1 schema
+    # Mirrors the live "007 Projects" schema exactly (verified Aug 2026).
+    # Option strings are compared by equality against qualify output — do not
+    # reword them. NOTE: "Awarded - pre-start" uses a plain hyphen.
+    PROJECT_TYPES = [
+        "Bridge / viaduct", "Tunnel", "Highway / road", "Rail / metro",
+        "Airport", "Port / marine", "Water treatment", "Wastewater treatment",
+        "Dam / hydro / reservoir", "Flood & coastal defence",
+        "Hospital / healthcare", "Education", "Residential",
+        "Student accommodation", "Commercial / office",
+        "Retail / hotel / leisure", "Stadium / arena / convention",
+        "Data centre", "Nuclear", "Power & transmission",
+        "Energy from waste", "Industrial / manufacturing",
+        "Life sciences / R&D", "Logistics / warehouse",
+        "Precast yard / batching plant", "Prison / justice / defence", "Other",
+    ]
+    WORK_NATURES = [
+        "New build", "Extension", "Replacement", "Widening / twinning",
+        "Refurbishment / retrofit", "Phase of larger scheme", "Unknown",
+    ]
+    USE_CASES = [
+        "In-situ frame", "Slipform core", "Raft / substructure / basement",
+        "Piling / foundations", "Mass concrete", "Post-tensioned slabs",
+        "Precast", "Tunnel linings", "Marine / water-retaining",
+        "Culverts / ancillary structures", "Slabs / pavements",
+        "DfMA / modular", "Unknown",
+    ]
+    PRODUCTS = ["Cure / Signal", "Helix", "Data Hub", "MixAI", "FieldAtlas"]
+    PROJECT_STAGES = [
+        "Planning / pre-tender", "Tender", "PCSA / preconstruction",
+        "Awarded - pre-start", "Groundbreaking / enabling works",
+        "Main works / on site", "Finishing", "Complete", "Unknown",
+    ]
+    STATUSES = [
+        ("New", "gray"), ("This week", "blue"), ("Working on", "yellow"),
+        ("Recontact later", "orange"), ("On the project", "green"),
+        ("Disqualified", "red"), ("Lost", "red"),
+    ]
+    AES = ["lisa", "aled", "avi", "alex", "jamie", "jeremy", "justin",
+           "lawson", "alicia", "ben", "britain", "brady", "dan", "unassigned"]
+
     SCHEMA = {
         "Source": {"select": {"options": [{"name": s} for s in
                    ("TED", "FTS", "AUSTENDER", "SAM", "NEWS", "MANUAL")]}},
+        "Summary": {"rich_text": {}},
+        "Location": {"rich_text": {}},
+        "Country": {"rich_text": {}},
         "Region": {"select": {"options": [{"name": s} for s in
                    ("uk", "eu", "us_east", "us_west", "us", "ca", "au")]}},
-        "Country": {"rich_text": {}},
-        "Location": {"rich_text": {}},
         "Lat": {"number": {}},
         "Lng": {"number": {}},
         "General contractor": {"rich_text": {}},
-        "Project type": {"select": {}},
-        "Phase": {"select": {"options": [{"name": s} for s in
-                  ("Tender", "PCSA / preconstruction", "Starting",
-                   "On site", "Finishing", "Unknown")]}},
+        "JV / parents": {"rich_text": {}},
+        "Client": {"rich_text": {}},
+        "Concrete subcontractor": {"rich_text": {}},
         "Value": {"number": {}},
         "Currency": {"select": {"options": [{"name": s} for s in
                      ("EUR", "GBP", "USD", "AUD")]}},
+        "Value band": {"select": {"options": [
+            {"name": "Under 50M", "color": "gray"},
+            {"name": "50-250M", "color": "yellow"},
+            {"name": "250M+", "color": "red"}]}},
+        "Concrete opportunity": {"select": {"options": [{"name": s} for s in
+                                 ("Small", "Medium", "Large", "Unknown")]}},
+        "Tender deadline": {"date": {}},
+        "Announced": {"date": {}},
         "Expected concrete start": {"rich_text": {}},
+        "Project type": {"select": {"options": [{"name": t} for t in PROJECT_TYPES]}},
+        "Work nature": {"select": {"options": [{"name": w} for w in WORK_NATURES]}},
+        "Use case": {"multi_select": {"options": [{"name": u} for u in USE_CASES]}},
+        "Product fit": {"multi_select": {"options": [{"name": p} for p in PRODUCTS]}},
         "Fit": {"select": {"options": [
             {"name": "high", "color": "green"},
             {"name": "medium", "color": "yellow"},
             {"name": "low", "color": "gray"}]}},
         "Fit reason": {"rich_text": {}},
-        "Status": {"select": {"options": [
-            {"name": "New", "color": "gray"},
-            {"name": "This week", "color": "blue"},
-            {"name": "Working on", "color": "yellow"},
-            {"name": "Recontact later", "color": "orange"},
-            {"name": "On the project", "color": "green"},
-            {"name": "Disqualified", "color": "red"},
-            {"name": "Lost", "color": "red"}]}},
+        "Competitor present": {"rich_text": {}},
+        "Verified": {"checkbox": {}},
+        "Status": {"select": {"options": [{"name": s, "color": c}
+                                          for s, c in STATUSES]}},
+        "Project stage": {"select": {"options": [{"name": s} for s in PROJECT_STAGES]}},
+        "AE": {"select": {"options": [{"name": a} for a in AES]}},
+        "Partner route": {"select": {"options": [{"name": s} for s in
+                          ("Direct", "White Cap", "Hakron", "Agency", "TBD")]}},
+        "Partner contact": {"rich_text": {}},
+        "Next action": {"rich_text": {}},
+        "Next action date": {"date": {}},
         "Recontact date": {"date": {}},
         "Notice URL": {"url": {}},
-        "Summary": {"rich_text": {}},
-        # ---- extended filterable criteria (Aug 2026) ----
-        "Client": {"rich_text": {}},
-        "JV / parents": {"rich_text": {}},
-        "Concrete subcontractor": {"rich_text": {}},
-        "Concrete scope": {"multi_select": {"options": [{"name": s} for s in
-            ("In-situ frame", "Mass concrete", "Piling / foundations",
-             "Precast", "Tunnel linings", "Marine / water-retaining",
-             "DfMA / modular", "Slabs / pavements", "Unknown")]}},
-        "Product fit": {"multi_select": {"options": [
-            {"name": "Cure / Signal", "color": "blue"},
-            {"name": "Data Hub", "color": "purple"},
-            {"name": "MixAI", "color": "green"},
-            {"name": "FieldAtlas", "color": "orange"}]}},
-        "AE": {"select": {"options": [{"name": s} for s in
-            ("lisa", "aled", "avi", "alex", "jamie", "jeremy", "justin",
-             "lawson", "alicia", "ben", "britain", "brady", "dan",
-             "unassigned")]}},
-        "Partner route": {"select": {"options": [
-            {"name": "Direct"}, {"name": "White Cap"},
-            {"name": "Hakron"}, {"name": "Agency"}, {"name": "TBD"}]}},
-        "Value band": {"select": {"options": [
-            {"name": "<50M", "color": "gray"},
-            {"name": "50-250M", "color": "yellow"},
-            {"name": "250M+", "color": "red"}]}},
-        "Tender deadline": {"date": {}},
-        "Announced": {"date": {}},
         "HubSpot deal": {"url": {}},
     }
 
@@ -141,10 +169,6 @@ class NotionClient:
         db = self._check(self.session.get(f"{BASE}/databases/{db_id}", timeout=30))
         existing = set((db.get("properties") or {}).keys())
         missing = {k: v for k, v in self.SCHEMA.items() if k not in existing}
-        # inject project-type options from config
-        if "Project type" in missing:
-            types = self.cfg.get("_project_types", [])
-            missing["Project type"] = {"select": {"options": [{"name": t} for t in types]}}
         if missing:
             self._check(self.session.patch(
                 f"{BASE}/databases/{db_id}",
@@ -166,7 +190,11 @@ class NotionClient:
             "Country": self._rt(fields.get("country", "")),
             "Location": self._rt(fields.get("location", "")),
             "General contractor": self._rt(fields.get("gc", "")),
-            "Phase": {"select": {"name": fields.get("phase", "Unknown")}},
+            "Project stage": {"select": {"name": fields.get("stage", "Unknown")}},
+            "Work nature": {"select": {"name": fields.get("work_nature", "Unknown")}},
+            "Concrete opportunity": {"select": {"name": fields.get("concrete_opportunity", "Unknown")}},
+            "Competitor present": self._rt(fields.get("competitor", "")),
+            "Verified": {"checkbox": False},
             "Expected concrete start": self._rt(fields.get("concrete_start", "")),
             "Fit": {"select": {"name": fields.get("fit", "medium")}},
             "Fit reason": self._rt(fields.get("fit_reason", "")),
@@ -187,16 +215,16 @@ class NotionClient:
         props["Client"] = self._rt(fields.get("client", ""))
         props["JV / parents"] = self._rt(fields.get("jv_parents", ""))
         props["Concrete subcontractor"] = self._rt(fields.get("subcontractor", ""))
-        if fields.get("concrete_scope"):
-            props["Concrete scope"] = {"multi_select": [
-                {"name": s} for s in fields["concrete_scope"]]}
+        if fields.get("use_case"):
+            props["Use case"] = {"multi_select": [
+                {"name": s} for s in fields["use_case"]]}
         if fields.get("product_fit"):
             props["Product fit"] = {"multi_select": [
                 {"name": s} for s in fields["product_fit"]]}
         props["AE"] = {"select": {"name": fields.get("ae") or "unassigned"}}
         props["Partner route"] = {"select": {"name": fields.get("partner_route", "TBD")}}
         if fields.get("value") is not None:
-            band = ("<50M" if fields["value"] < 50_000_000
+            band = ("Under 50M" if fields["value"] < 50_000_000
                     else "50-250M" if fields["value"] < 250_000_000 else "250M+")
             props["Value band"] = {"select": {"name": band}}
         if fields.get("deadline"):

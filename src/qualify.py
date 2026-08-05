@@ -23,44 +23,46 @@ with exactly these keys:
 summary: 2-3 sentences, what this project is, plain language.
 general_contractor: canonical PARENT company name (e.g. "Balfour Beatty" not
   "Balfour Beatty Ground Engineering Ltd"; JV entity name if a JV). "" if unknown.
+client: the commissioning client, developer or authority. "" if unknown.
+jv_parents: if the contractor is a JV, its parent companies comma-separated,
+  else "".
 project_type: exactly one of {types}.
-phase: one of "Tender" | "PCSA / preconstruction" | "Starting" | "On site" |
-  "Finishing" | "Unknown".
+work_nature: exactly one of {natures}.
+project_stage: exactly one of {stages}.
+use_case: array of zero or more of {use_cases}.
+product_fit: array of zero or more of {products}. Rules: mass concrete or
+  in-situ frame -> "Cure / Signal" + "Data Hub"; DfMA/modular -> "FieldAtlas";
+  stated low-carbon or net-zero target -> "MixAI"; embedding impossible ->
+  "Helix".
+concrete_opportunity: "Small" | "Medium" | "Large" | "Unknown" — the size of
+  OUR prize (concrete volume), not the project's headline value.
 expected_concrete_start: best estimate like "Q3 2027" or "Live" or "Unknown".
 location: most specific place you can infer (site, town, or region). "" if none.
+competitor: any rival monitoring/curing system named or implied, else "".
 fit: "high" | "medium" | "low" — high = major in-situ concrete or DfMA scope
   with the pour/manufacture window still ahead; low = fit-out, refurb, small
   works, services-only, or concrete already finished.
 fit_reason: one sentence explaining the rating.
-client: the commissioning client/developer/authority. "" if unknown.
-jv_parents: if the contractor is a JV, its parent companies comma-separated.
-  "" otherwise.
-concrete_scope: array of zero or more of {scopes}.
-product_fit: array of zero or more of "Cure / Signal", "Data Hub", "MixAI",
-  "FieldAtlas" — which Converge products plausibly fit and why the fit field
-  says what it says. DfMA/modular projects -> FieldAtlas; mass concrete or
-  in-situ frames -> Cure / Signal + Data Hub; stated low-carbon targets -> MixAI.
 
 Judge only from the given data. Unknown is a valid answer; never invent."""
-
-SCOPES = ["In-situ frame", "Mass concrete", "Piling / foundations", "Precast",
-          "Tunnel linings", "Marine / water-retaining", "DfMA / modular",
-          "Slabs / pavements"]
-PRODUCTS = ["Cure / Signal", "Data Hub", "MixAI", "FieldAtlas"]
 
 
 def qualify(api_key: str, cfg: dict, *, title: str, source: str,
             country: str, buyer: str = "", value: str = "",
             url: str = "") -> dict:
-    types = ", ".join(f'"{t}"' for t in cfg["ingest"]["project_types"])
-    scopes = ", ".join(f'"{s}"' for s in SCOPES)
+    from .notion_client import NotionClient as _N
+    quote = lambda xs: ", ".join(f'"{x}"' for x in xs)
     user = (f"Source: {source}\nTitle: {title}\nCountry: {country}\n"
             f"Buyer/entity: {buyer or 'unknown'}\nValue: {value or 'unknown'}\n"
             f"URL: {url or 'n/a'}")
     body = {
         "model": cfg["ingest"]["qualify_model"],
         "max_tokens": 500,
-        "system": SYSTEM.replace("{types}", types).replace("{scopes}", scopes),
+        "system": (SYSTEM.replace("{types}", quote(_N.PROJECT_TYPES))
+                   .replace("{natures}", quote(_N.WORK_NATURES))
+                   .replace("{stages}", quote(_N.PROJECT_STAGES))
+                   .replace("{use_cases}", quote(_N.USE_CASES))
+                   .replace("{products}", quote(_N.PRODUCTS))),
         "messages": [{"role": "user", "content": user}],
     }
     resp = requests.post(API_URL, json=body, headers={
@@ -75,13 +77,24 @@ def qualify(api_key: str, cfg: dict, *, title: str, source: str,
     text = text.replace("```json", "").replace("```", "").strip()
     data = json.loads(text)
 
-    # Defensive normalisation against the controlled lists.
-    if data.get("project_type") not in cfg["ingest"]["project_types"]:
+    # Defensive normalisation against the canonical lists. Off-list values
+    # coerce rather than fail — a wrong option name breaks the Notion write.
+    if data.get("project_type") not in _N.PROJECT_TYPES:
         data["project_type"] = "Other"
+    if data.get("work_nature") not in _N.WORK_NATURES:
+        data["work_nature"] = "Unknown"
+    if data.get("project_stage") not in _N.PROJECT_STAGES:
+        data["project_stage"] = "Unknown"
+    if data.get("concrete_opportunity") not in ("Small", "Medium", "Large", "Unknown"):
+        data["concrete_opportunity"] = "Unknown"
     if data.get("fit") not in ("high", "medium", "low"):
         data["fit"] = "medium"
-    data["concrete_scope"] = [s for s in (data.get("concrete_scope") or [])
-                              if s in SCOPES] or ["Unknown"]
+    data["use_case"] = [u for u in (data.get("use_case") or [])
+                        if u in _N.USE_CASES] or ["Unknown"]
     data["product_fit"] = [p for p in (data.get("product_fit") or [])
-                           if p in PRODUCTS]
+                           if p in _N.PRODUCTS]
+    for key in ("summary", "general_contractor", "client", "jv_parents",
+                "location", "competitor", "fit_reason",
+                "expected_concrete_start"):
+        data.setdefault(key, "")
     return data
