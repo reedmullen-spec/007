@@ -140,7 +140,7 @@ filters:
     - IE
     - DK
     - SE
-    - NO
+    - "NO"   # Norway — must be quoted, bare NO parses as YAML boolean false
     - FI
     - AT
     - PL

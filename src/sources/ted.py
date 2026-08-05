@@ -16,6 +16,20 @@ from ..models import Project
 SEARCH_URL = "https://api.ted.europa.eu/v3/notices/search"
 NOTICE_URL = "https://ted.europa.eu/en/notice/-/detail/{pubnum}"
 
+# TED's expert query syntax requires ISO 3166-1 alpha-3 country codes
+# (verified against the live API, Aug 2026) — config.yaml and the rest of
+# the pipeline (filtering.py, _parse_notice below) use alpha-2 throughout,
+# so the conversion happens only here, for the outbound query.
+ALPHA2_TO_ALPHA3 = {
+    "AT": "AUT", "BE": "BEL", "BG": "BGR", "CH": "CHE", "CY": "CYP",
+    "CZ": "CZE", "DE": "DEU", "DK": "DNK", "EE": "EST", "ES": "ESP",
+    "FI": "FIN", "FR": "FRA", "GB": "GBR", "GR": "GRC", "HR": "HRV",
+    "HU": "HUN", "IE": "IRL", "IS": "ISL", "IT": "ITA", "LI": "LIE",
+    "LT": "LTU", "LU": "LUX", "LV": "LVA", "MT": "MLT", "NL": "NLD",
+    "NO": "NOR", "PL": "POL", "PT": "PRT", "RO": "ROU", "SE": "SWE",
+    "SI": "SVN", "SK": "SVK",
+}
+
 # Fields requested back from the search API.
 FIELDS = [
     "publication-number",
@@ -34,7 +48,8 @@ def _build_query(cfg: dict, days_back: int) -> str:
     f = cfg["filters"]
     since = (dt.date.today() - dt.timedelta(days=days_back)).strftime("%Y%m%d")
     cpv = " OR ".join(f"classification-cpv={p}*" for p in f["cpv_prefixes"])
-    countries = " OR ".join(f"buyer-country={c}" for c in f.get("countries", []))
+    countries = " OR ".join(f"buyer-country={ALPHA2_TO_ALPHA3.get(c, c)}"
+                            for c in f.get("countries", []))
     query = f"(publication-date>={since}) AND ({cpv})"
     if countries:
         query += f" AND ({countries})"
