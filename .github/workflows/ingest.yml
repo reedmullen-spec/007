@@ -13,6 +13,13 @@ on:
       days_back:
         description: "How many days back to scan"
         default: "2"
+      historical:
+        description: "Backfill mode (expired TED notices, deeper pagination) — run repeatedly, it's self-continuing via dedup"
+        type: boolean
+        default: false
+      max_rows:
+        description: "Override the per-run row cap (e.g. 300 for backfill)"
+        default: ""
 
 permissions:
   contents: write
@@ -24,7 +31,7 @@ concurrency:
 jobs:
   ingest:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: ${{ github.event.inputs.historical == 'true' && 90 || 30 }}
     steps:
       - uses: actions/checkout@v4
 
@@ -40,10 +47,17 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           SAM_API_KEY: ${{ secrets.SAM_API_KEY }}
         run: |
+          args="--days-back ${{ github.event.inputs.days_back || '2' }}"
+          if [ "${{ github.event.inputs.historical }}" = "true" ]; then
+            args="$args --historical"
+          fi
+          if [ -n "${{ github.event.inputs.max_rows }}" ]; then
+            args="$args --max-rows ${{ github.event.inputs.max_rows }}"
+          fi
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            python ingest.py --dry-run --days-back "${{ github.event.inputs.days_back || '2' }}"
+            python ingest.py --dry-run $args
           else
-            python ingest.py --days-back "${{ github.event.inputs.days_back || '2' }}"
+            python ingest.py $args
           fi
 
       - name: Commit state
