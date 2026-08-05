@@ -39,7 +39,10 @@ ask Reed before changing architecture, not just code.
   `slack.ae_slack_ids[name]`), and mirrors that week's facts onto the
   person's own `My week — {Name}` page (`src/ae_pages.py`). Lists are never
   de-duplicated against each other — the SDR squad and the White Cap AEs
-  deliberately work the same regions from different angles.
+  deliberately work the same regions from different angles. **Dan (US Data
+  Hub) is deliberately not in `triage.lists`** — per the team, Data Hub is
+  handled manually, not through the automated per-AE page/list system. He
+  stays a selectable `AE` value in the master schema for manual tagging.
 - **Weekly focus** (`src/focus.py`) — a "007 Weekly focus" Notion database,
   one row per person per week (`Person`, `Week starting`, `Focus` text,
   `Applied` checkbox), editable by everyone. Entered before Sunday
@@ -128,7 +131,6 @@ ask Reed before changing architecture, not just code.
   U07GNGNMQGZ, Avi UB96Q98T0, Alex U0AKM99CK08, Jamie U32ML88RE,
   Jeremy U01FP4CRR8A, Justin U0AS1A6JZ7Y, Lawson U0BGLKVNG65, Alicia
   U0BA6PQB8CA, Ben U08H37C1Z9S, Britain U08H37AMZ36, Brady U0BMDES0YRW.
-  Dan's ID is still a TODO in `config.yaml`.
 - GitHub secrets (names are load-bearing): SLACK_BOT_TOKEN, HUBSPOT_TOKEN,
   ANTHROPIC_API_KEY, NOTION_TOKEN, AMPLEMARKET_TOKEN, SAM_API_KEY (optional).
 - Notion parent page: 3a6a315b1b0080bdb2b2fae4c805d40e.
@@ -140,9 +142,10 @@ Tier 1 of the resolver: live HubSpot company ownership overrides geography.
 US: state → White Cap-team AE via `routing.us_state_ae` (Lawson Pacific,
 Alicia Mountain, Ben Plains/TX/HI, Britain Midwest/South/DC, Brady
 Mid-Atlantic/New England — the "new American guidelines", Aug 2026). Canada →
-Justin, national. APAC → Jeremy. Dan is product-routed (Data Hub only), not
-geographic. Alex/Jamie (SDR squad) are Region-filtered in `triage.lists`, not
-AE-assigned — they work the same US regions from the contractor side.
+Justin, national. APAC → Jeremy. Alex/Jamie (SDR squad) are Region-filtered
+in `triage.lists`, not AE-assigned — they work the same US regions from the
+contractor side. Dan (US Data Hub) is out of the automated system entirely —
+see the note on `triage.lists` above.
 
 ## Statuses (Notion select; drive the future map colours)
 New (grey) → This week (blue) → Working on (amber) / Recontact later

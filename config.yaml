@@ -43,7 +43,6 @@ slack:
     ben: "U08H37C1Z9S"      # White Cap team — Plains/TX/HI
     britain: "U08H37AMZ36"  # White Cap team — Midwest/South/DC
     brady: "U0BMDES0YRW"    # White Cap team — Mid-Atlantic/New England
-    dan: "TODO_U..."      # Data Hub product line (not geographic)
 
   # Who gets @-mentioned on news cards, by watchlist region.
   # us = national contractors: award could land either side, so tag both.
@@ -95,8 +94,6 @@ routing:
   # US state -> White Cap-team AE (the "new American guidelines", Aug 2026).
   # Confirmed Aug 2026: HI -> ben, DE -> brady, DC -> britain, AK -> lawson.
   # NM is Ben's as stated, despite Alicia holding AZ.
-  # Dan is product-routed (Data Hub only), not geographic — filter the
-  # database on Product fit = "Data Hub" for his list.
   us_state_ae:
     lawson:  [CA, WA, OR, AK]
     alicia:  [ID, MT, WY, CO, NV, UT, AZ]
@@ -281,8 +278,11 @@ triage:
     # --- SDR squad: same projects, contractor-side approach ---
     - { name: alex,    filter: { Region: us_west }, count: 10, channel: us_west }
     - { name: jamie,   filter: { Region: us_east }, count: 10, channel: us_east }
-    # --- Product-routed, not geographic ---
-    - { name: dan,     filter: { "Product fit contains": "Data Hub" }, count: 10, channel: us_east }
+    # Dan (US Data Hub) is deliberately excluded from triage.lists — per the
+    # team, Data Hub is handled manually, not through the automated per-AE
+    # page/list system. "dan" stays a selectable AE value in the master
+    # schema for anyone who wants to hand-tag a row, but nothing here ever
+    # creates a page or Slack list for him.
 
 # --------------------------------------------------------------- Phase 2 ----
 enrichment:
