@@ -69,16 +69,21 @@ def build_filter(filter_spec: dict) -> dict:
 
 def gather_for_list(notion: NotionClient, list_cfg: dict) -> tuple[list[dict], list[dict]]:
     """Returns (carryover rows, fresh 'New' candidates), unranked.
-    Carryover = still "This week", or "Recontact later" past its date."""
+    Carryover = still "This week", or "Recontact later" past its date.
+
+    Notion's filter API only allows compound and/or nesting two levels
+    deep, so `base` (a leaf condition for every list.filter in current
+    config) is distributed into each branch of the "or" rather than
+    wrapping the whole "or" in an outer "and" — that would be three levels
+    and Notion 400s on it."""
     base = build_filter(list_cfg["filter"])
     today = _dt.date.today().isoformat()
-    carry = notion.query_rows({"and": [base, {"or": [
-        {"property": "Status", "select": {"equals": "This week"}},
-        {"and": [
-            {"property": "Status", "select": {"equals": "Recontact later"}},
-            {"property": "Recontact date", "date": {"on_or_before": today}},
-        ]},
-    ]}]})
+    carry = notion.query_rows({"or": [
+        {"and": [base, {"property": "Status", "select": {"equals": "This week"}}]},
+        {"and": [base,
+                {"property": "Status", "select": {"equals": "Recontact later"}},
+                {"property": "Recontact date", "date": {"on_or_before": today}}]},
+    ]})
     fresh = notion.query_rows({"and": [base,
                               {"property": "Status", "select": {"equals": "New"}}]})
     return carry, fresh
