@@ -20,6 +20,10 @@ slack:
     us: ["C0BJS20BUDB", "C0BJXLBT8RF"]   # national firms -> both
     ca: "C0BK21UMHK3"        # t-canada-sales-project-annoucements
     au: "C0BJX8B028Z"        # t-apac-sales-project-annoucements
+    # Aliases used by triage.lists (same channels, person-list-friendly names)
+    emea: "C0BGRLQ2BMH"
+    apac: "C0BJX8B028Z"
+    canada: "C0BK21UMHK3"
 
   # Only reactions from this Slack user count as approvals.
   approver_user_id: "U0AS3P6EY80"   # Reed
@@ -254,18 +258,31 @@ ingest:
 
 # ------------------------------------------------------------- Triage ------
 triage:
-  # Monday morning: pick top-N New projects per region, mark them
-  # "This week", and post one Slack message per region with Notion links.
-  per_region:
-    uk: 10
-    eu: 10
-    us_east: 10
-    us_west: 10
-    ca: 5
-    au: 5
-  # Priority order: manually-added rows first (White Cap / AE intel beats
-  # scraped data), then fit (high>medium>low), then value.
-  manual_first: true
+  # Monday morning: pick top-N New projects per list, mark them "This week",
+  # and post one Slack message per list with Notion links. One list = one
+  # person's page, so filters must resolve to exactly the projects that
+  # person owns or is scouting.
+  focus_deadline_hour_utc: 20   # Sunday 20:00 UTC cutoff for focus entry
+  manual_first: true            # human/White Cap intel outranks scraped
+  lists:
+    # --- EMEA (Reed's AEs) ---
+    - { name: lisa,    filter: { AE: lisa },    count: 10, channel: emea }
+    - { name: aled,    filter: { AE: aled },    count: 10, channel: emea }
+    - { name: avi,     filter: { AE: avi },     count: 10, channel: emea }
+    # --- APAC / Canada ---
+    - { name: jeremy,  filter: { Region: au },  count: 5,  channel: apac }
+    - { name: justin,  filter: { Region: ca },  count: 5,  channel: canada }
+    # --- US White Cap team (state-map assigned) ---
+    - { name: lawson,  filter: { AE: lawson },  count: 10, channel: us_west }
+    - { name: alicia,  filter: { AE: alicia },  count: 10, channel: us_west }
+    - { name: ben,     filter: { AE: ben },     count: 10, channel: us_east }
+    - { name: britain, filter: { AE: britain }, count: 10, channel: us_east }
+    - { name: brady,   filter: { AE: brady },   count: 10, channel: us_east }
+    # --- SDR squad: same projects, contractor-side approach ---
+    - { name: alex,    filter: { Region: us_west }, count: 10, channel: us_west }
+    - { name: jamie,   filter: { Region: us_east }, count: 10, channel: us_east }
+    # --- Product-routed, not geographic ---
+    - { name: dan,     filter: { "Product fit contains": "Data Hub" }, count: 10, channel: us_east }
 
 # --------------------------------------------------------------- Phase 2 ----
 enrichment:

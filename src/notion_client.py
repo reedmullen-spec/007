@@ -24,20 +24,19 @@ class NotionClient:
             "Content-Type": "application/json",
         })
 
-    def ensure_database(self) -> str:
-        """Find or create the '007 Projects' database inside the parent page.
-        The resolved ID is cached in state/notion.json between runs."""
+    def _ensure_named_database(self, cache_key: str, title: str,
+                               properties: dict, state_file: str = "notion") -> str:
+        """Find-or-create a child database with `title` under the shared
+        parent page (MI6 teamspace), caching its id in
+        state/{state_file}.json under `cache_key` between runs."""
         from . import state
 
-        if self.database_id:
-            return self.database_id
-        cached = state.load("notion")
-        if cached.get("database_id"):
-            self.database_id = cached["database_id"]
-            return self.database_id
+        cached = state.load(state_file)
+        db_id = cached.get(cache_key)
+        if db_id:
+            return db_id
 
         parent = self.cfg["parent_page_id"]
-        wanted = self.cfg.get("database_name", "007 Projects")
 
         # Reuse an existing child database with the right name, if present.
         data = self._check(self.session.get(
@@ -45,25 +44,39 @@ class NotionClient:
             timeout=30))
         for block in data.get("results", []):
             if block.get("type") == "child_database" and \
-                    block.get("child_database", {}).get("title") == wanted:
-                self.database_id = block["id"]
+                    block.get("child_database", {}).get("title") == title:
+                db_id = block["id"]
                 break
 
-        if not self.database_id:
+        if not db_id:
             body = {
                 "parent": {"type": "page_id", "page_id": parent},
-                "title": [{"type": "text", "text": {"content": wanted}}],
-                "properties": {
-                    self.cfg["title_property"]: {"title": {}},
-                    self.cfg["notice_id_property"]: {"rich_text": {}},
-                },
+                "title": [{"type": "text", "text": {"content": title}}],
+                "properties": properties,
             }
             created = self._check(self.session.post(
                 f"{BASE}/databases", json=body, timeout=30))
-            self.database_id = created["id"]
-            print(f"Created Notion database '{wanted}': {created.get('url', '')}")
+            db_id = created["id"]
+            print(f"Created Notion database '{title}': {created.get('url', '')} "
+                  f"— share it with the right person(s), the API can't do that part.")
 
-        state.save("notion", {"database_id": self.database_id})
+        cached[cache_key] = db_id
+        state.save(state_file, cached)
+        return db_id
+
+    def ensure_database(self) -> str:
+        """Find or create the '007 Projects' database inside the parent page.
+        The resolved ID is cached in state/notion.json between runs."""
+        if self.database_id:
+            return self.database_id
+        wanted = self.cfg.get("database_name", "007 Projects")
+        self.database_id = self._ensure_named_database(
+            "database_id", wanted,
+            {
+                self.cfg["title_property"]: {"title": {}},
+                self.cfg["notice_id_property"]: {"rich_text": {}},
+            },
+        )
         return self.database_id
 
     def _check(self, resp: requests.Response) -> dict:
@@ -111,6 +124,54 @@ class NotionClient:
     ]
     AES = ["lisa", "aled", "avi", "alex", "jamie", "jeremy", "justin",
            "lawson", "alicia", "ben", "britain", "brady", "dan", "unassigned"]
+
+    FOCUS_SCHEMA = {
+        "Name": {"title": {}},
+        "Person": {"select": {"options": [{"name": a} for a in AES if a != "unassigned"]}},
+        "Week starting": {"date": {}},
+        "Focus": {"rich_text": {}},
+        "Applied": {"checkbox": {}},
+    }
+
+    def ensure_focus_database(self) -> str:
+        """Find or create the '007 Weekly focus' database, one row per
+        person per week. Editable by everyone (shared manually, once)."""
+        return self._ensure_named_database(
+            "focus_database_id", "007 Weekly focus", self.FOCUS_SCHEMA)
+
+    # Per-AE page: master owns everything except the AE-owned block below
+    # (Status / Next action / Next action date / Notes / Outcome /
+    # Correction needed) — see src/ae_pages.py and sync.py.
+    AE_PAGE_SCHEMA = {
+        "Project": {"title": {}},
+        "Master row": {"url": {}},
+        "Why this project": {"rich_text": {}},
+        "Fit": {"select": {"options": [
+            {"name": "high", "color": "green"},
+            {"name": "medium", "color": "yellow"},
+            {"name": "low", "color": "gray"}]}},
+        "GC": {"rich_text": {}},
+        "Location": {"rich_text": {}},
+        "Expected concrete start": {"rich_text": {}},
+        "Value band": {"select": {"options": [
+            {"name": "Under 50M", "color": "gray"},
+            {"name": "50-250M", "color": "yellow"},
+            {"name": "250M+", "color": "red"}]}},
+        "Status": {"select": {"options": [{"name": s, "color": c}
+                                          for s, c in STATUSES]}},
+        "Next action": {"rich_text": {}},
+        "Next action date": {"date": {}},
+        "Notes": {"rich_text": {}},
+        "Outcome": {"select": {"options": [{"name": s} for s in
+                    ("Meeting booked", "No interest", "Wrong contact",
+                     "Too early", "Already covered", "Other")]}},
+        "Correction needed": {"rich_text": {}},
+    }
+
+    def create_page(self, database_id: str, properties: dict) -> dict:
+        """Generic page create for any database (per-AE pages, focus rows)."""
+        body = {"parent": {"database_id": database_id}, "properties": properties}
+        return self._check(self.session.post(f"{BASE}/pages", json=body, timeout=30))
 
     SCHEMA = {
         "Source": {"select": {"options": [{"name": s} for s in
@@ -236,12 +297,13 @@ class NotionClient:
         return self._check(self.session.post(f"{BASE}/pages", json=body, timeout=30))
 
     def query_rows(self, filter_obj: dict, sorts: list | None = None,
-                   limit: int = 100) -> list[dict]:
+                   limit: int = 100, database_id: str | None = None) -> list[dict]:
+        db = database_id or self.ensure_database()
         body: dict = {"filter": filter_obj, "page_size": min(limit, 100)}
         if sorts:
             body["sorts"] = sorts
         data = self._check(self.session.post(
-            f"{BASE}/databases/{self.ensure_database()}/query",
+            f"{BASE}/databases/{db}/query",
             json=body, timeout=30))
         return data.get("results", [])
 
