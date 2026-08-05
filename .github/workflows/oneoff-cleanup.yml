@@ -1,0 +1,41 @@
+name: One-off cleanup
+
+# Two one-time actions requested together: archive the rows
+# cleanup_filters.py flagged as Disqualified, then set up a default
+# "Active projects" view that hides Disqualified rows going forward.
+# Dispatch only — not meant to run repeatedly.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (print what would be archived, create nothing)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Archive disqualified rows
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python archive_disqualified.py --dry-run
+          else
+            python archive_disqualified.py
+          fi
+      - name: Create Active projects view
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: python create_active_view.py

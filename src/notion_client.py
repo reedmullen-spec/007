@@ -10,6 +10,11 @@ import requests
 
 BASE = "https://api.notion.com/v1"
 VERSION = "2022-06-28"
+# The Views API (create/update database views) needs a newer version than
+# everything else this client does. Kept as a per-request override rather
+# than bumping VERSION globally — a version bump can silently change
+# response shapes for calls the whole pipeline already depends on.
+VIEWS_VERSION = "2026-03-11"
 MAX_BLOCK_CHARS = 1900  # Notion caps rich_text at 2000 chars per block
 
 
@@ -235,6 +240,38 @@ class NotionClient:
                 f"{BASE}/databases/{db_id}",
                 json={"properties": missing}, timeout=30))
             print(f"Notion schema: added {sorted(missing)}")
+
+    def get_data_source_id(self, database_id: str | None = None) -> str:
+        """The Views API addresses a database's *data source*, not the
+        database itself — a newer concept the older API version this
+        client otherwise uses doesn't return. Needs the newer version
+        header just for this one call."""
+        db_id = database_id or self.ensure_database()
+        headers = {**self.session.headers, "Notion-Version": VIEWS_VERSION}
+        resp = self.session.get(f"{BASE}/databases/{db_id}", headers=headers, timeout=30)
+        data = self._check(resp)
+        sources = data.get("data_sources") or []
+        if not sources:
+            raise RuntimeError(f"Database {db_id} has no data_sources — "
+                               f"can't create a view on it")
+        return sources[0]["id"]
+
+    def create_view(self, name: str, view_type: str, database_id: str | None = None,
+                    filter_obj: dict | None = None, sorts: list | None = None) -> dict:
+        """Create a database view (Views API, Notion-Version 2026-03-11) —
+        an isolated request with its own version header, not the client's
+        global VERSION (see the VIEWS_VERSION comment above)."""
+        db_id = database_id or self.ensure_database()
+        data_source_id = self.get_data_source_id(db_id)
+        headers = {**self.session.headers, "Notion-Version": VIEWS_VERSION}
+        body: dict = {"database_id": db_id, "data_source_id": data_source_id,
+                      "name": name, "type": view_type}
+        if filter_obj:
+            body["filter"] = filter_obj
+        if sorts:
+            body["sorts"] = sorts
+        resp = self.session.post(f"{BASE}/views", json=body, headers=headers, timeout=30)
+        return self._check(resp)
 
     @staticmethod
     def _rt(text: str) -> dict:
