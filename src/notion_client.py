@@ -307,6 +307,29 @@ class NotionClient:
             json=body, timeout=30))
         return data.get("results", [])
 
+    def query_all_rows(self, filter_obj: dict, sorts: list | None = None,
+                       database_id: str | None = None) -> list[dict]:
+        """Like query_rows but follows pagination to return every match —
+        query_rows caps at one page (100 rows)."""
+        db = database_id or self.ensure_database()
+        results: list[dict] = []
+        cursor: str | None = None
+        while True:
+            body: dict = {"page_size": 100}
+            if filter_obj:
+                body["filter"] = filter_obj
+            if sorts:
+                body["sorts"] = sorts
+            if cursor:
+                body["start_cursor"] = cursor
+            data = self._check(self.session.post(
+                f"{BASE}/databases/{db}/query", json=body, timeout=30))
+            results.extend(data.get("results", []))
+            if not data.get("has_more"):
+                break
+            cursor = data.get("next_cursor")
+        return results
+
     def row_title(self, row: dict) -> str:
         prop = (row.get("properties") or {}).get(self.cfg["title_property"]) or {}
         return "".join(t.get("plain_text", "") for t in prop.get("title", []))
