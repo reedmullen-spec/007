@@ -1,4 +1,202 @@
 {
+  "AUSTENDER:prod-c8d3d190e5454d6aa55ff883b418cbe3": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-02874b": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-02874d": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-031c25": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-0341af": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-034714": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-045715": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-04e378": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-04e476": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-0546e1": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-058aaf": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-0602d8": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-066d95": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-067d0c": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06a264": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06b7b2": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06b8b5": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06b97e": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06b9e3": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06bb1e": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06bb9f": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06bbb6": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c181": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c28b": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c2bb": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c41a": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c4d9": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c4ff": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c51f": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c584": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c59a": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c61b": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c62e": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c630": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c634": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c681": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c807": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c85c": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c869": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c896": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c8ce": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06c9c1": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06ca98": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cabc": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cae0": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cb04": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cb5a": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cbc5": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cc0c": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cc8e": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06ccdb": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cd09": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06ce1b": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cfc6": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06cfc7": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06d03c": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06d090": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06d185": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06d25b": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06d355": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06d56d": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06d7e5": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06d8b4": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06dac0": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06daca": {
+    "ingested": true
+  },
+  "FTS:ocds-h6vhtk-06db91": {
+    "ingested": true
+  },
   "NEWS:0283ece7da3c418e": {
     "ts": [
       "1784824893.058349"
@@ -49,6 +247,9 @@
       "1785772719.660709"
     ]
   },
+  "NEWS:5a17281d216c1cae": {
+    "ingested": true
+  },
   "NEWS:6e694e55f05f0587": {
     "ts": [
       "1785772711.063979",
@@ -95,6 +296,12 @@
     "ts": [
       "1784824886.416119"
     ]
+  },
+  "NEWS:b1bd1e16d87a4bb9": {
+    "ingested": true
+  },
+  "NEWS:c08e29498a46934d": {
+    "ingested": true
   },
   "NEWS:c857c5c1746c03de": {
     "ts": [
@@ -1395,6 +1602,699 @@
     "ts": [
       "1785763444.788589"
     ]
+  },
+  "TED:510667-2025": {
+    "ingested": true
+  },
+  "TED:510755-2025": {
+    "ingested": true
+  },
+  "TED:510777-2025": {
+    "ingested": true
+  },
+  "TED:510970-2025": {
+    "ingested": true
+  },
+  "TED:511007-2025": {
+    "ingested": true
+  },
+  "TED:511154-2025": {
+    "ingested": true
+  },
+  "TED:511332-2025": {
+    "ingested": true
+  },
+  "TED:511536-2025": {
+    "ingested": true
+  },
+  "TED:511540-2025": {
+    "ingested": true
+  },
+  "TED:511643-2025": {
+    "ingested": true
+  },
+  "TED:511674-2025": {
+    "ingested": true
+  },
+  "TED:511693-2025": {
+    "ingested": true
+  },
+  "TED:511697-2025": {
+    "ingested": true
+  },
+  "TED:511760-2025": {
+    "ingested": true
+  },
+  "TED:511783-2025": {
+    "ingested": true
+  },
+  "TED:511786-2025": {
+    "ingested": true
+  },
+  "TED:511835-2025": {
+    "ingested": true
+  },
+  "TED:511865-2025": {
+    "ingested": true
+  },
+  "TED:512045-2025": {
+    "ingested": true
+  },
+  "TED:512065-2025": {
+    "ingested": true
+  },
+  "TED:512154-2025": {
+    "ingested": true
+  },
+  "TED:512159-2025": {
+    "ingested": true
+  },
+  "TED:512272-2025": {
+    "ingested": true
+  },
+  "TED:512288-2025": {
+    "ingested": true
+  },
+  "TED:512401-2025": {
+    "ingested": true
+  },
+  "TED:512423-2025": {
+    "ingested": true
+  },
+  "TED:512445-2025": {
+    "ingested": true
+  },
+  "TED:512545-2025": {
+    "ingested": true
+  },
+  "TED:512569-2025": {
+    "ingested": true
+  },
+  "TED:512578-2025": {
+    "ingested": true
+  },
+  "TED:512618-2025": {
+    "ingested": true
+  },
+  "TED:512623-2025": {
+    "ingested": true
+  },
+  "TED:512625-2025": {
+    "ingested": true
+  },
+  "TED:512632-2025": {
+    "ingested": true
+  },
+  "TED:512757-2025": {
+    "ingested": true
+  },
+  "TED:512760-2025": {
+    "ingested": true
+  },
+  "TED:512898-2025": {
+    "ingested": true
+  },
+  "TED:513001-2025": {
+    "ingested": true
+  },
+  "TED:513157-2025": {
+    "ingested": true
+  },
+  "TED:513182-2025": {
+    "ingested": true
+  },
+  "TED:513185-2025": {
+    "ingested": true
+  },
+  "TED:513264-2025": {
+    "ingested": true
+  },
+  "TED:513311-2025": {
+    "ingested": true
+  },
+  "TED:513391-2025": {
+    "ingested": true
+  },
+  "TED:513414-2025": {
+    "ingested": true
+  },
+  "TED:513447-2025": {
+    "ingested": true
+  },
+  "TED:513484-2025": {
+    "ingested": true
+  },
+  "TED:513526-2025": {
+    "ingested": true
+  },
+  "TED:513731-2025": {
+    "ingested": true
+  },
+  "TED:513744-2025": {
+    "ingested": true
+  },
+  "TED:513749-2025": {
+    "ingested": true
+  },
+  "TED:513797-2025": {
+    "ingested": true
+  },
+  "TED:513880-2025": {
+    "ingested": true
+  },
+  "TED:513984-2025": {
+    "ingested": true
+  },
+  "TED:513987-2025": {
+    "ingested": true
+  },
+  "TED:514085-2025": {
+    "ingested": true
+  },
+  "TED:514131-2025": {
+    "ingested": true
+  },
+  "TED:514319-2025": {
+    "ingested": true
+  },
+  "TED:514388-2025": {
+    "ingested": true
+  },
+  "TED:514431-2025": {
+    "ingested": true
+  },
+  "TED:514480-2025": {
+    "ingested": true
+  },
+  "TED:514566-2025": {
+    "ingested": true
+  },
+  "TED:514612-2025": {
+    "ingested": true
+  },
+  "TED:514627-2025": {
+    "ingested": true
+  },
+  "TED:514667-2025": {
+    "ingested": true
+  },
+  "TED:514831-2025": {
+    "ingested": true
+  },
+  "TED:514958-2025": {
+    "ingested": true
+  },
+  "TED:514985-2025": {
+    "ingested": true
+  },
+  "TED:515058-2025": {
+    "ingested": true
+  },
+  "TED:515106-2025": {
+    "ingested": true
+  },
+  "TED:515230-2025": {
+    "ingested": true
+  },
+  "TED:515234-2025": {
+    "ingested": true
+  },
+  "TED:515283-2025": {
+    "ingested": true
+  },
+  "TED:515464-2025": {
+    "ingested": true
+  },
+  "TED:515467-2025": {
+    "ingested": true
+  },
+  "TED:515518-2025": {
+    "ingested": true
+  },
+  "TED:515522-2025": {
+    "ingested": true
+  },
+  "TED:515532-2025": {
+    "ingested": true
+  },
+  "TED:515584-2025": {
+    "ingested": true
+  },
+  "TED:515596-2025": {
+    "ingested": true
+  },
+  "TED:515796-2025": {
+    "ingested": true
+  },
+  "TED:515811-2025": {
+    "ingested": true
+  },
+  "TED:515891-2025": {
+    "ingested": true
+  },
+  "TED:516087-2025": {
+    "ingested": true
+  },
+  "TED:516113-2025": {
+    "ingested": true
+  },
+  "TED:516271-2025": {
+    "ingested": true
+  },
+  "TED:516289-2025": {
+    "ingested": true
+  },
+  "TED:516379-2025": {
+    "ingested": true
+  },
+  "TED:516392-2025": {
+    "ingested": true
+  },
+  "TED:516473-2025": {
+    "ingested": true
+  },
+  "TED:516479-2025": {
+    "ingested": true
+  },
+  "TED:516696-2025": {
+    "ingested": true
+  },
+  "TED:516742-2025": {
+    "ingested": true
+  },
+  "TED:516945-2025": {
+    "ingested": true
+  },
+  "TED:517084-2025": {
+    "ingested": true
+  },
+  "TED:517086-2025": {
+    "ingested": true
+  },
+  "TED:517218-2025": {
+    "ingested": true
+  },
+  "TED:517274-2025": {
+    "ingested": true
+  },
+  "TED:517340-2025": {
+    "ingested": true
+  },
+  "TED:517352-2025": {
+    "ingested": true
+  },
+  "TED:517453-2025": {
+    "ingested": true
+  },
+  "TED:517564-2025": {
+    "ingested": true
+  },
+  "TED:517631-2025": {
+    "ingested": true
+  },
+  "TED:517650-2025": {
+    "ingested": true
+  },
+  "TED:517691-2025": {
+    "ingested": true
+  },
+  "TED:517730-2025": {
+    "ingested": true
+  },
+  "TED:517831-2025": {
+    "ingested": true
+  },
+  "TED:517856-2025": {
+    "ingested": true
+  },
+  "TED:517895-2025": {
+    "ingested": true
+  },
+  "TED:517910-2025": {
+    "ingested": true
+  },
+  "TED:518049-2025": {
+    "ingested": true
+  },
+  "TED:518065-2025": {
+    "ingested": true
+  },
+  "TED:518124-2025": {
+    "ingested": true
+  },
+  "TED:518131-2025": {
+    "ingested": true
+  },
+  "TED:518139-2025": {
+    "ingested": true
+  },
+  "TED:518163-2025": {
+    "ingested": true
+  },
+  "TED:518286-2025": {
+    "ingested": true
+  },
+  "TED:518371-2025": {
+    "ingested": true
+  },
+  "TED:518507-2025": {
+    "ingested": true
+  },
+  "TED:518743-2025": {
+    "ingested": true
+  },
+  "TED:518750-2025": {
+    "ingested": true
+  },
+  "TED:518755-2025": {
+    "ingested": true
+  },
+  "TED:518877-2025": {
+    "ingested": true
+  },
+  "TED:518920-2025": {
+    "ingested": true
+  },
+  "TED:519022-2025": {
+    "ingested": true
+  },
+  "TED:519089-2025": {
+    "ingested": true
+  },
+  "TED:519103-2025": {
+    "ingested": true
+  },
+  "TED:519175-2025": {
+    "ingested": true
+  },
+  "TED:519191-2025": {
+    "ingested": true
+  },
+  "TED:519312-2025": {
+    "ingested": true
+  },
+  "TED:519358-2025": {
+    "ingested": true
+  },
+  "TED:519399-2025": {
+    "ingested": true
+  },
+  "TED:519440-2025": {
+    "ingested": true
+  },
+  "TED:519456-2025": {
+    "ingested": true
+  },
+  "TED:519458-2025": {
+    "ingested": true
+  },
+  "TED:519490-2025": {
+    "ingested": true
+  },
+  "TED:519598-2025": {
+    "ingested": true
+  },
+  "TED:519607-2025": {
+    "ingested": true
+  },
+  "TED:519648-2025": {
+    "ingested": true
+  },
+  "TED:519655-2025": {
+    "ingested": true
+  },
+  "TED:519656-2025": {
+    "ingested": true
+  },
+  "TED:519696-2025": {
+    "ingested": true
+  },
+  "TED:519697-2025": {
+    "ingested": true
+  },
+  "TED:519730-2025": {
+    "ingested": true
+  },
+  "TED:519820-2025": {
+    "ingested": true
+  },
+  "TED:519821-2025": {
+    "ingested": true
+  },
+  "TED:520021-2025": {
+    "ingested": true
+  },
+  "TED:520119-2025": {
+    "ingested": true
+  },
+  "TED:520235-2025": {
+    "ingested": true
+  },
+  "TED:520274-2025": {
+    "ingested": true
+  },
+  "TED:520337-2025": {
+    "ingested": true
+  },
+  "TED:520350-2025": {
+    "ingested": true
+  },
+  "TED:520400-2025": {
+    "ingested": true
+  },
+  "TED:520470-2025": {
+    "ingested": true
+  },
+  "TED:520649-2025": {
+    "ingested": true
+  },
+  "TED:520828-2025": {
+    "ingested": true
+  },
+  "TED:520954-2025": {
+    "ingested": true
+  },
+  "TED:521054-2025": {
+    "ingested": true
+  },
+  "TED:521140-2025": {
+    "ingested": true
+  },
+  "TED:521156-2025": {
+    "ingested": true
+  },
+  "TED:521166-2025": {
+    "ingested": true
+  },
+  "TED:521226-2025": {
+    "ingested": true
+  },
+  "TED:521282-2025": {
+    "ingested": true
+  },
+  "TED:521289-2025": {
+    "ingested": true
+  },
+  "TED:521343-2025": {
+    "ingested": true
+  },
+  "TED:521356-2025": {
+    "ingested": true
+  },
+  "TED:521386-2025": {
+    "ingested": true
+  },
+  "TED:521437-2025": {
+    "ingested": true
+  },
+  "TED:521449-2025": {
+    "ingested": true
+  },
+  "TED:521475-2025": {
+    "ingested": true
+  },
+  "TED:521477-2025": {
+    "ingested": true
+  },
+  "TED:521554-2025": {
+    "ingested": true
+  },
+  "TED:521639-2025": {
+    "ingested": true
+  },
+  "TED:521805-2025": {
+    "ingested": true
+  },
+  "TED:521840-2025": {
+    "ingested": true
+  },
+  "TED:521962-2025": {
+    "ingested": true
+  },
+  "TED:522023-2025": {
+    "ingested": true
+  },
+  "TED:522030-2025": {
+    "ingested": true
+  },
+  "TED:522084-2025": {
+    "ingested": true
+  },
+  "TED:522106-2025": {
+    "ingested": true
+  },
+  "TED:522206-2025": {
+    "ingested": true
+  },
+  "TED:522209-2025": {
+    "ingested": true
+  },
+  "TED:522230-2025": {
+    "ingested": true
+  },
+  "TED:522235-2025": {
+    "ingested": true
+  },
+  "TED:522241-2025": {
+    "ingested": true
+  },
+  "TED:522242-2025": {
+    "ingested": true
+  },
+  "TED:522244-2025": {
+    "ingested": true
+  },
+  "TED:522358-2025": {
+    "ingested": true
+  },
+  "TED:522376-2025": {
+    "ingested": true
+  },
+  "TED:522382-2025": {
+    "ingested": true
+  },
+  "TED:522440-2025": {
+    "ingested": true
+  },
+  "TED:522472-2025": {
+    "ingested": true
+  },
+  "TED:522474-2025": {
+    "ingested": true
+  },
+  "TED:522486-2025": {
+    "ingested": true
+  },
+  "TED:522622-2025": {
+    "ingested": true
+  },
+  "TED:522716-2025": {
+    "ingested": true
+  },
+  "TED:522747-2025": {
+    "ingested": true
+  },
+  "TED:522753-2025": {
+    "ingested": true
+  },
+  "TED:522834-2025": {
+    "ingested": true
+  },
+  "TED:522847-2025": {
+    "ingested": true
+  },
+  "TED:522871-2025": {
+    "ingested": true
+  },
+  "TED:523043-2025": {
+    "ingested": true
+  },
+  "TED:523131-2025": {
+    "ingested": true
+  },
+  "TED:523188-2025": {
+    "ingested": true
+  },
+  "TED:523438-2025": {
+    "ingested": true
+  },
+  "TED:523550-2025": {
+    "ingested": true
+  },
+  "TED:523610-2025": {
+    "ingested": true
+  },
+  "TED:523619-2025": {
+    "ingested": true
+  },
+  "TED:523633-2025": {
+    "ingested": true
+  },
+  "TED:523662-2025": {
+    "ingested": true
+  },
+  "TED:523787-2025": {
+    "ingested": true
+  },
+  "TED:523799-2025": {
+    "ingested": true
+  },
+  "TED:523846-2025": {
+    "ingested": true
+  },
+  "TED:523860-2025": {
+    "ingested": true
+  },
+  "TED:523864-2025": {
+    "ingested": true
+  },
+  "TED:523879-2025": {
+    "ingested": true
+  },
+  "TED:523968-2025": {
+    "ingested": true
+  },
+  "TED:524034-2025": {
+    "ingested": true
+  },
+  "TED:524040-2025": {
+    "ingested": true
+  },
+  "TED:524087-2025": {
+    "ingested": true
+  },
+  "TED:524088-2025": {
+    "ingested": true
+  },
+  "TED:524122-2025": {
+    "ingested": true
+  },
+  "TED:524132-2025": {
+    "ingested": true
+  },
+  "TED:524134-2025": {
+    "ingested": true
+  },
+  "TED:524178-2025": {
+    "ingested": true
+  },
+  "TED:524180-2025": {
+    "ingested": true
+  },
+  "TED:524287-2025": {
+    "ingested": true
+  },
+  "TED:524346-2025": {
+    "ingested": true
+  },
+  "TED:524501-2025": {
+    "ingested": true
+  },
+  "TED:524592-2025": {
+    "ingested": true
+  },
+  "TED:524631-2025": {
+    "ingested": true
   },
   "TED:533508-2026": {
     "ingested": true

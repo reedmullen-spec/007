@@ -1,8 +1,15 @@
 {
+  "a-4 motorway, toledo and ciudad real provinces, spain|es": null,
+  "a-5 motorway, alcorcón / móstoles / navalcarnero, madrid, spain|es": null,
   "a10 motorway, france|fr": [
     50.1224536,
     3.0879926
   ],
+  "a15 motorway, la spezia to parma corridor, italy|it": null,
+  "a2 highway, km 64.609, lithuania|lt": null,
+  "a4 motorway, brescia–padova corridor, northern italy|it": null,
+  "a4 motorway, s. donà di piave to portogruaro, veneto, italy|it": null,
+  "a43 tunnel de l'epine, savoie, france|fr": null,
   "a565/a61, rhineland, germany|de": [
     50.3506168,
     7.4865779
@@ -12,6 +19,15 @@
     47.5629635,
     7.9882641
   ],
+  "aberbeeg, wales|gb": [
+    51.711157,
+    -3.1455257
+  ],
+  "adlershof, berlin, germany|de": [
+    52.4378932,
+    13.5475496
+  ],
+  "alagón district, zaragoza, spain|es": null,
   "alexanderplatz, berlin, germany|de": [
     52.5219814,
     13.4136358
@@ -20,11 +36,26 @@
     52.4417588,
     5.2093149
   ],
+  "altendorf to strullendorf, bavaria, germany|de": null,
+  "alūksne, latvia|lv": [
+    57.4204759,
+    27.0505075
+  ],
   "amberg, bavaria, germany|de": [
     49.4543662,
     11.8474021
   ],
+  "amsterdam, netherlands|nl": [
+    52.3730796,
+    4.8924534
+  ],
+  "angermünde to passow, brandenburg, germany|de": null,
   "angermünde to stettin (szczecin), brandenburg, germany|de": null,
+  "aschaffenburg, bavaria, germany|de": [
+    49.9706701,
+    9.1384857
+  ],
+  "ashford & st peter's hospital, surrey, gb|gb": null,
   "attendorn, north rhine-westphalia, germany|de": [
     51.1250541,
     7.9010992
@@ -33,19 +64,72 @@
     45.9553777,
     2.1674549
   ],
+  "augusta, sicily, italy|it": [
+    37.2369363,
+    15.2196575
+  ],
+  "australia|au": [
+    -24.7761086,
+    134.755
+  ],
+  "bad münster am stein, rhineland-palatinate, germany|de": [
+    49.8135462,
+    7.8471929
+  ],
+  "bad schandau, saxony, germany|de": [
+    50.9247388,
+    14.2153046
+  ],
+  "bad urach, baden-württemberg, germany|de": [
+    48.4937953,
+    9.3978845
+  ],
+  "bamberg, germany|de": [
+    49.8916044,
+    10.8868478
+  ],
+  "bangor, wales|gb": [
+    53.2277163,
+    -4.1268822
+  ],
   "barcelona, spain|es": [
     41.3825802,
     2.177073
+  ],
+  "barletta, puglia, italy|it": [
+    41.3214976,
+    16.2868696
+  ],
+  "bayonne, france|fr": [
+    43.4945144,
+    -1.4736657
+  ],
+  "bayonne, nouvelle-aquitaine, france|fr": [
+    43.4945144,
+    -1.4736657
+  ],
+  "belgium|be": [
+    50.6402809,
+    4.6667145
+  ],
+  "berdorf, luxembourg|lu": [
+    49.8210345,
+    6.3560653
   ],
   "bergamo plain, lombardy, italy|it": null,
   "berlin mitte, berlin, germany|de": [
     52.5332165,
     13.3597957
   ],
+  "berlin, germany|de": [
+    52.5173885,
+    13.3951309
+  ],
   "beuel, bonn, germany|de": [
     50.7386619,
     7.1245135
   ],
+  "blarghour, scotland|gb": null,
   "bonn, north rhine-westphalia, germany|de": [
     50.7352621,
     7.1024635
@@ -54,10 +138,15 @@
     44.841225,
     -0.5800364
   ],
+  "bornholm, denmark|": [
+    55.1431224,
+    14.9226297
+  ],
   "braunschweig, germany|de": [
     52.2646577,
     10.5236066
   ],
+  "brescia province, lombardy, italy|it": null,
   "bruyères-le-châtel, île-de-france, france|fr": [
     48.5922609,
     2.1909499
@@ -66,29 +155,99 @@
     48.0245814,
     -1.7471629
   ],
+  "bussy-saint-georges, seine-et-marne, france|fr": [
+    48.8389953,
+    2.7171086
+  ],
+  "caen, normandy, france|fr": [
+    49.1813403,
+    -0.3635615
+  ],
+  "cambridge, gb|gb": [
+    52.1975846,
+    0.1391537
+  ],
+  "cambridgeshire, uk|gb": [
+    52.333333,
+    0.083333
+  ],
   "canal del flumen, huesca, aragón, spain|es": [
     42.0055985,
     -0.3834784
+  ],
+  "castellón - vinaroz, mediterranean corridor, spain|es": null,
+  "castroper straße, bochum, germany|de": [
+    51.4851143,
+    7.2283405
   ],
   "catania, sicily, italy|it": [
     37.5023612,
     15.0873718
   ],
+  "caudry, nord, france|fr": [
+    50.124391,
+    3.410362
+  ],
   "cenon, gironde, france|fr": [
     44.8552882,
     -0.5239863
+  ],
+  "cheltenham, gloucestershire|gb": [
+    51.8995685,
+    -2.0711559
+  ],
+  "chemnitz altendorf, saxony, germany|de": [
+    50.836085,
+    12.8856957
+  ],
+  "cheshire east, england|gb": [
+    53.1673422,
+    -2.2928803
+  ],
+  "châteauroux, france|fr": [
+    46.8203785,
+    1.6770956
+  ],
+  "ciudad real, castilla-la mancha, spain|es": [
+    38.9597347,
+    -3.8828744
   ],
   "clichy-la-garenne / asnières-sur-seine, hauts-de-seine, france|fr": [
     48.9096701,
     2.2994624
   ],
+  "clydebank, scotland|gb": [
+    55.9030134,
+    -4.4039773
+  ],
+  "cologne (köln), germany|de": [
+    50.9575459,
+    6.8914429
+  ],
   "cologne, germany|de": [
     50.938361,
     6.959974
   ],
+  "cooper park, elgin, moray, scotland|gb": [
+    57.6522463,
+    -3.3104713
+  ],
   "crailsheim, baden-württemberg, germany|de": [
     49.1365626,
     10.0720195
+  ],
+  "cramberg, germany|de": [
+    50.3416473,
+    7.9417333
+  ],
+  "craponne, auvergne-rhône-alpes, france|fr": [
+    45.743476,
+    4.7231057
+  ],
+  "cumbria / northumberland / tyne and wear, gb|gb": null,
+  "dahlem, germany|de": [
+    52.4573805,
+    13.2810976
   ],
   "dannenwalde, brandenburg, germany|de": [
     53.0271745,
@@ -99,17 +258,44 @@
     52.957976,
     4.760279
   ],
+  "deurne, antwerp, belgium|be": [
+    51.20849,
+    4.4719297
+  ],
+  "ditzingen, baden-württemberg, germany|de": [
+    48.8263983,
+    9.0658446
+  ],
   "dobeles novads, latvia|lv": [
     56.561572,
     23.1046096
+  ],
+  "dudley, west midlands|gb": [
+    52.5110832,
+    -2.0816813
+  ],
+  "dömitz, mecklenburg-vorpommern, germany|de": [
+    53.1384884,
+    11.2609279
   ],
   "dörverden, lower saxony, germany|de": [
     52.847207,
     9.2299135
   ],
+  "e45, kløfta to alta, norway|no": null,
+  "east of friesenbrücke, lower saxony, germany|de": null,
+  "east west rail corridor, gb|gb": null,
   "ebergötzen, lower saxony, germany|de": [
     51.570053,
     10.107081
+  ],
+  "ebersberg, bavaria, germany|de": [
+    48.0782763,
+    11.9694372
+  ],
+  "edinburgh, scotland|gb": [
+    55.9533456,
+    -3.1883749
   ],
   "eichstätt, bavaria, germany|de": [
     48.8863328,
@@ -120,23 +306,59 @@
     52.1448863,
     14.6294413
   ],
+  "emilia-romagna, toscana and marche, italy|it": null,
+  "emilia-romagna, tuscany and marche, italy|it": null,
+  "emmendingen, baden-württemberg, germany|de": [
+    48.1206565,
+    7.850993
+  ],
   "emmerich–oberhausen corridor, north rhine-westphalia, germany|de": null,
+  "erftstadt, north rhine-westphalia, germany|de": [
+    50.8027168,
+    6.8031625
+  ],
+  "erlangen-höchstadt, bavaria, germany|de": [
+    49.64042,
+    10.930096
+  ],
+  "eschede, lower saxony, germany|de": [
+    52.7396011,
+    10.2591201
+  ],
   "essonne, île-de-france, france|fr": [
     48.5303402,
     2.2392918
+  ],
+  "eur district, rome, italy|it": null,
+  "euskirchen, germany|de": [
+    50.6612623,
+    6.7871219
+  ],
+  "falkensee, brandenburg, germany|de": [
+    52.5606426,
+    13.08824
   ],
   "festung marienberg, würzburg, bavaria, germany|de": [
     49.7897963,
     9.9192428
   ],
+  "finkenbrunn, nuremberg, germany|de": [
+    49.4141349,
+    11.0787796
+  ],
   "forchheim, bavaria, germany|de": [
     49.7122951,
     11.0664285
+  ],
+  "forst (lausitz), brandenburg, germany|de": [
+    51.7438586,
+    14.6455395
   ],
   "france|fr": [
     46.603354,
     1.8883335
   ],
+  "frankfurter straße / b 55a junction, germany|de": null,
   "freising, bavaria, germany|de": [
     48.4008273,
     11.7439565
@@ -145,11 +367,44 @@
     43.3098426,
     3.4949388
   ],
+  "freystadt, bavaria, germany|de": [
+    49.1989574,
+    11.3285933
+  ],
+  "friarage hospital, northallerton, north yorkshire|gb": [
+    54.3424534,
+    -1.4301501
+  ],
+  "friedrichshafen, baden-württemberg, germany|de": [
+    47.6500279,
+    9.4800858
+  ],
   "frontenhausen, bavaria, germany|de": [
     48.5202297,
     12.5243631
   ],
+  "frouzins, haute-garonne, france|fr": [
+    43.515214,
+    1.3244441
+  ],
+  "galindo, bizkaia, spain|es": [
+    43.3040996,
+    -3.0101752
+  ],
+  "gallico, reggio calabria, italy|it": [
+    38.1644754,
+    15.6519063
+  ],
+  "gateshead / sheffield, gb|gb": null,
+  "gb|gb": [
+    54.7023545,
+    -3.2765753
+  ],
   "genoa, italy|it": [
+    44.40726,
+    8.9338624
+  ],
+  "genova, italy|it": [
     44.40726,
     8.9338624
   ],
@@ -158,6 +413,23 @@
     51.1638175,
     10.4478313
   ],
+  "gießen, hesse, germany|de": [
+    50.5862066,
+    8.6742306
+  ],
+  "gloucestershire, gb|gb": [
+    51.7643786,
+    -2.1880662
+  ],
+  "gloucestershire, uk|gb": [
+    51.7643786,
+    -2.1880662
+  ],
+  "great britain|gb": [
+    54.3151594,
+    -1.9181532
+  ],
+  "greater paris region, france|fr": null,
   "greifswald, mecklenburg-vorpommern, germany|de": [
     54.095791,
     13.3815238
@@ -165,6 +437,10 @@
   "greven, north rhine-westphalia, germany|de": [
     52.0929254,
     7.6120326
+  ],
+  "grothusstraße 201, 45883 gelsenkirchen, germany|de": [
+    51.5217929,
+    7.0336151
   ],
   "görlitzer bahnhof, berlin, germany|de": [
     52.4992784,
@@ -178,9 +454,17 @@
     43.6249487,
     -0.6264287
   ],
+  "halden, norway|no": [
+    59.0680555,
+    11.537191
+  ],
   "halle, saxony-anhalt, germany|de": [
     51.4824354,
     11.9712985
+  ],
+  "hamburg hauptbahnhof, hamburg, germany|de": [
+    53.5531993,
+    10.0064364
   ],
   "hamburg rothenburgsort to büchen, germany|de": null,
   "hamburg, germany|de": [
@@ -188,26 +472,126 @@
     10.0013165
   ],
   "hanau, am hauptbahnhof 1, germany|de": null,
+  "hannover, germany|de": [
+    52.3744779,
+    9.7385532
+  ],
+  "haute-vienne, france|fr": [
+    45.9190193,
+    1.2031768
+  ],
+  "hauts-de-france, france|fr": [
+    50.1024606,
+    2.7247515
+  ],
+  "heidelberg, baden-württemberg, germany|de": [
+    49.4093582,
+    8.694724
+  ],
   "heilbronn, baden-württemberg, germany|de": [
     49.142291,
     9.218655
+  ],
+  "herefordshire and worcestershire, gb|gb": [
+    52.2566022,
+    -2.1318719
   ],
   "herne-eickel, north rhine-westphalia, germany|de": [
     51.5359268,
     7.2067116
   ],
+  "hertfordshire, england|gb": [
+    51.8400523,
+    -0.0978552
+  ],
+  "hettange-grande, moselle, france|fr": [
+    49.407298,
+    6.1516319
+  ],
+  "hinchingbrooke country park, huntingdon, cambridgeshire|gb": [
+    52.3286463,
+    -0.2120845
+  ],
+  "holten / schmachtendorfer strasse, oberhausen area, north rhine-westphalia, germany|de": null,
+  "homburg, saarland, germany|de": [
+    49.32146,
+    7.3409031
+  ],
+  "horten, norway|no": [
+    59.4101728,
+    10.4437392
+  ],
   "hündfeld moor, westmünsterland, north rhine-westphalia, germany|de": null,
+  "ibiza, balearic islands, spain|es": [
+    38.9743901,
+    1.4197463
+  ],
   "iden, saxony-anhalt, germany|de": [
     52.7794495,
     11.9141261
+  ],
+  "immenstadt im allgäu, bavaria, germany|de": [
+    47.5713422,
+    10.1888003
+  ],
+  "industriehafen, magdeburg, saxony-anhalt, germany|de": [
+    52.174619,
+    11.6735668
+  ],
+  "ingolstadt, bavaria, germany|de": [
+    48.7630165,
+    11.4250395
+  ],
+  "inn-salzach, bavaria, germany|de": [
+    48.0586125,
+    12.2039582
+  ],
+  "irun, basque country, spain|es": [
+    43.3383176,
+    -1.7888095
+  ],
+  "iserlohn and nachrodt, north rhine-westphalia, germany|de": null,
+  "italy|it": [
+    42.6384261,
+    12.674297
+  ],
+  "jakob-stämpfli-strasse, biel/bienne, switzerland|ch": [
+    47.1469898,
+    7.2656394
+  ],
+  "jaunpils pagasts, tukuma novads, latvia|lv": [
+    56.7494892,
+    22.9518816
+  ],
+  "kalmthoutse heide, antwerp province, belgium|be": null,
+  "kanaaldok b2, port of antwerp, belgium|be": null,
+  "kaufbeuren, bavaria, germany|de": [
+    47.8803788,
+    10.622246
   ],
   "kehl – appenweier, baden-württemberg, germany|de": [
     48.5577112,
     7.9538203
   ],
+  "kettering, northamptonshire|gb": [
+    52.3994233,
+    -0.728004
+  ],
+  "king's lynn, norfolk|gb": [
+    52.7538673,
+    0.3954774
+  ],
   "kirchberg, luxembourg|lu": [
     49.6278334,
     6.1596669
+  ],
+  "konstanz, baden-württemberg, germany|de": [
+    47.659216,
+    9.1750718
+  ],
+  "kristiansand, norway|no": [
+    58.0856276,
+    7.931858
   ],
   "köln-dellbrück, cologne, germany|de": [
     50.9814765,
@@ -221,6 +605,26 @@
     50.195133,
     8.4628165
   ],
+  "la ferté-macé, normandy, france|fr": [
+    48.5895488,
+    -0.3584924
+  ],
+  "la roche-sur-yon, vendée, france|fr": [
+    46.6705578,
+    -1.4269591
+  ],
+  "lahn-dill, hesse, germany|de": [
+    50.6388777,
+    8.408633
+  ],
+  "landsberg am lech, bavaria, germany|de": [
+    48.0497474,
+    10.8768728
+  ],
+  "landstuhl, rhineland-palatinate, germany|de": [
+    49.4143311,
+    7.5722301
+  ],
   "latvia|lv": [
     56.8406494,
     24.7537645
@@ -228,6 +632,22 @@
   "lautrach, bavaria, germany|de": [
     47.8972699,
     10.1176274
+  ],
+  "le havre, normandy, france|fr": [
+    49.4938975,
+    0.1079732
+  ],
+  "lebach, saarland, germany|de": [
+    49.4132377,
+    6.9091348
+  ],
+  "lerchenfeld 10, hamburg, germany|de": [
+    53.5690389,
+    10.0301006
+  ],
+  "lievestuore, central finland|fi": [
+    62.2631219,
+    26.200397
   ],
   "lille, nord, france|fr": [
     50.6365654,
@@ -237,6 +657,26 @@
     45.8354243,
     1.2644847
   ],
+  "lincolnshire, england|gb": [
+    53.1823034,
+    -0.2031209
+  ],
+  "liverpool, england|gb": [
+    53.3933411,
+    -2.9166389
+  ],
+  "liévin, pas-de-calais, france|fr": [
+    50.4245,
+    2.7738
+  ],
+  "london, gb|gb": [
+    51.5074456,
+    -0.1277653
+  ],
+  "london, uk|gb": [
+    51.5074456,
+    -0.1277653
+  ],
   "lugo, galicia, spain|es": [
     43.0395266,
     -7.4567985
@@ -245,9 +685,22 @@
     46.8020794,
     8.1388425
   ],
+  "luxembourg|lu": [
+    49.8158683,
+    6.1296751
+  ],
   "lyon, france|fr": [
     45.7578137,
     4.8320114
+  ],
+  "lüchow, wendland, lower saxony, germany|de": [
+    52.9685123,
+    11.1573647
+  ],
+  "m-12 tunnel, madrid, spain|es": null,
+  "mainz, germany|de": [
+    49.9995205,
+    8.2736253
   ],
   "markelsheim–igersheim–bad mergentheim, baden-württemberg, germany|de": [
     49.4836098,
@@ -257,13 +710,37 @@
     49.2226399,
     4.0953197
   ],
+  "marseille, france|fr": [
+    43.2963986,
+    5.3777888
+  ],
+  "maubeuge and louvroil, hauts-de-france, france|fr": [
+    50.2709381,
+    3.9549718
+  ],
   "mauel, germany|de": [
     50.0734596,
     6.3937514
   ],
+  "meaux, île-de-france, france|fr": [
+    48.9582708,
+    2.8773541
+  ],
+  "meerfeld, rhineland-palatinate, germany|de": [
+    50.0945058,
+    6.7570454
+  ],
   "meschede, north rhine-westphalia, germany|de": [
     51.3436532,
     8.2859257
+  ],
+  "minden, north rhine-westphalia, germany|de": [
+    52.2881045,
+    8.9168852
+  ],
+  "moabit, berlin, germany|de": [
+    52.5301017,
+    13.3425422
   ],
   "modena, emilia-romagna, italy|it": [
     44.5384728,
@@ -273,33 +750,140 @@
     41.5526221,
     -5.7064267
   ],
+  "mont de marsan, landes, france|fr": [
+    43.8911318,
+    -0.500972
+  ],
+  "mont-de-marsan, landes, france|fr": [
+    43.8911318,
+    -0.500972
+  ],
+  "montpellier, france|fr": [
+    43.6112422,
+    3.8767337
+  ],
+  "munich, germany|de": [
+    48.1371079,
+    11.5753822
+  ],
   "märkisches kreis, north rhine-westphalia, germany|de": [
     51.4345446,
     7.3384375
+  ],
+  "müllheim, baden-württemberg, germany|de": [
+    47.810102,
+    7.5995606
+  ],
+  "münster, germany|de": [
+    51.9625101,
+    7.6251879
   ],
   "naples, italy|it": [
     40.8358846,
     14.2487679
   ],
+  "neauphle-le-château, île-de-france, france|fr": [
+    48.8111045,
+    1.9038201
+  ],
+  "netherton, scotland|gb": [
+    55.8977087,
+    -4.3290342
+  ],
   "neu zippendorf, schwerin, germany|de": [
     53.5978783,
     11.4517518
+  ],
+  "neuilly-sur-marne, île-de-france, france|fr": [
+    48.8565557,
+    2.5290045
+  ],
+  "neukirchen – vilseck, bavaria, germany|de": null,
+  "neukirchen–vilseck, bavaria, germany|de": null,
+  "neustadt an der weinstraße, rhineland-palatinate, germany|de": [
+    49.3536057,
+    8.1360247
+  ],
+  "newry, mourne & down, northern ireland|gb": [
+    54.1775283,
+    -6.337506
   ],
   "noale, venice, italy|it": [
     45.4423591,
     12.3330743
   ],
+  "norden, lower saxony, germany|de": [
+    53.5942039,
+    7.2067435
+  ],
+  "north central london|gb": [
+    52.0328305,
+    -0.2167966
+  ],
+  "north finland|fi": [
+    62.8937283,
+    27.6394748
+  ],
+  "north rhine-westphalia, germany|de": [
+    51.4789205,
+    7.5543751
+  ],
+  "northampton, england|gb": [
+    52.2343297,
+    -0.9028043
+  ],
+  "northern france (canal seine-nord europe corridor)|fr": null,
+  "northumberland, gb|gb": [
+    55.25,
+    -2.000559
+  ],
+  "norwich, norfolk|gb": [
+    52.6285576,
+    1.2923954
+  ],
+  "nottingham, england|gb": [
+    52.9534193,
+    -1.1496461
+  ],
   "novara / verbano-cusio-ossola, italy|it": [
     45.9214437,
     8.5528765
+  ],
+  "oslo, norway|no": [
+    59.9133301,
+    10.7389701
   ],
   "osterfeld, oberhausen, north rhine-westphalia, germany|de": [
     51.5019415,
     6.8857344
   ],
+  "ostfriesland, lower saxony, germany|de": [
+    53.3725785,
+    7.4392346
+  ],
   "ostwestfalen-lippe, germany|de": [
     51.9866376,
     8.6460129
+  ],
+  "ottignies, belgium|be": [
+    50.666357,
+    4.5690502
+  ],
+  "pantin, île-de-france, france|fr": [
+    48.8965023,
+    2.4019804
+  ],
+  "papenburg, lower saxony, germany|de": [
+    53.0822606,
+    7.3928398
+  ],
+  "paris, france|fr": [
+    48.8588897,
+    2.320041
+  ],
+  "parvis notre-dame, paris, france|fr": [
+    48.8532366,
+    2.3483979
   ],
   "passau, bavaria, germany|de": [
     48.5748229,
@@ -309,6 +893,22 @@
     48.7450919,
     9.1595621
   ],
+  "petit-canal, guadeloupe, france|fr": [
+    16.3776349,
+    -61.4877837
+  ],
+  "piacenza, emilia-romagna, italy|it": [
+    44.8476352,
+    9.6665313
+  ],
+  "pirna-sonnenstein, saxony, germany|de": [
+    50.9617138,
+    13.950382
+  ],
+  "poitiers, nouvelle-aquitaine, france|fr": [
+    46.5802596,
+    0.340196
+  ],
   "poitiers-biard, france|fr": [
     46.5887732,
     0.3085158
@@ -317,9 +917,31 @@
     49.0508845,
     2.1008067
   ],
+  "potsdam, brandenburg, germany|de": [
+    52.4009309,
+    13.0591397
+  ],
+  "potsdamer platz and anhalter bahnhof, berlin, germany|de": null,
+  "priestfield, west midlands|gb": [
+    52.5715528,
+    -2.0939272
+  ],
+  "puerto de castellón, castellón, spain|es": [
+    39.9627036,
+    0.0186903
+  ],
+  "queen alexandra hospital, portsmouth|gb": [
+    50.8503788,
+    -1.0697372
+  ],
   "rastatt, baden-württemberg, germany|de": [
     48.8584568,
     8.2040452
+  ],
+  "redbridge and waltham forest, london|gb": null,
+  "redshaw, scotland|gb": [
+    55.410164,
+    -3.5334235
   ],
   "reims and bezannes, grand est, france|fr": null,
   "rezé, loire-atlantique, france|fr": [
@@ -336,17 +958,65 @@
     24.1051846
   ],
   "right rhine corridor, germany|de": null,
+  "rijen, noord-brabant, netherlands|nl": [
+    51.5879869,
+    4.9193988
+  ],
+  "rijnkaai, antwerp, belgium|be": [
+    51.2333401,
+    4.4029752
+  ],
+  "roanne, loire, france|fr": [
+    46.0345572,
+    4.0729178
+  ],
   "romainville, seine-saint-denis (93230), france|fr": [
     48.8852958,
     2.4358326
+  ],
+  "rome, italy|it": [
+    41.8933203,
+    12.4829321
   ],
   "rostock, germany|de": [
     54.0886707,
     12.1400211
   ],
+  "rouen, normandie, france|fr": [
+    49.4404591,
+    1.0939658
+  ],
+  "royal south hants hospital, southampton|gb": [
+    50.9125822,
+    -1.3975608
+  ],
+  "royal stoke university hospital, stoke-on-trent|gb": [
+    53.0028801,
+    -2.2128877
+  ],
+  "saint-denis, seine-saint-denis, île-de-france, france|fr": [
+    48.9383732,
+    2.3627508
+  ],
+  "saint-fargeau-ponthierry, seine-et-marne, france|fr": [
+    48.5361215,
+    2.5273471
+  ],
+  "saint-martin-boulogne, pas-de-calais, france|fr": [
+    50.7258932,
+    1.633867
+  ],
+  "san miguel de arona, tenerife, spain|es": [
+    28.0140376,
+    -16.6466261
+  ],
   "sant adrià del besòs, barcelona, spain|es": [
     41.4287238,
     2.2145543
+  ],
+  "schirnding, bavaria, germany|de": [
+    50.081242,
+    12.2283415
   ],
   "schliersee–bayrischzell, bavaria, germany|de": [
     47.6776378,
@@ -356,34 +1026,142 @@
     50.4460848,
     6.8868579
   ],
+  "schweriner straße, ruhr region, germany|de": null,
+  "scotland|gb": [
+    56.7861112,
+    -4.1140518
+  ],
+  "senftenberg, brandenburg, germany|de": [
+    51.519201,
+    14.0046541
+  ],
+  "somain, nord, france|fr": [
+    50.3589237,
+    3.2810972
+  ],
+  "somerset, england|gb": [
+    51.1617509,
+    -3.0753867
+  ],
+  "somerset, uk|gb": [
+    51.1617509,
+    -3.0753867
+  ],
+  "southeastern estonia land border, sections 7-8|es": null,
+  "southern france|fr": [
+    -49.237442,
+    69.622759
+  ],
+  "spain (multiple guardia civil barracks sites)|es": null,
   "spain|es": [
     39.3260685,
     -4.8379791
+  ],
+  "sperone, palermo, sicily, italy|it": [
+    38.0297889,
+    13.5708828
   ],
   "steinheim am albuch, baden-württemberg, germany|de": [
     48.692598,
     10.0643967
   ],
+  "stjørdal to hegramo, trøndelag, norway|no": null,
+  "stockport, greater manchester|gb": [
+    53.407901,
+    -2.160243
+  ],
   "strasbourg, france|fr": [
     48.584614,
     7.7507127
+  ],
+  "strullendorf, bavaria, germany|de": [
+    49.8439391,
+    10.9700482
+  ],
+  "stuttgart airport / leinfelden-echterdingen, baden-württemberg, germany|de": [
+    48.688422,
+    9.2053925
+  ],
+  "stuttgart airport, stuttgart, baden-württemberg, germany|de": [
+    48.6915808,
+    9.1934675
+  ],
+  "stuttgart bad cannstatt, baden-württemberg, germany|de": [
+    48.8014069,
+    9.2168515
+  ],
+  "stuttgart, baden-württemberg, germany|de": [
+    48.7784485,
+    9.1800132
+  ],
+  "sunderland, north east england|gb": [
+    54.9058512,
+    -1.3828727
+  ],
+  "süderelbe, hamburg, germany|de": [
+    53.4731723,
+    10.0123717
+  ],
+  "tallinn, estonia|es": null,
+  "tamm, baden-württemberg, germany|de": [
+    48.9204307,
+    9.1158361
   ],
   "tarbes, hautes-pyrénées, france|fr": [
     43.232858,
     0.0781021
   ],
+  "tongeren, belgium|be": [
+    50.7806267,
+    5.4639172
+  ],
   "torrevieja, alicante, spain|es": [
     37.9775416,
     -0.6828446
   ],
+  "toulouse, france|fr": [
+    43.6044638,
+    1.4442433
+  ],
   "troisdorf to bonn oberkassel, north rhine-westphalia, germany|de": null,
+  "troisdorf–unkel, river sieg, north rhine-westphalia / rhineland-palatinate border, germany|de": null,
   "upper bavaria, germany|de": [
     48.2405833,
     11.9699152
   ],
+  "various locations, spain|es": null,
+  "vaucluse, provence-alpes-côte d'azur, france|fr": [
+    43.9938643,
+    5.1818898
+  ],
+  "verona, veneto, italy|it": [
+    45.4424977,
+    10.9857377
+  ],
+  "vestland, norway|no": [
+    60.9291011,
+    6.1078869
+  ],
+  "via magnagrecia 50, rome, italy|it": [
+    41.8817659,
+    12.5082314
+  ],
+  "via mitolo, bari, italy|it": [
+    41.0912185,
+    16.8614377
+  ],
+  "villeneuve d'ascq, métropole européenne de lille, france|fr": null,
+  "villingen-schwenningen, baden-württemberg, germany|de": [
+    48.063152,
+    8.4929618
+  ],
   "vinaceite, aragon, spain|es": [
     41.2660396,
     -0.5793052
+  ],
+  "vitoria-gasteiz, álava, basque country, spain|es": [
+    42.8505845,
+    -2.66145
   ],
   "vuosaari, helsinki, finland|fi": [
     60.2083483,
@@ -393,13 +1171,65 @@
     50.5312003,
     7.0794414
   ],
+  "warnemünde, rostock, germany|de": [
+    54.1779039,
+    12.0812875
+  ],
+  "west and north london|gb": [
+    52.8650243,
+    -1.3372524
+  ],
+  "west hertfordshire, gb|gb": [
+    51.7047737,
+    -0.4084569
+  ],
+  "west lothian, scotland|gb": [
+    55.916667,
+    -3.5
+  ],
+  "west midlands, gb|gb": [
+    52.505432,
+    -1.9646782
+  ],
+  "west yorkshire, gb|gb": [
+    53.7414271,
+    -1.7202004
+  ],
+  "wiesbaden, germany|de": [
+    50.0820384,
+    8.2416556
+  ],
+  "wiesthal, bavaria, germany|de": [
+    50.0314357,
+    9.4281943
+  ],
+  "wilhelm-leuschner-platz, leipzig, germany|de": [
+    51.3343165,
+    12.3741429
+  ],
   "wiltbergstraße, berlin, germany|de": [
     52.6406786,
     13.4869923
+  ],
+  "wirral, merseyside|gb": [
+    53.3324945,
+    -3.0290296
   ],
   "wunsiedel, bavaria, germany|de": [
     50.0373241,
     12.0027278
   ],
-  "zee & delta district noord, netherlands|nl": null
+  "zee & delta district noord, netherlands|nl": null,
+  "zollikerberg, zollikon, switzerland|ch": [
+    47.3456637,
+    8.5993998
+  ],
+  "zuid nederland, netherlands|nl": [
+    51.4193031,
+    5.6516717
+  ],
+  "zwolle, netherlands|nl": [
+    52.5145653,
+    6.0977204
+  ]
 }
