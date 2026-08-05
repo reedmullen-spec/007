@@ -43,7 +43,8 @@ PROFILES = [
                       "Piling / foundations", "Culverts / ancillary structures"},
         "types": {"Bridge / viaduct", "Tunnel", "Dam / hydro / reservoir",
                   "Port / marine", "Flood & coastal defence", "Water treatment",
-                  "Wastewater treatment", "Nuclear", "Power & transmission"},
+                  "Wastewater treatment", "Nuclear", "Power & transmission",
+                  "Rail / metro", "Highway / road"},
         # Thermal control is effectively mandatory, so engage close to the pour.
         "timing_months": (0, 24),
         "min_opportunity": "Medium",
