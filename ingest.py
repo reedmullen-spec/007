@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import sys
 import time
+from collections import defaultdict, deque
 
 from src import state
 from src.config import env, load_config
@@ -31,6 +32,26 @@ from src.routing import resolve_ae
 from src.sources import austender, fts, sam, ted
 
 from news import collect as collect_news, REGION_COUNTRY
+
+
+def _round_robin(items: list[dict]) -> list[dict]:
+    """Interleave candidates by source (TED/FTS/AUSTENDER/SAM/NEWS) so a
+    single high-volume source (TED routinely dwarfs the others) can't
+    monopolize the per-run cap. Preserves each source's internal order —
+    only the interleaving across sources changes."""
+    buckets: dict[str, deque] = defaultdict(deque)
+    order: list[str] = []
+    for item in items:
+        src = item["source"]
+        if src not in buckets:
+            order.append(src)
+        buckets[src].append(item)
+    result = []
+    while any(buckets[src] for src in order):
+        for src in order:
+            if buckets[src]:
+                result.append(buckets[src].popleft())
+    return result
 
 
 def gather(cfg: dict, days_back: int, historical: bool = False) -> list[dict]:
@@ -82,7 +103,7 @@ def gather(cfg: dict, days_back: int, historical: bool = False) -> list[dict]:
                     "country": REGION_COUNTRY.get(i.region.split("_")[0], ""),
                     "buyer": i.entity, "value": None, "currency": "",
                     "url": i.url})
-    return out
+    return _round_robin(out)
 
 
 def main() -> int:
