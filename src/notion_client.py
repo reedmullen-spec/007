@@ -159,6 +159,29 @@ class NotionClient:
         return self._ensure_named_database(
             "focus_database_id", "007 Weekly focus", self.FOCUS_SCHEMA)
 
+    # Intake: a deliberately tiny, separate database that anyone can be
+    # given edit access to without ever touching the master "007 Projects"
+    # database (which stays restricted to Reed + Issam). ingest.py sweeps
+    # unimported rows through the same qualify/score/route pipeline as
+    # manual master rows — see src/intake.py.
+    INTAKE_SCHEMA = {
+        "Title": {"title": {}},
+        "Notice URL": {"url": {}},
+        "Country": {"rich_text": {}},
+        "Value": {"number": {}},
+        "Currency": {"select": {"options": [
+            {"name": "EUR"}, {"name": "GBP"}, {"name": "AUD"}, {"name": "USD"}]}},
+        "Notes": {"rich_text": {}},
+        "Imported": {"checkbox": {}},
+    }
+
+    def ensure_intake_database(self) -> str:
+        """Find or create the '007 — Submit a project' database — its own
+        page, its own sharing, no fields to hide (unlike a form view on
+        the master, which inherits every master field)."""
+        return self._ensure_named_database(
+            "intake_database_id", "007 — Submit a project", self.INTAKE_SCHEMA)
+
     # Per-AE page: master owns everything except the AE-owned block below
     # (Status / Next action / Next action date / Notes / Outcome /
     # Correction needed) — see src/ae_pages.py and sync.py.

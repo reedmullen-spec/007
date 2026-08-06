@@ -1,0 +1,37 @@
+name: Create intake form
+
+# One-off: creates the standalone "007 — Submit a project" intake
+# database + form view, separate from the master database. Idempotent —
+# cached in state/notion.json, safe to re-run.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tender-radar-state
+  cancel-in-progress: false
+
+jobs:
+  create-form:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Create intake form
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: python create_intake_form.py
+      - name: Commit state
+        if: always()
+        run: |
+          git config user.name "007-bot"
+          git config user.email "007-bot@users.noreply.github.com"
+          git add state/
+          git diff --staged --quiet || git commit -m "Cache intake database + form view id"
+          git push
