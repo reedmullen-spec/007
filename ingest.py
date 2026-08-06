@@ -90,7 +90,9 @@ def gather(cfg: dict, days_back: int, historical: bool = False) -> list[dict]:
                     "country": p.country, "buyer": p.buyer, "value": p.value,
                     "currency": p.currency, "url": p.url,
                     "deadline": p.deadline,
-                    "us_state": getattr(p, "us_state", "")})
+                    "us_state": getattr(p, "us_state", ""),
+                    "contractor": getattr(p, "contractor", ""),
+                    "jv_parents": getattr(p, "jv_parents", "")})
 
     news_fresh = [i for i in collect_news(cfg) if i.dedup_key not in seen]
     kept = []
@@ -172,8 +174,13 @@ def main() -> int:
             if coords:
                 lat, lng = coords
 
-        ae = resolve_ae(q.get("general_contractor") or c["buyer"],
-                        c["country"], cfg, None) or "unassigned"
+        # Ground truth from an award-type notice (TED winner-name/
+        # organisation-name-tenderer, FTS awards[].suppliers) overrides the
+        # model's guess when the source actually carries one.
+        gc = c.get("contractor") or q.get("general_contractor", "")
+        jv = c.get("jv_parents") or q.get("jv_parents", "")
+
+        ae = resolve_ae(gc or c["buyer"], c["country"], cfg, None) or "unassigned"
         if c["source"] == "SAM" and c.get("us_state"):
             from src.routing import us_state_ae
             ae = us_state_ae(c["us_state"], cfg) or ae
@@ -184,8 +191,7 @@ def main() -> int:
 
         # Score AFTER ae/partner are resolved — the coverage/access
         # dimensions need the real values, not "unassigned"/"TBD" placeholders.
-        scored = score_project({**q, "title": c["title"],
-                                "gc": q.get("general_contractor", ""),
+        scored = score_project({**q, "title": c["title"], "gc": gc,
                                 "value": c["value"], "ae": ae,
                                 "partner_route": partner}, cfg)
         dimensions_str = "; ".join(
@@ -197,7 +203,7 @@ def main() -> int:
                 "title": c["title"], "notice_id": c["notice_id"],
                 "source": c["source"], "region": c["region"],
                 "country": c["country"], "location": q.get("location", ""),
-                "gc": q.get("general_contractor", ""),
+                "gc": gc,
                 "project_type": q.get("project_type", "Other"),
                 "stage": q.get("project_stage", "Unknown"),
                 "work_nature": q.get("work_nature", "Unknown"),
@@ -212,7 +218,7 @@ def main() -> int:
                 "summary": q.get("summary", ""),
                 "url": c["url"], "lat": lat, "lng": lng,
                 "client": q.get("client", "") or c["buyer"],
-                "jv_parents": q.get("jv_parents", ""),
+                "jv_parents": jv,
                 "use_case": q.get("use_case", []),
                 "product_fit": scored["products"] or q.get("product_fit", []),
                 "ae": ae, "partner_route": partner,

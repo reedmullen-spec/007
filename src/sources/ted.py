@@ -41,6 +41,14 @@ FIELDS = [
     "estimated-value-lot",
     "deadline-receipt-tender-date-lot",
     "publication-date",
+    # Award-notice-only fields (notice-type=can-standard, form-type=result):
+    # populated when the winner is known, None on pre-award "competition"
+    # notices — verified against the live API, Aug 2026. winner-name is
+    # usually one name; organisation-name-tenderer lists every JV/consortium
+    # member when there's more than one.
+    "notice-type",
+    "winner-name",
+    "organisation-name-tenderer",
 ]
 
 
@@ -145,6 +153,12 @@ def _parse_notice(n: dict) -> Project:
     value = _to_float(n.get("total-value") or n.get("estimated-value-lot"))
     deadline = _first_text(n.get("deadline-receipt-tender-date-lot"))
 
+    # Ground-truth winner, only present on award-type notices.
+    winner = _first_text(n.get("winner-name"))
+    tenderers = list(dict.fromkeys(_all_strings(n.get("organisation-name-tenderer"))))
+    contractor = winner or (tenderers[0] if tenderers else "")
+    jv_parents = ", ".join(tenderers) if len(tenderers) > 1 else ""
+
     return Project(
         source="TED",
         notice_id=pubnum or "unknown",
@@ -156,4 +170,6 @@ def _parse_notice(n: dict) -> Project:
         value=value,
         currency="EUR",
         deadline=deadline,
+        contractor=contractor,
+        jv_parents=jv_parents,
     )

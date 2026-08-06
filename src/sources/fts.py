@@ -78,6 +78,17 @@ def _parse_release(rel: dict) -> Project | None:
 
     deadline = (tender.get("tenderPeriod") or {}).get("endDate", "")
 
+    # Ground-truth winner — only present on "award" stage releases (we
+    # already request stages=[tender, award], just weren't reading this).
+    suppliers: list[str] = []
+    for award in rel.get("awards", []) or []:
+        for supplier in award.get("suppliers", []) or []:
+            name = supplier.get("name", "")
+            if name and name not in suppliers:
+                suppliers.append(name)
+    contractor = suppliers[0] if suppliers else ""
+    jv_parents = ", ".join(suppliers) if len(suppliers) > 1 else ""
+
     return Project(
         source="FTS",
         notice_id=str(ocid),
@@ -90,4 +101,6 @@ def _parse_release(rel: dict) -> Project | None:
         value=value,
         currency="GBP",
         deadline=str(deadline or ""),
+        contractor=contractor,
+        jv_parents=jv_parents,
     )

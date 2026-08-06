@@ -23,6 +23,12 @@ class Project:
     value: float | None = None
     currency: str = "EUR"
     deadline: str = ""
+    # Ground-truth winner/JV from an award-type notice, when the source
+    # actually carries one — distinct from `buyer` (the procuring
+    # authority for TED/FTS). Overrides the model's guess in ingest.py
+    # when present, since this is authoritative, not inferred.
+    contractor: str = ""
+    jv_parents: str = ""
 
     @property
     def dedup_key(self) -> str:
