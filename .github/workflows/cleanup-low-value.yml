@@ -1,0 +1,41 @@
+name: Cleanup low value
+
+# One-off / repeatable: disqualifies existing "New" rows below the current
+# filters.min_value_* threshold. Run by hand after changing that threshold.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (print what would be disqualified, change nothing)"
+        type: boolean
+        default: true
+      min_value:
+        description: "Override the threshold (defaults to filters.min_value_eur)"
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run cleanup
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          args=""
+          if [ -n "${{ github.event.inputs.min_value }}" ]; then
+            args="--min-value ${{ github.event.inputs.min_value }}"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python cleanup_low_value.py --dry-run $args
+          else
+            python cleanup_low_value.py $args
+          fi
