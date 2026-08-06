@@ -25,9 +25,15 @@ ask Reed before changing architecture, not just code.
   completion, location, use cases — observations only, no fit; see
   src/scoring.py) → geocode (Nominatim, cached in state) → score → create
   Notion row, Status=New. Also sweeps rows humans added by hand (no Notice
-  ID): qualifies + scores them and stamps Source=MANUAL.
+  ID): qualifies + scores them and stamps Source=MANUAL. Also derives
+  `SDR` from the resolved `AE` (`routing.ae_sdr_map`) and writes it
+  alongside — Alex owns Lawson/Alicia/Ben's patch, Jamie owns
+  Britain/Brady/Justin's, Reed's own AEs (Lisa/Aled/Avi/Jeremy) get the
+  label too even though he has no dedicated SDR triage list.
   Backfill: `--historical --days-back 365 --max-rows 300`, run repeatedly;
   dedup makes it self-continuing. News RSS cannot backfill (feeds are shallow).
+  `backfill_sdr.py` sets `SDR` on rows created before that field existed
+  — one-off, AE never changes after ingest so this never needs a repeat.
 - `src/scoring.py` — deterministic fit scoring (High/Medium/Low/
   Disqualified) against 5 named profiles; `qualify.py`'s model call
   supplies observations only, never a fit. Deliberately narrow hard

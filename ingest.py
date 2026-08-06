@@ -184,6 +184,7 @@ def main() -> int:
         if c["source"] == "SAM" and c.get("us_state"):
             from src.routing import us_state_ae
             ae = us_state_ae(c["us_state"], cfg) or ae
+        sdr = cfg["routing"].get("ae_sdr_map", {}).get(ae, "")
         partner = ("Hakron" if c["country"].upper() in
                    [x.upper() for x in cfg.get("hakron_skip_contacts_countries", [])]
                    else "White Cap" if c["region"].startswith(("us", "ca"))
@@ -223,7 +224,7 @@ def main() -> int:
                 "jv_parents": jv,
                 "use_case": q.get("use_case", []),
                 "product_fit": scored["products"] or q.get("product_fit", []),
-                "ae": ae, "partner_route": partner,
+                "ae": ae, "sdr": sdr, "partner_route": partner,
                 "deadline": c.get("deadline", ""), "announced": today,
             })
             seen[c["dedup_key"]] = {"ingested": True}
@@ -262,13 +263,18 @@ def sweep_manual_rows(cfg: dict, api_key: str, notion: NotionClient) -> int:
                   file=sys.stderr)
             continue
         slug = _re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:60]
-        # Manually-added rows have no resolved AE/partner/value at sweep
-        # time — score honestly against what's known; coverage/access will
-        # legitimately read as "off" until an AE or value is set by hand.
+        # Manually-added rows have no resolved partner/value at sweep time
+        # — score honestly against what's known; access will legitimately
+        # read as "off" until a value is set by hand. AE, though, may
+        # already be hand-set (White Cap/AE tips often come in pre-tagged);
+        # read it back so SDR derives correctly even for manual rows.
         existing_value = (row.get("properties") or {}).get("Value", {}).get("number")
+        existing_ae = (((row.get("properties") or {}).get("AE") or {}).get("select")
+                      or {}).get("name", "") or "unassigned"
+        sdr = cfg["routing"].get("ae_sdr_map", {}).get(existing_ae, "")
         scored = score_project({**q, "title": title,
                                 "gc": q.get("general_contractor", ""),
-                                "value": existing_value, "ae": "unassigned",
+                                "value": existing_value, "ae": existing_ae,
                                 "partner_route": "TBD"}, cfg)
         dimensions_str = "; ".join(
             f"{k}: {'ok' if v['pass'] else 'off'} — {v['note']}"
@@ -289,6 +295,8 @@ def sweep_manual_rows(cfg: dict, api_key: str, notion: NotionClient) -> int:
         completion = resolve_date(q.get("expected_completion", ""))
         if completion:
             props["Expected completion"] = {"date": {"start": completion.isoformat()}}
+        if sdr:
+            props["SDR"] = {"select": {"name": sdr}}
         if scored["profile"]:
             props["Fit profile"] = {"select": {"name": scored["profile"]}}
         if q.get("project_type"):

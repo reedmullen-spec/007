@@ -134,6 +134,10 @@ class NotionClient:
     AES = ["lisa", "aled", "avi", "alex", "jamie", "jeremy", "justin",
            "lawson", "alicia", "ben", "britain", "brady", "dan", "unassigned"]
 
+    # Derived from AE via routing.ae_sdr_map (config.yaml), written once at
+    # ingest time — see ingest.py. Left blank for AE=unassigned/dan.
+    SDRS = ["alex", "jamie", "reed"]
+
     # Fit is computed deterministically by src/scoring.py — see its docstring
     # for why (reproducibility: same project in, same band out).
     FIT_BANDS = ["High", "Medium", "Low", "Disqualified"]
@@ -236,6 +240,7 @@ class NotionClient:
                                           for s, c in STATUSES]}},
         "Project stage": {"select": {"options": [{"name": s} for s in PROJECT_STAGES]}},
         "AE": {"select": {"options": [{"name": a} for a in AES]}},
+        "SDR": {"select": {"options": [{"name": s} for s in SDRS]}},
         "Partner route": {"select": {"options": [{"name": s} for s in
                           ("Direct", "White Cap", "Hakron", "Agency", "TBD")]}},
         "Partner contact": {"rich_text": {}},
@@ -340,6 +345,8 @@ class NotionClient:
             props["Product fit"] = {"multi_select": [
                 {"name": s} for s in fields["product_fit"]]}
         props["AE"] = {"select": {"name": fields.get("ae") or "unassigned"}}
+        if fields.get("sdr"):
+            props["SDR"] = {"select": {"name": fields["sdr"]}}
         props["Partner route"] = {"select": {"name": fields.get("partner_route", "TBD")}}
         if fields.get("value") is not None:
             band = ("Under 50M" if fields["value"] < 50_000_000

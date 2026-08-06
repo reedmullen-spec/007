@@ -8,10 +8,11 @@ out): they count toward the cap and are re-listed. "Recontact later" rows
 resurface once their Recontact date has passed.
 
 One list = one person's page (config `triage.lists`) — filters can match on
-AE, Region, or Product fit, so the same project can legitimately appear on
-more than one person's list (e.g. the SDR squad works the same region as the
-White Cap AEs from a different angle). Lists are never de-duplicated against
-each other.
+AE, Region, SDR (derived from AE via routing.ae_sdr_map — Alex/Jamie's own
+lists use this to cover their whole patch of AEs in one list), or Product
+fit, so the same project can legitimately appear on more than one person's
+list (e.g. the SDR squad works the same projects as the White Cap AEs from
+a different angle). Lists are never de-duplicated against each other.
 
 Usage:
     python triage.py               # live
@@ -55,12 +56,13 @@ def rank_key(row: dict, manual_first: bool):
 
 def build_filter(filter_spec: dict) -> dict:
     """Translate a triage.lists filter spec into a Notion filter object.
-    Supports `AE equals`, `Region equals`, and `Product fit contains`."""
+    Supports `AE equals`, `Region equals`, `SDR equals`, and
+    `Product fit contains`."""
     conds = []
     for key, value in filter_spec.items():
         if key == "Product fit contains":
             conds.append({"property": "Product fit", "multi_select": {"contains": value}})
-        elif key in ("AE", "Region"):
+        elif key in ("AE", "Region", "SDR"):
             conds.append({"property": key, "select": {"equals": value}})
         else:
             raise ValueError(f"Unsupported triage filter key: {key!r}")

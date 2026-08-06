@@ -102,6 +102,26 @@ routing:
     britain: [MN, IA, MO, AR, LA, WI, IL, IN, MI, OH, MS, AL, TN, KY,
               GA, FL, SC, NC, VA, WV, DC]
 
+  # AE -> SDR: each SDR works their AEs' territory contractor-side, same
+  # projects from a different angle. Alex/Jamie's own triage.lists entries
+  # filter on this (SDR equals) to get their whole patch in one list,
+  # rather than a Region filter that doesn't line up with the state-map AE
+  # boundaries above (that mismatch is exactly why "Ben searches California
+  # and finds zero" used to happen — California is Lawson's, not Ben's, and
+  # a Region-based filter couldn't tell). Reed has no dedicated SDR triage
+  # list; this just labels his AEs' rows too, for completeness.
+  ae_sdr_map:
+    lawson: alex
+    alicia: alex
+    ben: alex
+    britain: jamie
+    brady: jamie
+    justin: jamie
+    lisa: reed
+    aled: reed
+    avi: reed
+    jeremy: reed
+
   # Tier 1 of the resolver: if the buyer/contractor company exists in HubSpot,
   # inherit its live hubspot_owner_id instead of the geography fallback.
   use_hubspot_owner_lookup: true
@@ -287,9 +307,12 @@ triage:
     - { name: ben,     filter: { AE: ben },     count: 10, channel: us_east, timezone: "America/Chicago" }
     - { name: britain, filter: { AE: britain }, count: 10, channel: us_east, timezone: "America/New_York" }
     - { name: brady,   filter: { AE: brady },   count: 10, channel: us_east, timezone: "America/New_York" }
-    # --- SDR squad: same projects, contractor-side approach ---
-    - { name: alex,    filter: { Region: us_west }, count: 10, channel: us_west, timezone: "America/Los_Angeles" }
-    - { name: jamie,   filter: { Region: us_east }, count: 10, channel: us_east, timezone: "America/New_York" }
+    # --- SDR squad: same projects, contractor-side approach. Filtered on
+    # SDR (derived from AE via routing.ae_sdr_map), not Region — each
+    # covers their whole patch (3 AEs), so count is ~3x an individual
+    # AE's count rather than a separate region-sized number.
+    - { name: alex,    filter: { SDR: alex },  count: 30, channel: us_west, timezone: "America/Los_Angeles" }
+    - { name: jamie,   filter: { SDR: jamie }, count: 30, channel: us_east, timezone: "America/New_York" }
     # Dan (US Data Hub) is deliberately excluded from triage.lists — per the
     # team, Data Hub is handled manually, not through the automated per-AE
     # page/list system. "dan" stays a selectable AE value in the master
