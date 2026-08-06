@@ -14,7 +14,8 @@ from src.notion_client import NotionClient
 
 
 def _prop_select(row: dict, name: str) -> str:
-    return ((row.get("properties") or {}).get(name) or {}).get("select", {}).get("name", "")
+    sel = ((row.get("properties") or {}).get(name) or {}).get("select") or {}
+    return sel.get("name", "")
 
 
 def _prop_rt(row: dict, name: str) -> str:
