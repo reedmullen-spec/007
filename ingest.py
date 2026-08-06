@@ -241,70 +241,82 @@ def main() -> int:
     swept = sweep_manual_rows(cfg, api_key, notion)
     if swept:
         print(f"Qualified {swept} manually-added rows")
+
+    # Sweep: pull in anything submitted via the separate intake database.
+    from src.intake import sweep_intake_rows
+    imported = sweep_intake_rows(cfg, api_key, notion)
+    if imported:
+        print(f"Imported {imported} rows from the intake database")
     return 0
 
 
 def sweep_manual_rows(cfg: dict, api_key: str, notion: NotionClient) -> int:
-    """Rows added by hand (White Cap intel, AE tips) have no Notice ID.
-    Qualify them, geocode, stamp Source=MANUAL, so triage can prioritise."""
+    """Rows added by hand (White Cap intel, AE tips, or just a pasted news
+    URL) have no Notice ID. Runs the shared manual_entry pipeline — which
+    fetches a pasted "Notice URL"'s article text for a far richer qualify
+    pass than a bare title, and derives a title from the page when the
+    human only pasted a URL — then stamps Source=MANUAL so triage can
+    prioritise."""
     import re as _re
+    from src.manual_entry import compute_fields
     rows = notion.query_rows({"property": cfg["notion"]["notice_id_property"],
                               "rich_text": {"is_empty": True}})
     count = 0
     for row in rows:
         title = notion.row_title(row)
-        if not title:
+        url = (row.get("properties") or {}).get("Notice URL", {}).get("url") or ""
+        if not title and not url:
             continue
-        try:
-            q = qualify(api_key, cfg, title=title, source="MANUAL",
-                        country="", buyer="")
-        except Exception as exc:
-            print(f"WARNING: manual qualify failed for {title[:50]}: {exc}",
-                  file=sys.stderr)
-            continue
-        slug = _re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:60]
         # Manually-added rows have no resolved partner/value at sweep time
         # — score honestly against what's known; access will legitimately
         # read as "off" until a value is set by hand. AE, though, may
         # already be hand-set (White Cap/AE tips often come in pre-tagged);
-        # read it back so SDR derives correctly even for manual rows.
+        # read it back and use it as-is rather than re-resolving from a
+        # country/buyer this sweep doesn't have.
         existing_value = (row.get("properties") or {}).get("Value", {}).get("number")
         existing_ae = (((row.get("properties") or {}).get("AE") or {}).get("select")
                       or {}).get("name", "") or "unassigned"
-        sdr = cfg["routing"].get("ae_sdr_map", {}).get(existing_ae, "")
-        scored = score_project({**q, "title": title,
-                                "gc": q.get("general_contractor", ""),
-                                "value": existing_value, "ae": existing_ae,
-                                "partner_route": "TBD"}, cfg)
-        dimensions_str = "; ".join(
-            f"{k}: {'ok' if v['pass'] else 'off'} — {v['note']}"
-            for k, v in scored["dimensions"].items())
+
+        try:
+            fields = compute_fields(cfg, api_key, title=title, source="MANUAL",
+                                    value=existing_value, url=url,
+                                    ae_override=existing_ae)
+        except Exception as exc:
+            print(f"WARNING: manual qualify failed for {(title or url)[:50]}: {exc}",
+                  file=sys.stderr)
+            continue
+        if not fields:
+            continue
+
+        slug = _re.sub(r"[^a-z0-9]+", "-", fields["title"].lower()).strip("-")[:60]
         props = {
             cfg["notion"]["notice_id_property"]: NotionClient._rt(f"MANUAL:{slug}"),
             "Source": {"select": {"name": "MANUAL"}},
-            "Summary": NotionClient._rt(q.get("summary", "")),
-            "General contractor": NotionClient._rt(q.get("general_contractor", "")),
-            "Project stage": {"select": {"name": q.get("project_stage", "Unknown")}},
-            "Work nature": {"select": {"name": q.get("work_nature", "Unknown")}},
-            "Expected concrete start": NotionClient._rt(q.get("expected_concrete_start", "")),
-            "Fit": {"select": {"name": scored["fit"]}},
-            "Fit reason": NotionClient._rt(scored["reason"]),
-            "Fit dimensions": NotionClient._rt(dimensions_str),
-            "Location": NotionClient._rt(q.get("location", "")),
+            "Summary": NotionClient._rt(fields["summary"]),
+            "General contractor": NotionClient._rt(fields["gc"]),
+            "JV / parents": NotionClient._rt(fields["jv_parents"]),
+            "Project stage": {"select": {"name": fields["stage"]}},
+            "Work nature": {"select": {"name": fields["work_nature"]}},
+            "Expected concrete start": NotionClient._rt(fields["concrete_start"]),
+            "Fit": {"select": {"name": fields["fit"]}},
+            "Fit reason": NotionClient._rt(fields["fit_reason"]),
+            "Fit dimensions": NotionClient._rt(fields["fit_dimensions"]),
+            "Location": NotionClient._rt(fields["location"]),
         }
-        completion = resolve_date(q.get("expected_completion", ""))
-        if completion:
-            props["Expected completion"] = {"date": {"start": completion.isoformat()}}
-        if sdr:
-            props["SDR"] = {"select": {"name": sdr}}
-        if scored["profile"]:
-            props["Fit profile"] = {"select": {"name": scored["profile"]}}
-        if q.get("project_type"):
-            props["Project type"] = {"select": {"name": q["project_type"]}}
-        coords = geocode(q.get("location", "")) if cfg["ingest"].get("geocode") else None
-        if coords:
-            props["Lat"] = {"number": coords[0]}
-            props["Lng"] = {"number": coords[1]}
+        if not title:   # human pasted only a URL — set the page-derived title
+            props[cfg["notion"]["title_property"]] = {
+                "title": [{"text": {"content": fields["title"][:200]}}]}
+        if fields["completion_date"]:
+            props["Expected completion"] = {"date": {"start": fields["completion_date"]}}
+        if fields["sdr"]:
+            props["SDR"] = {"select": {"name": fields["sdr"]}}
+        if fields["fit_profile"]:
+            props["Fit profile"] = {"select": {"name": fields["fit_profile"]}}
+        if fields["project_type"]:
+            props["Project type"] = {"select": {"name": fields["project_type"]}}
+        if fields["lat"] is not None:
+            props["Lat"] = {"number": fields["lat"]}
+            props["Lng"] = {"number": fields["lng"]}
         notion.update_properties(row["id"], props)
         count += 1
         time.sleep(0.4)

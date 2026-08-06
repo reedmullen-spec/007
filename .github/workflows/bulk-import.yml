@@ -1,0 +1,50 @@
+name: Bulk import
+
+# Runs a committed CSV of hand-researched projects through the same
+# qualify + score + route pipeline as ingest.py. See bulk_import.py.
+on:
+  workflow_dispatch:
+    inputs:
+      csv_path:
+        description: "Path to the CSV, relative to repo root"
+        type: string
+        required: true
+      min_value:
+        description: "Skip rows below this value (row's own currency, no FX conversion)"
+        type: string
+        default: ""
+      source_tag:
+        description: "Notion Source value + notice_id prefix for these rows"
+        type: string
+        default: "BULK"
+      dry_run:
+        description: "Dry run (print what would be created, change nothing)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run bulk import
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ARGS="${{ github.event.inputs.csv_path }} --source-tag ${{ github.event.inputs.source_tag }}"
+          if [ -n "${{ github.event.inputs.min_value }}" ]; then
+            ARGS="$ARGS --min-value ${{ github.event.inputs.min_value }}"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          python bulk_import.py $ARGS

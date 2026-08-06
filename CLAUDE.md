@@ -25,7 +25,15 @@ ask Reed before changing architecture, not just code.
   completion, location, use cases — observations only, no fit; see
   src/scoring.py) → geocode (Nominatim, cached in state) → score → create
   Notion row, Status=New. Also sweeps rows humans added by hand (no Notice
-  ID): qualifies + scores them and stamps Source=MANUAL. Also derives
+  ID): if a `Notice URL` is pasted, fetches the article text
+  (`src/fetch_content.py`) so qualify works from real content instead of a
+  bare title, and derives the title itself when the human only pasted a
+  URL — then qualifies + scores and stamps Source=MANUAL (shared
+  `src/manual_entry.py` pipeline, also used by `bulk_import.py` and
+  `src/intake.py`). Also sweeps the separate "007 — Submit a project"
+  intake database the same way (`src/intake.py`, `Source=INTAKE`,
+  `notice_id` prefix `INTAKE:`) — see the intake note under Architecture.
+  Also derives
   `SDR` from the resolved `AE` (`routing.ae_sdr_map`) and writes it
   alongside — Alex owns Lawson/Alicia/Ben's patch, Jamie owns
   Britain/Brady/Justin's, Reed's own AEs (Lisa/Aled/Avi/Jeremy) get the
@@ -159,6 +167,16 @@ ask Reed before changing architecture, not just code.
     existing row. `sync.py` writes the reverse (`Status`/`Next
     action`/`Next action date` only) back to the master. Widening either
     direction re-creates the sync-fighting this split was built to avoid.
+12. **The master "007 Projects" database is restricted to Reed + Issam.**
+    Anyone else who needs to add a project uses the separate "007 —
+    Submit a project" intake database (`ensure_intake_database`,
+    `src/intake.py`) instead — its own page, its own Notion sharing, a
+    deliberately minimal schema. A form view on the master itself was
+    considered and rejected: the Notion API can't hide fields on a form,
+    so it would expose every master field (including computed ones like
+    `Fit`/`AE`/`SDR`) to whoever could submit it. Don't add a form view
+    directly on the master database — route new manual-entry ideas
+    through the intake database instead.
 
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage

@@ -55,12 +55,22 @@ Judge only from the given data. Unknown is a valid answer; never invent."""
 
 def qualify(api_key: str, cfg: dict, *, title: str, source: str,
             country: str, buyer: str = "", value: str = "",
-            url: str = "") -> dict:
+            url: str = "", article_text: str = "", notes: str = "") -> dict:
+    """article_text: full page text when the source gives us more than a
+    bare notice — the manual-entry paths (URL-to-project, bulk import)
+    fetch this via src/fetch_content.py so the model works from a real
+    article instead of just a title. notes: free-text human context (the
+    intake form's Notes field) — a person's own knowledge, kept distinct
+    from the fetched article text."""
     from .notion_client import NotionClient as _N
     quote = lambda xs: ", ".join(f'"{x}"' for x in xs)
     user = (f"Source: {source}\nTitle: {title}\nCountry: {country}\n"
             f"Buyer/entity: {buyer or 'unknown'}\nValue: {value or 'unknown'}\n"
             f"URL: {url or 'n/a'}")
+    if article_text:
+        user += f"\n\nFull article text:\n{article_text}"
+    if notes:
+        user += f"\n\nSubmitter's own notes:\n{notes}"
     body = {
         "model": cfg["ingest"]["qualify_model"],
         "max_tokens": 500,
