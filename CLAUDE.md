@@ -21,12 +21,30 @@ ask Reed before changing architecture, not just code.
   skips politely without it) + news RSS (trade press + ~84 generated Google
   News contractor queries from `watchlist.yaml`). Filter → dedup → qualify
   (one small Anthropic API call per candidate: summary, canonical GC,
-  project type, phase, expected concrete start, location, low/med/high fit +
-  one-line reason) → geocode (Nominatim, cached in state) → create Notion
-  row, Status=New. Also sweeps rows humans added by hand (no Notice ID):
-  qualifies them and stamps Source=MANUAL.
+  project type, work nature, project stage, expected concrete start +
+  completion, location, use cases — observations only, no fit; see
+  src/scoring.py) → geocode (Nominatim, cached in state) → score → create
+  Notion row, Status=New. Also sweeps rows humans added by hand (no Notice
+  ID): qualifies + scores them and stamps Source=MANUAL.
   Backfill: `--historical --days-back 365 --max-rows 300`, run repeatedly;
   dedup makes it self-continuing. News RSS cannot backfill (feeds are shallow).
+- `src/scoring.py` — deterministic fit scoring (High/Medium/Low/
+  Disqualified) against 5 named profiles; `qualify.py`'s model call
+  supplies observations only, never a fit. Deliberately narrow hard
+  disqualification (Aug 2026 revision, Issam's biggest accuracy ask): ONLY
+  `project_stage == "Complete"` or `Expected completion` under
+  `MIN_MONTHS_TO_COMPLETION` (6) away. A past `expected_concrete_start` is
+  NOT disqualifying — phased pours (foundations now, a pause, then
+  structure later) mean a start up to `PAST_START_GRACE_MONTHS` (12) ago
+  still reads as a live site; only the soft "timing" dimension fails
+  beyond that, capping the band rather than killing the row. `project_stage`
+  is its own dimension (`HIGH_STAGES`: on site / groundbreaking / PCSA /
+  awarded → can reach High; still at tender → caps at Medium, real
+  pipeline but a Q1+ booking, not this quarter). `resolve_date()` parses
+  both qualify's fuzzy text ("Q3 2028") and an exact ISO date read back
+  from Notion's `Expected completion` property — needed because
+  `rescore_existing.py` re-scores from already-stored fields, not fresh
+  qualify output.
 - `triage.py` — Monday 06:00 UTC. One list = one person (config
   `triage.lists`: `{name, filter, count, channel}`, filter is `AE equals` /
   `Region equals` / `Product fit contains` — see `build_filter`). Ranked

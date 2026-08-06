@@ -41,6 +41,8 @@ product_fit: array of zero or more of {products}. Rules: mass concrete or
 concrete_opportunity: "Small" | "Medium" | "Large" | "Unknown" — the size of
   OUR prize (concrete volume), not the project's headline value.
 expected_concrete_start: best estimate like "Q3 2027" or "Live" or "Unknown".
+expected_completion: best estimate of practical completion, like "Q3 2028"
+  or "2029" or "Unknown".
 location: most specific place you can infer (site, town, or region). "" if none.
 competitor: any rival monitoring/curing system named or implied, else "".
 
@@ -96,6 +98,7 @@ def qualify(api_key: str, cfg: dict, *, title: str, source: str,
     data["product_fit"] = [p for p in (data.get("product_fit") or [])
                            if p in _N.PRODUCTS]
     for key in ("summary", "general_contractor", "client", "jv_parents",
-                "location", "competitor", "expected_concrete_start"):
+                "location", "competitor", "expected_concrete_start",
+                "expected_completion"):
         data.setdefault(key, "")
     return data

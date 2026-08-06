@@ -170,6 +170,7 @@ class NotionClient:
         "GC": {"rich_text": {}},
         "Location": {"rich_text": {}},
         "Expected concrete start": {"rich_text": {}},
+        "Expected completion": {"date": {}},
         "Value band": {"select": {"options": [
             {"name": "Under 50M", "color": "gray"},
             {"name": "50-250M", "color": "yellow"},
@@ -216,6 +217,7 @@ class NotionClient:
         "Tender deadline": {"date": {}},
         "Announced": {"date": {}},
         "Expected concrete start": {"rich_text": {}},
+        "Expected completion": {"date": {}},
         "Project type": {"select": {"options": [{"name": t} for t in PROJECT_TYPES]}},
         "Work nature": {"select": {"options": [{"name": w} for w in WORK_NATURES]}},
         "Use case": {"multi_select": {"options": [{"name": u} for u in USE_CASES]}},
@@ -347,6 +349,8 @@ class NotionClient:
             props["Tender deadline"] = {"date": {"start": fields["deadline"][:10]}}
         if fields.get("announced"):
             props["Announced"] = {"date": {"start": fields["announced"][:10]}}
+        if fields.get("completion_date"):
+            props["Expected completion"] = {"date": {"start": fields["completion_date"]}}
         body = {"parent": {"database_id": self.ensure_database()},
                 "properties": props}
         return self._check(self.session.post(f"{BASE}/pages", json=body, timeout=30))

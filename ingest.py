@@ -30,7 +30,7 @@ from src.models import Project
 from src.notion_client import NotionClient
 from src.qualify import qualify
 from src.routing import resolve_ae
-from src.scoring import score_project
+from src.scoring import resolve_date, score_project
 from src.sources import austender, fts, sam, ted
 
 from news import collect as collect_news, REGION_COUNTRY
@@ -197,6 +197,7 @@ def main() -> int:
         dimensions_str = "; ".join(
             f"{k}: {'ok' if v['pass'] else 'off'} — {v['note']}"
             for k, v in scored["dimensions"].items())
+        completion = resolve_date(q.get("expected_completion", ""))
 
         try:
             notion.create_project_row({
@@ -211,6 +212,7 @@ def main() -> int:
                 "competitor": q.get("competitor", ""),
                 "value": c["value"], "currency": c["currency"] or "EUR",
                 "concrete_start": q.get("expected_concrete_start", ""),
+                "completion_date": completion.isoformat() if completion else "",
                 "fit": scored["fit"],
                 "fit_profile": scored["profile"],
                 "fit_reason": scored["reason"],
@@ -284,6 +286,9 @@ def sweep_manual_rows(cfg: dict, api_key: str, notion: NotionClient) -> int:
             "Fit dimensions": NotionClient._rt(dimensions_str),
             "Location": NotionClient._rt(q.get("location", "")),
         }
+        completion = resolve_date(q.get("expected_completion", ""))
+        if completion:
+            props["Expected completion"] = {"date": {"start": completion.isoformat()}}
         if scored["profile"]:
             props["Fit profile"] = {"select": {"name": scored["profile"]}}
         if q.get("project_type"):
