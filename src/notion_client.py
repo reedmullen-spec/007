@@ -122,8 +122,12 @@ class NotionClient:
         "Awarded - pre-start", "Groundbreaking / enabling works",
         "Main works / on site", "Finishing", "Complete", "Unknown",
     ]
+    # "Active Contact" — renamed live in Notion from "Working on" at some
+    # point without the code being updated; ensure_schema() only ADDS
+    # missing properties, it never renames existing options, so this must
+    # stay in sync with Notion by hand.
     STATUSES = [
-        ("New", "gray"), ("This week", "blue"), ("Working on", "yellow"),
+        ("New", "gray"), ("This week", "blue"), ("Active Contact", "yellow"),
         ("Recontact later", "orange"), ("On the project", "green"),
         ("Disqualified", "red"), ("Lost", "red"),
     ]

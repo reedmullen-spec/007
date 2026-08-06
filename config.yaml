@@ -247,7 +247,7 @@ ingest:
   statuses:                     # lifecycle -> Notion select (map colours)
     - New                       # grey
     - This week                 # blue (set by Monday triage)
-    - Working on                # amber
+    - Active Contact            # amber (renamed live in Notion from "Working on")
     - Recontact later           # hollow amber
     - On the project            # green
     - Disqualified              # red (never pursued)

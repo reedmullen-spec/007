@@ -99,7 +99,7 @@ def enrich_deal(cfg: dict, hubspot: HubSpotClient, *, deal_id: str,
         notion.update_properties(row["id"], {
             "HubSpot deal": {"url": f"https://app.hubspot.com/contacts/"
                                     f"{cfg['hubspot']['portal_id']}/deal/{deal_id}"},
-            "Status": {"select": {"name": "Working on"}},
+            "Status": {"select": {"name": "Active Contact"}},
         })
     except Exception:
         pass  # row may predate the extended schema; never block the pack

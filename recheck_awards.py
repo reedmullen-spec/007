@@ -49,7 +49,7 @@ from src.config import env, load_config
 from src.notion_client import NotionClient
 from src.sources.ted import _all_strings, _first_text
 
-ACTIVE_STATUSES = ["New", "This week", "Working on", "Recontact later"]
+ACTIVE_STATUSES = ["New", "This week", "Active Contact", "Recontact later"]
 TED_SEARCH_URL = "https://api.ted.europa.eu/v3/notices/search"
 FTS_SEARCH_URL = "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages"
 

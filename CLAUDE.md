@@ -163,9 +163,11 @@ contractor side. Dan (US Data Hub) is out of the automated system entirely —
 see the note on `triage.lists` above.
 
 ## Statuses (Notion select; drive the future map colours)
-New (grey) → This week (blue) → Working on (amber) / Recontact later
-(hollow amber, has date) → On the project (green) / Disqualified / Lost
-(both red — kept separate for partner conversations, never delete rows).
+New (grey) → This week (blue) → Active Contact (amber, renamed live from
+"Working on" — code and Notion must be kept in sync by hand, ensure_schema()
+only adds missing properties, never renames existing options) / Recontact
+later (hollow amber, has date) → On the project (green) / Disqualified /
+Lost (both red — kept separate for partner conversations, never delete rows).
 
 ## Roadmap context
 - V2: static HTML portal generated from the Notion DB — list + Rightmove-
