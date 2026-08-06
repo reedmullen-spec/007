@@ -33,7 +33,13 @@ ask Reed before changing architecture, not just code.
   `src/intake.py`). Also sweeps the separate "007 — Submit a project"
   intake database the same way (`src/intake.py`, `Source=INTAKE`,
   `notice_id` prefix `INTAKE:`) — see the intake note under Architecture.
-  Also derives
+  `bulk_import.py` (researched CSV lists, e.g. Jeremy's Queensland set)
+  skips the Anthropic `qualify()` call entirely for a row that already
+  supplies `project_type`/`work_nature`/`stage` columns — a researcher who
+  already determined those doesn't need an API call to re-derive what
+  they already know, and validates against the same canonical option
+  lists (`src/qualify.py`'s `normalize_observations`) so a typo can't
+  write a bad value into a Notion select property. Also derives
   `SDR` from the resolved `AE` (`routing.ae_sdr_map`) and writes it
   alongside — Alex owns Lawson/Alicia/Ben's patch, Jamie owns
   Britain/Brady/Justin's, Reed's own AEs (Lisa/Aled/Avi/Jeremy) get the

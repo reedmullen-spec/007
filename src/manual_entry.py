@@ -15,7 +15,7 @@ import datetime as dt
 
 from .fetch_content import fetch_page
 from .geocode import geocode
-from .qualify import qualify
+from .qualify import normalize_observations, qualify
 from .routing import resolve_ae
 from .scoring import resolve_date, score_project
 
@@ -29,10 +29,14 @@ def region_for_country(country: str) -> str:
     return COUNTRY_REGION.get((country or "").upper(), "eu")
 
 
+CATEGORICAL_KEYS = ("project_type", "work_nature", "project_stage")
+
+
 def compute_fields(cfg: dict, api_key: str, *, title: str, source: str,
                    country: str = "", buyer: str = "", value: float | None = None,
                    currency: str = "EUR", url: str = "", region: str = "",
-                   ae_override: str | None = None, notes: str = "") -> dict | None:
+                   ae_override: str | None = None, notes: str = "",
+                   known: dict | None = None) -> dict | None:
     """Fetches `url`'s article text (if given) to enrich the qualify call,
     then runs qualify -> geocode -> AE/SDR routing -> score. Returns None
     only if there's no usable title even after trying to derive one from
@@ -41,19 +45,49 @@ def compute_fields(cfg: dict, api_key: str, *, title: str, source: str,
     ae_override: use this AE as-is instead of resolving one from
     gc/buyer/country. Manual rows are often hand-tagged with an AE already
     (White Cap/AE tips come in pre-tagged) — a fresh geography-based
-    resolve would silently clobber that."""
+    resolve would silently clobber that.
+
+    known: pre-researched fields (bulk_import.py's optional CSV columns —
+    project_type/work_nature/project_stage/use_case/gc/summary/
+    concrete_start/completion). If the three categorical fields are all
+    present, qualify() is skipped entirely for this row — a researcher who
+    already determined the stage/type shouldn't need an API call to
+    re-derive what they already know, and their own read is arguably more
+    reliable than a model's guess from a bare title. Falls back to
+    qualify() for anything left unknown."""
+    have_categoricals = bool(known) and all(known.get(k) for k in CATEGORICAL_KEYS)
+
     article_text = ""
-    if url:
+    if url and (not title or not have_categoricals):
         page = fetch_page(url)
-        article_text = page["text"]
+        if not have_categoricals:
+            article_text = page["text"]
         if not title:
             title = page["title"]
     if not title:
         return None
 
-    q = qualify(api_key, cfg, title=title, source=source, country=country,
-               buyer=buyer, value=(f"{value:,.0f} {currency}" if value else ""),
-               url=url, article_text=article_text, notes=notes)
+    if have_categoricals:
+        q = normalize_observations({
+            "project_type": known["project_type"],
+            "work_nature": known["work_nature"],
+            "project_stage": known["project_stage"],
+            "use_case": known.get("use_case", []),
+            "product_fit": known.get("product_fit", []),
+            "concrete_opportunity": known.get("concrete_opportunity", "Unknown"),
+            "expected_concrete_start": known.get("expected_concrete_start", ""),
+            "expected_completion": known.get("expected_completion", ""),
+            "summary": known.get("summary", ""),
+            "general_contractor": known.get("gc", ""),
+            "client": known.get("client", ""),
+            "jv_parents": known.get("jv_parents", ""),
+            "location": known.get("location", ""),
+            "competitor": known.get("competitor", ""),
+        })
+    else:
+        q = qualify(api_key, cfg, title=title, source=source, country=country,
+                   buyer=buyer, value=(f"{value:,.0f} {currency}" if value else ""),
+                   url=url, article_text=article_text, notes=notes)
 
     lat = lng = None
     if cfg["ingest"].get("geocode", True):
