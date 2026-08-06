@@ -2,5 +2,6 @@
   "database_id": "3aca315b-1b00-8166-983d-ca3ef89f9b05",
   "focus_database_id": "3b3a315b-1b00-81c5-94fc-e7c08f972903",
   "intake_database_id": "3b4a315b-1b00-81a8-982a-fc30e11381e1",
-  "intake_form_view_id": "3b4a315b-1b00-812a-a2da-000c7e0b3dc0"
+  "intake_form_view_id": "3b4a315b-1b00-812a-a2da-000c7e0b3dc0",
+  "intake_pending_view_id": "3b4a315b-1b00-815a-b926-000cdcd7d398"
 }
