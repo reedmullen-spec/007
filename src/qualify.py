@@ -53,6 +53,33 @@ accurate observation only.
 Judge only from the given data. Unknown is a valid answer; never invent."""
 
 
+def normalize_observations(data: dict) -> dict:
+    """Coerces free-form fields against the canonical option lists. Shared
+    by the model's raw JSON output (below) and by human-supplied fields
+    (bulk_import.py's --known columns, when a researcher already knows the
+    stage/type themselves and there's no need to spend an API call
+    re-deriving what's already known) — either way, nothing gets written
+    to a Notion select property that isn't one of its defined options."""
+    from .notion_client import NotionClient as _N
+    if data.get("project_type") not in _N.PROJECT_TYPES:
+        data["project_type"] = "Other"
+    if data.get("work_nature") not in _N.WORK_NATURES:
+        data["work_nature"] = "Unknown"
+    if data.get("project_stage") not in _N.PROJECT_STAGES:
+        data["project_stage"] = "Unknown"
+    if data.get("concrete_opportunity") not in ("Small", "Medium", "Large", "Unknown"):
+        data["concrete_opportunity"] = "Unknown"
+    data["use_case"] = [u for u in (data.get("use_case") or [])
+                        if u in _N.USE_CASES] or ["Unknown"]
+    data["product_fit"] = [p for p in (data.get("product_fit") or [])
+                           if p in _N.PRODUCTS]
+    for key in ("summary", "general_contractor", "client", "jv_parents",
+                "location", "competitor", "expected_concrete_start",
+                "expected_completion"):
+        data.setdefault(key, "")
+    return data
+
+
 def qualify(api_key: str, cfg: dict, *, title: str, source: str,
             country: str, buyer: str = "", value: str = "",
             url: str = "", article_text: str = "", notes: str = "") -> dict:
@@ -92,23 +119,4 @@ def qualify(api_key: str, cfg: dict, *, title: str, source: str,
                    if b.get("type") == "text")
     text = text.replace("```json", "").replace("```", "").strip()
     data = json.loads(text)
-
-    # Defensive normalisation against the canonical lists. Off-list values
-    # coerce rather than fail — a wrong option name breaks the Notion write.
-    if data.get("project_type") not in _N.PROJECT_TYPES:
-        data["project_type"] = "Other"
-    if data.get("work_nature") not in _N.WORK_NATURES:
-        data["work_nature"] = "Unknown"
-    if data.get("project_stage") not in _N.PROJECT_STAGES:
-        data["project_stage"] = "Unknown"
-    if data.get("concrete_opportunity") not in ("Small", "Medium", "Large", "Unknown"):
-        data["concrete_opportunity"] = "Unknown"
-    data["use_case"] = [u for u in (data.get("use_case") or [])
-                        if u in _N.USE_CASES] or ["Unknown"]
-    data["product_fit"] = [p for p in (data.get("product_fit") or [])
-                           if p in _N.PRODUCTS]
-    for key in ("summary", "general_contractor", "client", "jv_parents",
-                "location", "competitor", "expected_concrete_start",
-                "expected_completion"):
-        data.setdefault(key, "")
-    return data
+    return normalize_observations(data)
