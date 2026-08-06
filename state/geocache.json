@@ -56,6 +56,10 @@
     7.3285002
   ],
   "alsfeld-berfa, hesse, germany|de": null,
+  "alt penedès i garraf, catalonia, spain|es": [
+    41.2223402,
+    1.7095086
+  ],
   "altdorf, germany|de": [
     49.2863021,
     8.2164153
@@ -546,6 +550,7 @@
     47.414613,
     9.1861489
   ],
+  "flieden–gemünden, hesse, germany|de": null,
   "forchheim, bavaria, germany|de": [
     49.7122951,
     11.0664285
@@ -753,6 +758,10 @@
   "hannover, germany|de": [
     52.3744779,
     9.7385532
+  ],
+  "haringvliet, netherlands|nl": [
+    51.7490412,
+    4.2466676
   ],
   "haute-vienne, france|fr": [
     45.9190193,
@@ -1030,6 +1039,7 @@
     51.3406321,
     12.3747329
   ],
+  "lemmer–delfzijl, netherlands|nl": null,
   "lerchenfeld 10, hamburg, germany|de": [
     53.5690389,
     10.0301006
@@ -1123,6 +1133,10 @@
   "manosque, provence-alpes-côte d'azur, france|fr": [
     43.8338026,
     5.7826657
+  ],
+  "mantel, bavaria, germany|de": [
+    49.6538716,
+    12.0434814
   ],
   "markelsheim–igersheim–bad mergentheim, baden-württemberg, germany|de": [
     49.4836098,
@@ -1502,6 +1516,10 @@
     53.0028801,
     -2.2128877
   ],
+  "rue de courcelles, reims, france|fr": [
+    49.2644515,
+    4.0113607
+  ],
   "ruthenbeck, germany|de": [
     53.5324335,
     11.707071
@@ -1543,9 +1561,17 @@
     48.734239,
     7.0557352
   ],
+  "schaarbeek, brussels, belgium|be": [
+    50.878395,
+    4.3784579
+  ],
   "schaerbeek, brussels, belgium|be": [
     50.878395,
     4.3784579
+  ],
+  "schenkenzell, baden-württemberg, germany|de": [
+    48.3105623,
+    8.3717915
   ],
   "schirnding, bavaria, germany|de": [
     50.081242,
@@ -1713,6 +1739,7 @@
     43.6044638,
     1.4442433
   ],
+  "treuchtlingen–nürnberg corridor, bavaria, germany|de": null,
   "troisdorf to bonn oberkassel, north rhine-westphalia, germany|de": null,
   "troisdorf – bonn-oberkassel, north rhine-westphalia, germany|de": null,
   "troisdorf–unkel, river sieg, north rhine-westphalia / rhineland-palatinate border, germany|de": null,
@@ -1720,6 +1747,7 @@
     51.4407839,
     14.667536
   ],
+  "täsch–zermatt, oberwallis, switzerland|ch": null,
   "ulm, baden-württemberg, germany|de": [
     48.3984968,
     9.9912458
@@ -1881,6 +1909,10 @@
     49.0012229,
     12.4041615
   ],
+  "yorkshire, england|gb": [
+    53.9825271,
+    -1.38525
+  ],
   "zee & delta district noord, netherlands|nl": null,
   "zeebrugge, belgium|be": [
     51.3312211,
@@ -1894,6 +1926,10 @@
   "zuid nederland, netherlands|nl": [
     51.4193031,
     5.6516717
+  ],
+  "zwarte water, overijssel, netherlands|nl": [
+    52.5938219,
+    6.0838597
   ],
   "zwolle, netherlands|nl": [
     52.5145653,
