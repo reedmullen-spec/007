@@ -50,8 +50,10 @@ ask Reed before changing architecture, not just code.
   against it instead of the default order; late or blank → default ranking,
   never an empty list. A narrow focus returns a short list plus an explicit
   "only N matched" line — never padded. `focus_reminder.py` DMs everyone in
-  `triage.lists` Friday 17:00 UTC with a link to the Focus database, since
-  the ritual is pull-only otherwise (nobody's prompted to enter one).
+  `triage.lists` at ~4pm THEIR local time on Friday (per-person
+  `triage.lists[].timezone`, checked hourly via zoneinfo so it survives
+  DST without cron edits) with a link to the Focus database, since the
+  ritual is pull-only otherwise (nobody's prompted to enter one).
 - **Per-AE pages** (`src/ae_pages.py`) — Notion permissions are page-level,
   not row-level, so a filtered view of the read-only master can't be made
   person-editable without exposing every row. Each person instead gets their

@@ -268,23 +268,28 @@ triage:
   # person owns or is scouting.
   focus_deadline_hour_utc: 20   # Sunday 20:00 UTC cutoff for focus entry
   manual_first: true            # human/White Cap intel outranks scraped
+  # `timezone` (IANA) is used only by focus_reminder.py, to send each
+  # person's Friday reminder at ~4pm THEIR local time. Several White Cap
+  # AEs cover multiple US time zones (see routing.us_state_ae) — the value
+  # here is the best single approximation for their state list, not exact
+  # for every state they own; adjust if it's wrong for a given person.
   lists:
     # --- EMEA (Reed's AEs) ---
-    - { name: lisa,    filter: { AE: lisa },    count: 10, channel: emea }
-    - { name: aled,    filter: { AE: aled },    count: 10, channel: emea }
-    - { name: avi,     filter: { AE: avi },     count: 10, channel: emea }
+    - { name: lisa,    filter: { AE: lisa },    count: 10, channel: emea, timezone: "Europe/London" }
+    - { name: aled,    filter: { AE: aled },    count: 10, channel: emea, timezone: "Europe/London" }
+    - { name: avi,     filter: { AE: avi },     count: 10, channel: emea, timezone: "Europe/London" }
     # --- APAC / Canada ---
-    - { name: jeremy,  filter: { Region: au },  count: 5,  channel: apac }
-    - { name: justin,  filter: { Region: ca },  count: 5,  channel: canada }
+    - { name: jeremy,  filter: { Region: au },  count: 5,  channel: apac, timezone: "Australia/Sydney" }
+    - { name: justin,  filter: { Region: ca },  count: 5,  channel: canada, timezone: "America/Toronto" }
     # --- US White Cap team (state-map assigned) ---
-    - { name: lawson,  filter: { AE: lawson },  count: 10, channel: us_west }
-    - { name: alicia,  filter: { AE: alicia },  count: 10, channel: us_west }
-    - { name: ben,     filter: { AE: ben },     count: 10, channel: us_east }
-    - { name: britain, filter: { AE: britain }, count: 10, channel: us_east }
-    - { name: brady,   filter: { AE: brady },   count: 10, channel: us_east }
+    - { name: lawson,  filter: { AE: lawson },  count: 10, channel: us_west, timezone: "America/Los_Angeles" }
+    - { name: alicia,  filter: { AE: alicia },  count: 10, channel: us_west, timezone: "America/Denver" }
+    - { name: ben,     filter: { AE: ben },     count: 10, channel: us_east, timezone: "America/Chicago" }
+    - { name: britain, filter: { AE: britain }, count: 10, channel: us_east, timezone: "America/New_York" }
+    - { name: brady,   filter: { AE: brady },   count: 10, channel: us_east, timezone: "America/New_York" }
     # --- SDR squad: same projects, contractor-side approach ---
-    - { name: alex,    filter: { Region: us_west }, count: 10, channel: us_west }
-    - { name: jamie,   filter: { Region: us_east }, count: 10, channel: us_east }
+    - { name: alex,    filter: { Region: us_west }, count: 10, channel: us_west, timezone: "America/Los_Angeles" }
+    - { name: jamie,   filter: { Region: us_east }, count: 10, channel: us_east, timezone: "America/New_York" }
     # Dan (US Data Hub) is deliberately excluded from triage.lists — per the
     # team, Data Hub is handled manually, not through the automated per-AE
     # page/list system. "dan" stays a selectable AE value in the master
