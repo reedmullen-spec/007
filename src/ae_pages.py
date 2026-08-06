@@ -35,6 +35,9 @@ def _master_facts(master_row: dict) -> dict:
     def sel(name):
         return (props.get(name) or {}).get("select", {}).get("name", "")
 
+    def date(name):
+        return (props.get(name) or {}).get("date", {}).get("start") or ""
+
     title = "".join(t.get("plain_text", "") for t in
                     (props.get("Name") or {}).get("title", []))
     return {
@@ -43,6 +46,7 @@ def _master_facts(master_row: dict) -> dict:
         "gc": rt("General contractor"),
         "location": rt("Location"),
         "concrete_start": rt("Expected concrete start"),
+        "completion": date("Expected completion"),
         "value_band": sel("Value band"),
     }
 
@@ -64,6 +68,8 @@ def upsert_ae_row(notion: NotionClient, person: str, master_row: dict,
         "GC": NotionClient._rt(facts["gc"]),
         "Location": NotionClient._rt(facts["location"]),
         "Expected concrete start": NotionClient._rt(facts["concrete_start"]),
+        "Expected completion": ({"date": {"start": facts["completion"]}}
+                                if facts["completion"] else {"date": None}),
         "Value band": ({"select": {"name": facts["value_band"]}}
                        if facts["value_band"] else {"select": None}),
     }

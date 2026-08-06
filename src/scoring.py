@@ -22,6 +22,15 @@ is computed deterministically from the qualify output. The model supplies
 observations (use case, work nature, timing); the RULES decide the band. Same
 project scored twice always lands in the same band, and the rubric is tunable
 in one place instead of buried in a prompt.
+
+Aug 2026 revision (Issam's biggest accuracy ask): a past concrete start is
+NOT disqualifying on its own — phased pours mean foundations now, a pause,
+then structure later, so a start up to 12 months ago still reads as a live
+site. The ONLY automatic disqualification left is a project that's already
+Complete, or one whose expected completion is under 6 months away (too late
+to spec anything in). Project stage is now its own scoring dimension —
+on-site/PCSA/awarded work can reach High; still-at-tender work is real
+pipeline but caps at Medium (Q1+ booking, not this quarter).
 """
 from __future__ import annotations
 
@@ -97,27 +106,46 @@ CARBON_SIGNALS = ("net zero", "net-zero", "low carbon", "low-carbon", "carbon ne
                   "carbon-negative", "embodied carbon", "co2", "co₂", "epd",
                   "prestatieladder", "ghg", "decarbon", "sustainab")
 
-# Scope that isn't structural concrete work we can instrument.
-NON_STRUCTURAL_TYPES = {"Other"}
+# Project stages where the concrete is already gone. "Finishing" is
+# deliberately NOT here — punch-list/finishing trades can still involve
+# concrete (screeds, repairs); only a fully Complete project is spent.
+SPENT_STAGES = {"Complete"}
 
-# Project stages where the concrete is already gone.
-SPENT_STAGES = {"Finishing", "Complete"}
+# Active-pipeline stages for the "stage" dimension (Issam's biggest
+# accuracy ask) — on site, in preconstruction, or already awarded.
+HIGH_STAGES = {"Main works / on site", "Groundbreaking / enabling works",
+               "PCSA / preconstruction", "Awarded - pre-start"}
+
+# How far into the past a concrete start can be and still read as a live
+# site rather than a stale notice — phased pours (foundations now, a
+# pause, then structure later) are normal on any real job of size.
+PAST_START_GRACE_MONTHS = 12
+
+# A project completing sooner than this has no runway left to sell into.
+MIN_MONTHS_TO_COMPLETION = 6
 
 
 # --------------------------------------------------------------------------
 
-def _months_until(concrete_start: str) -> float | None:
-    """Parse 'Q3 2027' / '2027' / 'Live' / 'Unknown' into months from today.
-    Returns None when unknown, 0 for live/imminent, negative for past."""
-    if not concrete_start:
+def resolve_date(text: str) -> dt.date | None:
+    """Parse an exact ISO date (round-tripping a stored Notion date property)
+    or a fuzzy estimate like 'Q3 2027' / '2027' / 'Live' / 'Unknown' into a
+    representative calendar date (mid-quarter / mid-year). None when
+    unparseable or unknown."""
+    if not text:
         return None
-    s = concrete_start.strip().lower()
+    s = text.strip()
+    try:
+        return dt.date.fromisoformat(s[:10])
+    except ValueError:
+        pass
+
+    s = s.lower()
     if s in ("unknown", "tbc", "n/a", ""):
         return None
     if s in ("live", "now", "on site", "underway", "started"):
-        return 0.0
+        return dt.date.today()
 
-    today = dt.date.today()
     q = re.search(r"q([1-4])\s*[/ -]?\s*(20\d{2})", s)
     if q:
         quarter, year = int(q.group(1)), int(q.group(2))
@@ -131,7 +159,20 @@ def _months_until(concrete_start: str) -> float | None:
         if m:
             month = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug",
                      "sep", "oct", "nov", "dec"].index(m.group(1)) + 1
-    return (year - today.year) * 12 + (month - today.month)
+    return dt.date(year, month, 15)
+
+
+def _months_from(target: dt.date | None) -> float | None:
+    if target is None:
+        return None
+    today = dt.date.today()
+    return (target.year - today.year) * 12 + (target.month - today.month)
+
+
+def _months_until(concrete_start: str) -> float | None:
+    """Months from today until `concrete_start`. None when unknown, 0 for
+    live/imminent, negative for past."""
+    return _months_from(resolve_date(concrete_start))
 
 
 def _has_carbon_signal(text: str) -> bool:
@@ -172,24 +213,20 @@ def _match_profiles(fields: dict) -> list[dict]:
 
 
 def _disqualify(fields: dict, cfg: dict) -> str | None:
-    """Hard exclusions. Returns the reason, or None to continue scoring."""
-    use_cases = set(fields.get("use_case") or [])
-    ptype = fields.get("project_type", "")
+    """Hard exclusions. Deliberately narrow — everything else (unclear
+    scope, stale-looking timing, wrong activity) is a soft dimension that
+    caps the band instead of killing the row outright; see has_
+    structural_scope()'s activity gate and the "stage"/"timing" dimensions
+    below. Returns the reason, or None to continue scoring."""
     stage = fields.get("project_stage", "")
-    months = _months_until(fields.get("expected_concrete_start", ""))
-
     if stage in SPENT_STAGES:
-        return f"concrete window already spent (stage: {stage.lower()})"
-    if months is not None and months < -3:
-        return "expected concrete start is in the past"
-    if ptype in NON_STRUCTURAL_TYPES and not use_cases - {"Unknown"}:
-        return "no identifiable structural concrete scope"
-    # NOTE: deliberately NOT disqualifying on work_nature alone (e.g.
-    # "Refurbishment / retrofit") when use_case is just Unknown — that's
-    # absence of information, not evidence of irrelevance (real misses:
-    # "Betonsanierung"/concrete-repair notices were getting caught here).
-    # has_structural_scope()'s activity gate already drops these to Low
-    # instead, which is the right call under uncertainty.
+        return "project is complete — no concrete opportunity remains"
+
+    completion = resolve_date(fields.get("expected_completion", ""))
+    months_to_completion = _months_from(completion)
+    if months_to_completion is not None and months_to_completion < MIN_MONTHS_TO_COMPLETION:
+        return (f"expected completion is {int(months_to_completion)} months away — "
+                f"too late to sell into")
 
     floor = (cfg.get("scoring", {}) or {}).get("disqualify_below_value", 0)
     value = fields.get("value")
@@ -203,17 +240,25 @@ def _dimensions(fields: dict, profile: dict, cfg: dict) -> dict[str, tuple[bool,
     'size within/exceeds the target range' reasoning."""
     dims: dict[str, tuple[bool, str]] = {}
 
-    # Timing — profile-specific window (the analogue of their employee range).
+    # Timing — profile-specific window (the analogue of their employee range),
+    # extended into the past by PAST_START_GRACE_MONTHS: a start already
+    # underway still reads as a live site (phased pours), not a stale notice.
     months = _months_until(fields.get("expected_concrete_start", ""))
     lo, hi = profile["timing_months"]
+    lookback = lo - PAST_START_GRACE_MONTHS
     if months is None:
         dims["timing"] = (False, "concrete start date unknown")
-    elif months < lo:
-        dims["timing"] = (False, f"concrete starts sooner than the {profile['name']} "
-                                 f"engagement window")
+    elif months < lookback:
+        dims["timing"] = (False, f"concrete start was {abs(int(months))} months ago, "
+                                 f"beyond the {PAST_START_GRACE_MONTHS}-month phased-pour "
+                                 f"look-back")
     elif months > hi:
         dims["timing"] = (False, f"concrete start is {int(months)} months out, beyond "
                                  f"the {hi}-month window for this profile")
+    elif months < lo:
+        dims["timing"] = (True, f"concrete start was {abs(int(months))} months ago — "
+                                f"within the {PAST_START_GRACE_MONTHS}-month phased-pour "
+                                f"look-back")
     else:
         dims["timing"] = (True, f"concrete start sits inside the {lo}-{hi} month window")
 
@@ -242,6 +287,19 @@ def _dimensions(fields: dict, profile: dict, cfg: dict) -> dict[str, tuple[bool,
     ae = fields.get("ae", "unassigned")
     dims["coverage"] = ((ae != "unassigned"),
                         f"owned by {ae}" if ae != "unassigned" else "no AE assigned")
+
+    # Stage — where the project actually is in its lifecycle. On site,
+    # in preconstruction, or already awarded is active pipeline; still at
+    # tender is real but not a this-quarter booking.
+    stage = fields.get("project_stage", "")
+    if stage in HIGH_STAGES:
+        dims["stage"] = (True, f"{stage.lower()} — active pipeline")
+    elif stage == "Tender":
+        dims["stage"] = (False, "still at tender — real pipeline, but a Q1+ "
+                                "booking, not this quarter")
+    else:
+        dims["stage"] = (False, f"stage is {stage.lower() or 'unknown'}, not yet "
+                                f"active pipeline")
     return dims
 
 
@@ -249,12 +307,17 @@ def score_project(fields: dict, cfg: dict | None = None) -> dict:
     """Score one project. Returns band, profile, reason, products, dimensions.
 
     Bands mirror the company scorer:
-      Disqualified — structurally impossible (window spent, no concrete scope)
+      Disqualified — structurally impossible: project is Complete, or
+                     completion is under MIN_MONTHS_TO_COMPLETION away
+                     (deliberately narrow — everything else is a soft
+                     dimension below, not a hard kill)
       Low          — real concrete but wrong shape for every profile, or 2+
                      dimensions off (their 'fit-out / rental' equivalent)
       Medium       — matches a profile, exactly one dimension off (their
-                     'right industry, size exceeds range' equivalent)
-      High         — matches a profile on every dimension
+                     'right industry, size exceeds range' equivalent) — e.g.
+                     still at tender: real pipeline, not this quarter
+      High         — matches a profile on every dimension, including stage
+                     (on site / PCSA / awarded)
     """
     cfg = cfg or {}
 
@@ -291,9 +354,8 @@ def score_project(fields: dict, cfg: dict | None = None) -> dict:
     _, band, profile, dims, off = best
 
     if band == "High":
-        detail = dims["timing"][1] + ", " + dims["opportunity"][1]
-        reason = (f"High for {profile['name']}: {detail}, "
-                  f"{dims['access'][1]}.")
+        detail = ", ".join(dims[k][1] for k in ("stage", "timing", "opportunity", "access"))
+        reason = f"High for {profile['name']}: {detail}."
     elif band == "Medium":
         reason = (f"Medium for {profile['name']}: fits the profile but "
                   f"{dims[off[0]][1]}.")

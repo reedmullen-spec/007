@@ -47,9 +47,16 @@ def _prop_title(row: dict, name: str) -> str:
                   ((row.get("properties") or {}).get(name) or {}).get("title", []))
 
 
+def _prop_date(row: dict, name: str) -> str:
+    return ((row.get("properties") or {}).get(name) or {}).get("date", {}).get("start") or ""
+
+
 def row_to_fields(row: dict) -> dict:
     """Reconstruct score_project()'s expected input from what's already
-    stored on the row — the same data ingest.py wrote it from originally."""
+    stored on the row — the same data ingest.py wrote it from originally.
+    "Expected completion" is a date property (ISO string); scoring.
+    resolve_date() round-trips that format as well as qualify's original
+    fuzzy text, so no reformatting is needed here."""
     return {
         "title": _prop_title(row, "Name"),
         "project_type": _prop_select(row, "Project type"),
@@ -58,6 +65,7 @@ def row_to_fields(row: dict) -> dict:
         "use_case": _prop_ms(row, "Use case"),
         "concrete_opportunity": _prop_select(row, "Concrete opportunity"),
         "expected_concrete_start": _prop_rt(row, "Expected concrete start"),
+        "expected_completion": _prop_date(row, "Expected completion"),
         "gc": _prop_rt(row, "General contractor"),
         "value": _prop_number(row, "Value"),
         "ae": _prop_select(row, "AE") or "unassigned",
