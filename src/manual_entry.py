@@ -29,6 +29,18 @@ def region_for_country(country: str) -> str:
     return COUNTRY_REGION.get((country or "").upper(), "eu")
 
 
+def resolve_partner_route(country: str, region: str, cfg: dict) -> str:
+    """Country/region -> partner route, same rule ingest.py's main loop
+    uses. Factored out so import_scored_csv.py can re-derive this instead
+    of trusting a pre-filled CSV column (seen in practice: a blanket
+    "TBD" that ignored White Cap's US/Canada routing entirely)."""
+    if (country or "").upper() in [x.upper() for x in cfg.get("hakron_skip_contacts_countries", [])]:
+        return "Hakron"
+    if (region or "").startswith(("us", "ca")):
+        return "White Cap"
+    return "TBD"
+
+
 CATEGORICAL_KEYS = ("project_type", "work_nature", "project_stage")
 
 
@@ -99,9 +111,7 @@ def compute_fields(cfg: dict, api_key: str, *, title: str, source: str,
     jv = q.get("jv_parents", "")
     ae = ae_override if ae_override is not None else (resolve_ae(gc or buyer, country, cfg, None) or "unassigned")
     sdr = cfg["routing"].get("ae_sdr_map", {}).get(ae, "")
-    partner = ("Hakron" if country.upper() in
-               [x.upper() for x in cfg.get("hakron_skip_contacts_countries", [])]
-               else "White Cap" if region.startswith(("us", "ca")) else "TBD")
+    partner = resolve_partner_route(country, region, cfg)
 
     scored = score_project({**q, "title": title, "gc": gc, "value": value,
                             "ae": ae, "partner_route": partner}, cfg)
