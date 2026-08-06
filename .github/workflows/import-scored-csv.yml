@@ -1,0 +1,44 @@
+name: Import scored CSV
+
+# For CSVs already shaped like the master schema (Fit/AE/SDR/etc. already
+# filled in) — see import_scored_csv.py. Different from bulk-import.yml,
+# which is for lightweight title/url/value lists that still need
+# qualify()/score_project() to fill in the categorical fields.
+on:
+  workflow_dispatch:
+    inputs:
+      csv_path:
+        description: "Path to the CSV, relative to repo root"
+        type: string
+        required: true
+      source_tag:
+        description: "notice_id prefix used for dedup"
+        type: string
+        default: "CSVIMPORT"
+      dry_run:
+        description: "Dry run (print what would be created, change nothing)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run import
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          ARGS="${{ github.event.inputs.csv_path }} --source-tag ${{ github.event.inputs.source_tag }}"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          python import_scored_csv.py $ARGS
