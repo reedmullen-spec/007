@@ -30,6 +30,12 @@ def main() -> int:
     notion = NotionClient(env("NOTION_TOKEN"), cfg)
     ae_sdr_map = cfg["routing"].get("ae_sdr_map", {})
 
+    # ensure_schema() normally runs inside ingest.py's live path — this
+    # script needs to be able to run standalone regardless of whether a
+    # live ingest has happened since SDR was added to the schema.
+    if not args.dry_run:
+        notion.ensure_schema()
+
     rows = notion.query_all_rows({})
     print(f"Scanning {len(rows)} rows")
 
