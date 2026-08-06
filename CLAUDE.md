@@ -70,6 +70,17 @@ ask Reed before changing architecture, not just code.
   non-empty `Correction needed` entries are DM'd to Reed once each
   (`state/sync.json` tracks what's already been flagged) so a wrong fact can
   be fixed by a human, never auto-applied.
+- `recheck_awards.py` — weekly (Wednesday 04:00 UTC). Most TED/FTS rows
+  have no `General contractor` because they're pre-award tender notices —
+  the winner genuinely isn't known yet (confirmed live: TED ~1% GC
+  capture, FTS ~0%, vs NEWS ~67% since "awarded"/"breaking ground" stories
+  inherently name one). This backfills existing rows past their `Tender
+  deadline` once an award notice has since appeared. TED: buyer-name
+  exact match (a buyer's name doesn't change between their tender and its
+  award) + title-token similarity to pick the right award among that
+  buyer's others — a fuzzy match, flagged in `Fit reason`, `Verified`
+  stays False. FTS: exact OCID match (an award-stage OCDS release shares
+  its OCID with the original tender release) — `Verified` set True.
 - `enrich.py` — deep research (step 2). Standalone: `--deal-id` / `--title` /
   `--notice-id`. Anthropic API + web search, system prompt = the SKILL.md
   for the framework (concretedna for Lisa/Aled, fieldatlas for Avi). Writes

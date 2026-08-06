@@ -1,0 +1,45 @@
+name: Recheck awards
+
+# Weekly: backfills General contractor/JV parents on existing TED/FTS
+# rows whose tender deadline has passed, in case an award notice has
+# since been published for them. See recheck_awards.py for the matching
+# mechanism (TED: fuzzy buyer+title match; FTS: exact OCID match).
+on:
+  schedule:
+    - cron: "0 4 * * 3"   # Wednesday 04:00 UTC — quiet slot, no collisions
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (print matches, change nothing)"
+        type: boolean
+        default: false
+      lookback_days:
+        description: "How far back to search for award notices"
+        default: "730"
+      similarity_threshold:
+        description: "Minimum title-similarity for a TED fuzzy match"
+        default: "0.4"
+
+permissions:
+  contents: read
+
+jobs:
+  recheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run recheck
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          args="--lookback-days ${{ github.event.inputs.lookback_days || '730' }} --similarity-threshold ${{ github.event.inputs.similarity_threshold || '0.4' }}"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python recheck_awards.py --dry-run $args
+          else
+            python recheck_awards.py $args
+          fi
