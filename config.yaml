@@ -182,10 +182,10 @@ filters:
 
   # Value thresholds per currency. Notices below these are dropped — unless
   # the value is unknown and keep_unknown_value is true (many notices omit it).
-  min_value_eur: 10000000
-  min_value_gbp: 10000000
-  min_value_aud: 10000000
-  min_value_usd: 10000000
+  min_value_eur: 30000000
+  min_value_gbp: 30000000
+  min_value_aud: 30000000
+  min_value_usd: 30000000
   keep_unknown_value: true
 
   # AusTender uses UNSPSC classification (segment 72 = building/facility
