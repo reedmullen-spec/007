@@ -1,12 +1,20 @@
-"""Imports an already-researched-and-scored CSV straight into the master
-database — for exports shaped like the master schema itself (every
-column matches a Notion property name: Fit, Fit profile, AE, SDR,
-Product fit, etc. already filled in), as opposed to bulk_import.py's
-lightweight title/url/value CSVs that still need qualify()/score_project()
-to fill in the categorical fields. Skips both entirely: nothing here is
-re-derived by an API call except two fields known to be unreliable in
-practice (see below), because re-scoring what a human already researched
-and decided would just be a second-guess, not an improvement.
+"""Imports an already-researched CSV straight into the master database —
+for exports shaped like the master schema itself (every column matches a
+Notion property name: Project type, Work nature, AE, SDR, etc. already
+filled in), as opposed to bulk_import.py's lightweight title/url/value
+CSVs that still need qualify() to fill in the categorical fields.
+
+Skips the Anthropic qualify() call entirely — those categorical fields
+are already given, so there's nothing for a model to observe. Fit/Fit
+profile/Fit reason/Fit dimensions/Product fit are NOT trusted from the
+CSV, though: score_project() always runs (same rule as every other
+manual-entry path — bulk_import.py, the intake form — always scores,
+API call optional), so every imported row gets our own deterministic
+Fit rather than whatever the source file's external process decided.
+Concretely: a row where the categorical fields turn out to be missing or
+wrong will misscore the same way a hand-entered row would, but at least
+consistently, on the record, and by the same rule as everything else in
+the database.
 
 First use: converge_projects_qld_ca_or_wa.csv (290 rows, Queensland +
 California/Oregon/Washington). Discovered on inspection and corrected
@@ -40,6 +48,7 @@ import time
 from src.config import env, load_config
 from src.manual_entry import resolve_partner_route
 from src.notion_client import NotionClient
+from src.scoring import score_project
 
 COUNTRY_NAME_TO_ISO = {
     "united states": "US", "united kingdom": "GB", "australia": "AU",
@@ -79,12 +88,6 @@ def _select_prop(text: str, valid: list[str] | None = None):
     return {"select": {"name": text}}
 
 
-def _multi_prop(text: str, valid: list[str]):
-    names = [s.strip() for s in (text or "").split(MULTI_SELECT_SEP) if s.strip()]
-    names = [n for n in names if n in valid]
-    return {"multi_select": [{"name": n} for n in names]} if names else None
-
-
 def _rt_prop(notion: NotionClient, text: str):
     text = (text or "").strip()
     return notion._rt(text) if text else None
@@ -101,16 +104,43 @@ def build_properties(row: dict, cfg: dict, notion: NotionClient, notice_id: str)
     gc = (row.get("General contractor") or "").strip() or (row.get("General contractor/JV") or "").strip()
     value = _number(row.get("Value"))
     value_raw = value * 1_000_000 if value is not None else None
+    use_case = [s.strip() for s in (row.get("Use case") or "").split(MULTI_SELECT_SEP)
+               if s.strip() and s.strip() in NotionClient.USE_CASES]
+
+    # Fit is always computed here, never trusted from the CSV — same rule
+    # as bulk_import.py and the intake form: qualify() is skippable when
+    # the categorical fields are already known, score_project() is not.
+    scored = score_project({
+        "title": row.get("Name", ""), "project_type": row.get("Project type", ""),
+        "work_nature": row.get("Work nature", ""), "project_stage": row.get("Project stage", ""),
+        "use_case": use_case, "concrete_opportunity": row.get("Concrete opportunity", ""),
+        "expected_concrete_start": row.get("Expected concrete start", ""),
+        "expected_completion": row.get("Expected completion", ""),
+        "gc": gc, "value": value_raw, "ae": ae or "unassigned",
+        "partner_route": partner_route, "summary": row.get("Summary", ""),
+    }, cfg)
+    dimensions_str = "; ".join(
+        f"{k}: {'ok' if v['pass'] else 'off'} — {v['note']}"
+        for k, v in scored["dimensions"].items())
+    status = "Disqualified" if scored["fit"] == "Disqualified" \
+        else ((row.get("Status") or "New").strip() or "New")
 
     props: dict = {
         cfg["notion"]["title_property"]: {
             "title": [{"text": {"content": (row.get("Name") or "")[:200]}}]},
         cfg["notion"]["notice_id_property"]: notion._rt(notice_id),
-        "Status": {"select": {"name": (row.get("Status") or "New").strip() or "New"}},
+        "Status": {"select": {"name": status}},
         "Verified": {"checkbox": _bool(row.get("Verified", ""))},
         "AE": {"select": {"name": ae or "unassigned"}},
         "Partner route": {"select": {"name": partner_route}},
+        "Fit": {"select": {"name": scored["fit"]}},
+        "Fit reason": notion._rt(scored["reason"]),
+        "Fit dimensions": notion._rt(dimensions_str),
     }
+    if scored["profile"]:
+        props["Fit profile"] = {"select": {"name": scored["profile"]}}
+    if scored["products"]:
+        props["Product fit"] = {"multi_select": [{"name": p} for p in scored["products"]]}
     if sdr:
         props["SDR"] = {"select": {"name": sdr}}
     if country_iso:
@@ -131,7 +161,6 @@ def build_properties(row: dict, cfg: dict, notion: NotionClient, notice_id: str)
         "Client": row.get("Client", ""), "Concrete subcontractor": row.get("Concrete subcontractor", ""),
         "Competitor present": row.get("Competitor present", ""),
         "Expected concrete start": row.get("Expected concrete start", ""),
-        "Fit reason": row.get("Fit reason", ""), "Fit dimensions": row.get("Fit dimensions", ""),
         "Summary": row.get("Summary", ""),
     }
     for name, text in text_fields.items():
@@ -153,8 +182,6 @@ def build_properties(row: dict, cfg: dict, notion: NotionClient, notice_id: str)
         "Project stage": (row.get("Project stage", ""), N.PROJECT_STAGES),
         "Concrete opportunity": (row.get("Concrete opportunity", ""),
                                  ["Small", "Medium", "Large", "Unknown"]),
-        "Fit": (row.get("Fit", ""), ["High", "Medium", "Low", "Disqualified"]),
-        "Fit profile": (row.get("Fit profile", ""), N.FIT_PROFILES),
         "Source": (row.get("Source", "") or "MANUAL", None),
     }
     for name, (text, valid) in select_fields.items():
@@ -162,12 +189,8 @@ def build_properties(row: dict, cfg: dict, notion: NotionClient, notice_id: str)
         if sel:
             props[name] = sel
 
-    multi_fields = {"Use case": (row.get("Use case", ""), N.USE_CASES),
-                    "Product fit": (row.get("Product fit", ""), N.PRODUCTS)}
-    for name, (text, valid) in multi_fields.items():
-        multi = _multi_prop(text, valid)
-        if multi:
-            props[name] = multi
+    if use_case:
+        props["Use case"] = {"multi_select": [{"name": u} for u in use_case]}
 
     completion = _date_prop(row.get("Expected completion", ""))
     if completion:
