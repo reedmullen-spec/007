@@ -5,6 +5,10 @@ name: Rescore existing
 on:
   workflow_dispatch:
     inputs:
+      notice_id_prefix:
+        description: "Only rescore rows whose notice_id starts with this (e.g. CSVIMPORT:) — leave blank for the default sweep of every Status=New row"
+        type: string
+        default: ""
       dry_run:
         description: "Dry run (print what would change, change nothing)"
         type: boolean
@@ -27,8 +31,11 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         run: |
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            python rescore_existing.py --dry-run
-          else
-            python rescore_existing.py
+          ARGS=""
+          if [ -n "${{ github.event.inputs.notice_id_prefix }}" ]; then
+            ARGS="$ARGS --notice-id-prefix ${{ github.event.inputs.notice_id_prefix }}"
           fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          python rescore_existing.py $ARGS
