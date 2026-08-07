@@ -86,6 +86,7 @@
     53.5520761,
     10.0276471
   ],
+  "anderson ranch dam, boise river basin, idaho, usa|": null,
   "angermünde to passow, brandenburg, germany|de": null,
   "angermünde to stettin (szczecin), brandenburg, germany|de": null,
   "angermünde, brandenburg, germany|de": [
@@ -220,6 +221,11 @@
   ],
   "birkelandsvatn, norway|no": null,
   "blarghour, scotland|gb": null,
+  "boise river basin, idaho, usa|": null,
+  "boise, idaho, usa|": [
+    43.6166163,
+    -116.200886
+  ],
   "bonn, north rhine-westphalia, germany|de": [
     50.7352621,
     7.1024635
@@ -794,6 +800,10 @@
     60.1666204,
     24.9435408
   ],
+  "henderson, western australia, australia|": [
+    -32.1625849,
+    115.7779342
+  ],
   "herefordshire and worcestershire, gb|gb": [
     52.2566022,
     -2.1318719
@@ -864,6 +874,10 @@
     11.4320346
   ],
   "ida-harjumaa, estonia|es": null,
+  "idaho, usa|": [
+    43.6447642,
+    -114.015407
+  ],
   "iden, saxony-anhalt, germany|de": [
     52.7794495,
     11.9141261
@@ -970,6 +984,10 @@
   "kristiansand, norway|no": [
     58.0856276,
     7.931858
+  ],
+  "kuna, idaho, usa|": [
+    43.4918307,
+    -116.420122
   ],
   "köln-dellbrück, cologne, germany|de": [
     50.9814765,
@@ -1343,6 +1361,11 @@
   "nuremberg, bavaria, germany|de": [
     49.453872,
     11.077298
+  ],
+  "osborne naval shipyard, lefevre peninsula, adelaide, south australia|": null,
+  "osborne, south australia, australia|": [
+    -34.7859285,
+    138.5072887
   ],
   "oslo, norway|no": [
     59.9133301,
@@ -1766,6 +1789,11 @@
   "toulouse, france|fr": [
     43.6044638,
     1.4442433
+  ],
+  "treasure valley, idaho (i-84 corridor near boise/caldwell)|": null,
+  "treasure valley, idaho, usa|": [
+    43.6103051,
+    -116.590689
   ],
   "treuchtlingen–nürnberg corridor, bavaria, germany|de": null,
   "troisdorf to bonn oberkassel, north rhine-westphalia, germany|de": null,
