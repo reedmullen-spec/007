@@ -10,9 +10,15 @@ Rows that now score Disqualified also get Status flipped to Disqualified
 disqualification, so the master's Status field stays the reliable signal
 of what's actually still active.
 
+Also doubles as the way to run scoring on a CSV import: import_scored_csv.py
+deliberately skips score_project() (it trusts the source file's own Fit
+judgment), so --notice-id-prefix targets just that batch instead of the
+default full "New" sweep.
+
 Usage:
-    python rescore_existing.py               # live
+    python rescore_existing.py               # live, all "New" rows
     python rescore_existing.py --dry-run     # print what would change
+    python rescore_existing.py --notice-id-prefix CSVIMPORT: --dry-run
 """
 from __future__ import annotations
 
@@ -77,13 +83,26 @@ def row_to_fields(row: dict) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--notice-id-prefix", default="",
+                        help="Rescore rows whose notice_id starts with this "
+                             "(e.g. CSVIMPORT:) instead of the default sweep "
+                             "of every Status=New row — use this to run "
+                             "scoring on one import batch regardless of the "
+                             "Status values it was imported with.")
     args = parser.parse_args()
 
     cfg = load_config()
     notion = NotionClient(env("NOTION_TOKEN"), cfg)
 
-    rows = notion.query_all_rows({"property": "Status", "select": {"equals": "New"}})
-    print(f"Rescoring {len(rows)} 'New' rows")
+    if args.notice_id_prefix:
+        rows = notion.query_all_rows({
+            "property": cfg["notion"]["notice_id_property"],
+            "rich_text": {"starts_with": args.notice_id_prefix}})
+        print(f"Rescoring {len(rows)} rows with notice_id starting "
+              f"'{args.notice_id_prefix}'")
+    else:
+        rows = notion.query_all_rows({"property": "Status", "select": {"equals": "New"}})
+        print(f"Rescoring {len(rows)} 'New' rows")
 
     changed = disqualified = 0
     for row in rows:
