@@ -31,7 +31,7 @@ from src.scoring import score_project
 
 
 def _prop_select(row: dict, name: str) -> str:
-    return ((row.get("properties") or {}).get(name) or {}).get("select", {}).get("name", "")
+    return (((row.get("properties") or {}).get(name) or {}).get("select") or {}).get("name", "")
 
 
 def _prop_rt(row: dict, name: str) -> str:
@@ -54,7 +54,7 @@ def _prop_title(row: dict, name: str) -> str:
 
 
 def _prop_date(row: dict, name: str) -> str:
-    return ((row.get("properties") or {}).get(name) or {}).get("date", {}).get("start") or ""
+    return (((row.get("properties") or {}).get(name) or {}).get("date") or {}).get("start") or ""
 
 
 def row_to_fields(row: dict) -> dict:
