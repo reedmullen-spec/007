@@ -16,6 +16,7 @@
   "a4 motorway, s. donà di piave to portogruaro, veneto, italy|it": null,
   "a40 viaducs de sylans et glacières, ain, france|fr": null,
   "a43 tunnel de l'epine, savoie, france|fr": null,
+  "a5 motorway, kaunas–marijampolė corridor, lithuania|lt": null,
   "a565/a61, rhineland, germany|de": [
     50.3506168,
     7.4865779
@@ -401,6 +402,7 @@
     51.20849,
     4.4719297
   ],
+  "dijon, burgundy, france|fr": null,
   "ditzingen, baden-württemberg, germany|de": [
     48.8263983,
     9.0658446
@@ -542,6 +544,10 @@
     11.0787796
   ],
   "fischbach industrial area, bremgarten, aargau, switzerland|ch": null,
+  "fischenich, nordrhein-westfalen, germany|de": [
+    50.8576404,
+    6.8929108
+  ],
   "flanders, belgium|be": [
     51.0377778,
     4.2405556
@@ -668,6 +674,10 @@
     51.7643786,
     -2.1880662
   ],
+  "glückstadt, schleswig-holstein, germany|de": [
+    53.787927,
+    9.4238157
+  ],
   "gollion, canton of vaud, switzerland|ch": [
     46.5852339,
     6.5088361
@@ -725,6 +735,7 @@
   ],
   "gößnitz–crimmitschau, saxony/thuringia, germany|de": null,
   "gößnitz–crimmitschau, thuringia/saxony, germany|de": null,
+  "hachenburg / westerburg, westerwald, rhineland-palatinate, germany|de": null,
   "hadamar, hesse, germany|de": [
     50.4587,
     8.05793
@@ -916,6 +927,7 @@
     48.5577112,
     7.9538203
   ],
+  "keighley, west yorkshire, uk|ca": null,
   "kettering, northamptonshire|gb": [
     52.3994233,
     -0.728004
@@ -932,6 +944,10 @@
   "koblenz region, rhineland-palatinate, germany|de": [
     50.3562957,
     7.5902016
+  ],
+  "koblenz, germany|de": [
+    50.3533278,
+    7.5943951
   ],
   "kongshaugen, ålesund, norway|no": null,
   "konstanz, baden-württemberg, germany|de": [
@@ -1101,6 +1117,10 @@
     45.7578137,
     4.8320114
   ],
+  "lübeck–büchen, schleswig-holstein, germany|de": [
+    53.8392653,
+    10.6862943
+  ],
   "lüchow, wendland, lower saxony, germany|de": [
     52.9685123,
     11.1573647
@@ -1210,6 +1230,10 @@
   "montpellier, france|fr": [
     43.6112422,
     3.8767337
+  ],
+  "munich, bavaria, germany|de": [
+    48.1371079,
+    11.5753822
   ],
   "munich, germany|de": [
     48.1371079,
@@ -1339,6 +1363,10 @@
   "ottignies, belgium|be": [
     50.666357,
     4.5690502
+  ],
+  "overath, north rhine-westphalia, germany|de": [
+    50.9320015,
+    7.2839042
   ],
   "pantin, île-de-france, france|fr": [
     48.8965023,
@@ -1741,6 +1769,7 @@
   ],
   "treuchtlingen–nürnberg corridor, bavaria, germany|de": null,
   "troisdorf to bonn oberkassel, north rhine-westphalia, germany|de": null,
+  "troisdorf – bonn oberkassel, north rhine-westphalia, germany|de": null,
   "troisdorf – bonn-oberkassel, north rhine-westphalia, germany|de": null,
   "troisdorf–unkel, river sieg, north rhine-westphalia / rhineland-palatinate border, germany|de": null,
   "truppenübungsplatz oberlausitz, saxony, germany|de": [
@@ -1819,6 +1848,7 @@
     60.2083483,
     25.1435537
   ],
+  "wales and western region, gb|gb": null,
   "walporzheim to ahrbrück, ahr valley, rhineland-palatinate, germany|de": null,
   "walporzheim, ahrweiler, rhineland-palatinate, germany|de": [
     50.5312003,
