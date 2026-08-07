@@ -1,0 +1,24 @@
+name: Check CSVIMPORT batch
+
+# One-off read-only spot-check on the CSVIMPORT: rows in the master
+# database — confirms rescore_existing.py's write actually landed.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run check
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: python check_csvimport.py
