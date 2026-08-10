@@ -1,0 +1,35 @@
+name: Fix value units
+
+# One-off: fixes rows (Source=NEWS, blank Notice ID) whose Value is
+# stored in millions instead of raw dollars. Run before any
+# rescore_existing.py pass — see fix_value_units.py.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (print what would change, change nothing)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run fix
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python fix_value_units.py --dry-run
+          else
+            python fix_value_units.py
+          fi
