@@ -8,3 +8,5 @@ feeds:
   - { region: uk, entity: "New Civil Engineer", url: "https://www.newcivilengineer.com/feed", keyword_gate: true }
   - { region: uk, entity: "Construction Enquirer", url: "https://www.constructionenquirer.com/feed/", keyword_gate: true }
   - { region: us, entity: "Construction Dive", url: "https://www.constructiondive.com/feeds/news/", keyword_gate: true }
+  - { region: ca, entity: "Daily Commercial News", url: "https://canada.constructconnect.com/dcn/feed", keyword_gate: true }
+  - { region: ca, entity: "ReNew Canada", url: "https://renewcanada.net/feed/", keyword_gate: true }
