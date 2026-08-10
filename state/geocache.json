@@ -1,4 +1,9 @@
 {
+  "106th street, east harlem, new york city, usa|": [
+    40.7919164,
+    -73.9454962
+  ],
+  "54-42 2nd street, hunters point south, long island city, queens, new york|": null,
   "a-4 motorway, toledo and ciudad real provinces, spain|es": null,
   "a-5 motorway, alcorcón / móstoles / navalcarnero, madrid, spain|es": null,
   "a-6 motorway, lugo province, galicia, spain|es": null,
@@ -107,6 +112,10 @@
     7.6196825
   ],
   "ashford & st peter's hospital, surrey, gb|gb": null,
+  "astoria, queens, new york city, usa|": [
+    40.7720145,
+    -73.9302673
+  ],
   "attendorn, north rhine-westphalia, germany|de": [
     51.1250541,
     7.9010992
@@ -251,6 +260,27 @@
     10.5236066
   ],
   "brescia province, lombardy, italy|it": null,
+  "bronx, new york city, usa|": [
+    40.8466508,
+    -73.8785937
+  ],
+  "brooklyn and queens, new york city, usa|": [
+    40.6950366,
+    -73.9362832
+  ],
+  "brooklyn heights, brooklyn, new york city, ny|": [
+    40.6960849,
+    -73.9950297
+  ],
+  "brooklyn marine terminal, red hook / cobble hill, brooklyn, new york city|": null,
+  "brooklyn marine terminal, red hook, brooklyn, new york|": [
+    40.6928949,
+    -74.0122518
+  ],
+  "brooklyn, new york city, usa|": [
+    40.6526006,
+    -73.9497211
+  ],
   "bruyères-le-châtel, île-de-france, france|fr": [
     48.5922609,
     2.1909499
@@ -360,6 +390,10 @@
   "cologne, germany|de": [
     50.938361,
     6.959974
+  ],
+  "coney island, brooklyn, new york|": [
+    40.5765081,
+    -73.9929419
   ],
   "constantina and el pedroso, seville, spain|es": null,
   "cooper park, elgin, moray, scotland|gb": [
@@ -541,6 +575,10 @@
     4.4788217
   ],
   "fernán núñez, montilla, puente genil, córdoba, andalusia, spain|es": null,
+  "ferry point park, bronx, new york city|": [
+    40.8108136,
+    -73.837528
+  ],
   "festung marienberg, würzburg, bavaria, germany|de": [
     49.7897963,
     9.9192428
@@ -563,6 +601,10 @@
     9.1861489
   ],
   "flieden–gemünden, hesse, germany|de": null,
+  "flushing, queens, new york|": [
+    40.7654301,
+    -73.8174291
+  ],
   "forchheim, bavaria, germany|de": [
     49.7122951,
     11.0664285
@@ -852,6 +894,15 @@
     50.4524327,
     2.5378571
   ],
+  "hudson river, new york/new jersey|": [
+    42.6112398,
+    -73.7607546
+  ],
+  "hudson river, weehawken nj to manhattan west side, new york|": null,
+  "hudson yards, manhattan, new york, usa|": [
+    40.7559064,
+    -74.0005322
+  ],
   "hundem, sauerland, north rhine-westphalia, germany|de": null,
   "hérault, france|fr": [
     43.591422,
@@ -921,6 +972,18 @@
   "jaunpils pagasts, tukuma novads, latvia|lv": [
     56.7494892,
     22.9518816
+  ],
+  "jfk airport, queens, new york|": [
+    40.6429479,
+    -73.7793734
+  ],
+  "jfk international airport, queens, new york, usa|": [
+    40.6429479,
+    -73.7793734
+  ],
+  "jfk international airport, queens, new york|": [
+    40.6429479,
+    -73.7793734
   ],
   "jēkabpils novads, latvia|lv": [
     56.3584642,
@@ -1099,6 +1162,10 @@
     45.8354243,
     1.2644847
   ],
+  "lincoln tunnel helix, weehawken, new jersey|": [
+    40.7626781,
+    -74.0238503
+  ],
   "lincolnshire, england|gb": [
     53.1823034,
     -0.2031209
@@ -1119,6 +1186,10 @@
   "london, uk|gb": [
     51.5074456,
     -0.1277653
+  ],
+  "lower east side, manhattan, new york city, ny|": [
+    40.7159357,
+    -73.9868057
   ],
   "lugo, galicia, spain|es": [
     43.0395266,
@@ -1169,6 +1240,10 @@
     49.9995205,
     8.2736253
   ],
+  "manhattan, new york city, ny, us|": [
+    40.7579554,
+    -73.9855319
+  ],
   "manosque, provence-alpes-côte d'azur, france|fr": [
     43.8338026,
     5.7826657
@@ -1216,6 +1291,10 @@
     51.3436532,
     8.2859257
   ],
+  "midtown manhattan, new york city, ny|": [
+    40.7524714,
+    -73.9876344
+  ],
   "minden, north rhine-westphalia, germany|de": [
     52.2881045,
     8.9168852
@@ -1249,6 +1328,10 @@
   "montpellier, france|fr": [
     43.6112422,
     3.8767337
+  ],
+  "mt. pleasant, westchester county, new york|": [
+    41.0962975,
+    -73.7934355
   ],
   "munich, bavaria, germany|de": [
     48.1371079,
@@ -1309,6 +1392,15 @@
   "neustadt an der weinstraße, rhineland-palatinate, germany|de": [
     49.3536057,
     8.1360247
+  ],
+  "new york city (brooklyn, queens, bronx, manhattan), usa|": null,
+  "new york city, new york, usa|": [
+    40.7127281,
+    -74.0060152
+  ],
+  "new york penn station, new york city, usa|": [
+    40.7502382,
+    -73.9928111
   ],
   "newry, mourne & down, northern ireland|gb": [
     54.1775283,
@@ -1392,6 +1484,10 @@
     50.666357,
     4.5690502
   ],
+  "outerbridge crossing, staten island, new york / perth amboy, new jersey|": [
+    40.5247079,
+    -74.2491624
+  ],
   "overath, north rhine-westphalia, germany|de": [
     50.9320015,
     7.2839042
@@ -1466,6 +1562,10 @@
     52.5715528,
     -2.0939272
   ],
+  "prospect heights, brooklyn, new york city|": [
+    40.6778708,
+    -73.9684725
+  ],
   "provinces of ancona and pesaro-urbino, marche, italy|it": null,
   "puerto de castellón, castellón, spain|es": [
     39.9627036,
@@ -1475,6 +1575,10 @@
   "queen alexandra hospital, portsmouth|gb": [
     50.8503788,
     -1.0697372
+  ],
+  "queens, new york city, usa|": [
+    40.7135078,
+    -73.8283132
   ],
   "radebeul, saxony, germany|de": [
     51.0999765,
@@ -1492,6 +1596,7 @@
     51.6143815,
     7.1978546
   ],
+  "red hook / cobble hill, brooklyn, new york|": null,
   "redbridge and waltham forest, london|gb": null,
   "redshaw, scotland|gb": [
     55.410164,
@@ -1662,6 +1767,14 @@
     56.7861112,
     -4.1140518
   ],
+  "second avenue, east harlem, new york city, ny|": [
+    40.7966251,
+    -73.9380283
+  ],
+  "second avenue, manhattan, new york city, usa|": [
+    40.805757,
+    -73.940739
+  ],
   "senftenberg, brandenburg, germany|de": [
     51.519201,
     14.0046541
@@ -1679,9 +1792,17 @@
     51.1617509,
     -3.0753867
   ],
+  "south brooklyn marine terminal, sunset park, brooklyn, new york city, ny|": [
+    40.658571,
+    -74.0077872
+  ],
   "south finland|fi": [
     60.6686364,
     22.9138012
+  ],
+  "south ozone park, queens, new york city, ny|": [
+    40.6701035,
+    -73.8190231
   ],
   "south-east norway|no": null,
   "southeastern estonia land border, sections 7-8|es": null,
@@ -1822,6 +1943,7 @@
     48.2405833,
     11.9699152
   ],
+  "upper east side / east harlem, manhattan, new york city, usa|": null,
   "utrecht, netherlands|nl": [
     52.0907006,
     5.1215634
@@ -1932,6 +2054,10 @@
     7.5543751
   ],
   "weurt and heumen, gelderland, netherlands|nl": null,
+  "white street, chinatown, manhattan, new york city|": [
+    40.7179212,
+    -74.0028112
+  ],
   "wiesbaden biebrich, germany|de": [
     50.0488229,
     8.2363412
@@ -1951,6 +2077,14 @@
   "wilhelm-leuschner-platz, leipzig, germany|de": [
     51.3343165,
     12.3741429
+  ],
+  "willets point, queens, new york city, ny|": [
+    40.796708,
+    -73.779396
+  ],
+  "willets point, queens, new york city, usa|": [
+    40.796708,
+    -73.779396
   ],
   "wiltbergstraße, berlin, germany|de": [
     52.6406786,
