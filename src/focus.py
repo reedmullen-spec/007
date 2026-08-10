@@ -79,7 +79,7 @@ def _candidate_line(idx: int, row: dict) -> str:
         return vals[0].get("plain_text", "") if vals else ""
 
     def sel(name):
-        return (props.get(name) or {}).get("select", {}).get("name", "")
+        return ((props.get(name) or {}).get("select") or {}).get("name", "")
 
     def ms(name):
         return ",".join(o.get("name", "") for o in (props.get(name) or {}).get("multi_select", []))

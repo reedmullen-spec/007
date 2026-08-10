@@ -33,10 +33,10 @@ def _master_facts(master_row: dict) -> dict:
         return vals[0].get("plain_text", "") if vals else ""
 
     def sel(name):
-        return (props.get(name) or {}).get("select", {}).get("name", "")
+        return ((props.get(name) or {}).get("select") or {}).get("name", "")
 
     def date(name):
-        return (props.get(name) or {}).get("date", {}).get("start") or ""
+        return ((props.get(name) or {}).get("date") or {}).get("start") or ""
 
     title = "".join(t.get("plain_text", "") for t in
                     (props.get("Name") or {}).get("title", []))

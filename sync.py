@@ -30,7 +30,7 @@ def _prop_rt(row: dict, name: str) -> str:
 
 
 def _prop_sel(row: dict, name: str) -> str:
-    return ((row.get("properties") or {}).get(name) or {}).get("select", {}).get("name", "")
+    return (((row.get("properties") or {}).get(name) or {}).get("select") or {}).get("name", "")
 
 
 def _prop_date(row: dict, name: str) -> str:
