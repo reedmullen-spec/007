@@ -33,25 +33,31 @@ class NotionClient:
                                properties: dict, state_file: str = "notion") -> str:
         """Find-or-create a child database with `title` under the shared
         parent page (MI6 teamspace), caching its id in
-        state/{state_file}.json under `cache_key` between runs."""
+        state/{state_file}.json under `cache_key` between runs.
+
+        Also patches in any properties missing from an already-created
+        database (ADD-only, same idempotent rule as ensure_schema()) —
+        schemas like AE_PAGE_SCHEMA have grown fields (e.g. Expected
+        completion) after some people's pages already existed; a cached
+        id alone would silently skip ever picking those up, which is
+        exactly what crashed triage.py writing to an AE page created
+        before that field existed."""
         from . import state
 
         cached = state.load(state_file)
         db_id = cached.get(cache_key)
-        if db_id:
-            return db_id
 
-        parent = self.cfg["parent_page_id"]
-
-        # Reuse an existing child database with the right name, if present.
-        data = self._check(self.session.get(
-            f"{BASE}/blocks/{parent}/children", params={"page_size": 100},
-            timeout=30))
-        for block in data.get("results", []):
-            if block.get("type") == "child_database" and \
-                    block.get("child_database", {}).get("title") == title:
-                db_id = block["id"]
-                break
+        if not db_id:
+            parent = self.cfg["parent_page_id"]
+            # Reuse an existing child database with the right name, if present.
+            data = self._check(self.session.get(
+                f"{BASE}/blocks/{parent}/children", params={"page_size": 100},
+                timeout=30))
+            for block in data.get("results", []):
+                if block.get("type") == "child_database" and \
+                        block.get("child_database", {}).get("title") == title:
+                    db_id = block["id"]
+                    break
 
         if not db_id:
             body = {
@@ -64,6 +70,15 @@ class NotionClient:
             db_id = created["id"]
             print(f"Created Notion database '{title}': {created.get('url', '')} "
                   f"— share it with the right person(s), the API can't do that part.")
+        else:
+            db = self._check(self.session.get(f"{BASE}/databases/{db_id}", timeout=30))
+            existing = set((db.get("properties") or {}).keys())
+            missing = {k: v for k, v in properties.items() if k not in existing}
+            if missing:
+                self._check(self.session.patch(
+                    f"{BASE}/databases/{db_id}",
+                    json={"properties": missing}, timeout=30))
+                print(f"'{title}' schema: added {sorted(missing)}")
 
         cached[cache_key] = db_id
         state.save(state_file, cached)
