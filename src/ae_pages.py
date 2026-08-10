@@ -52,11 +52,15 @@ def _master_facts(master_row: dict) -> dict:
 
 
 def upsert_ae_row(notion: NotionClient, person: str, master_row: dict,
-                  reason: str) -> None:
+                  reason: str) -> str:
     """Create or update this project's row on person's page. Only the
     master-owned fact fields (+ Why this project) are written here — the
     AE-owned fields are never touched on update, and only initialised
-    (Status = This week) the first time the row is created."""
+    (Status = This week) the first time the row is created.
+
+    Returns this AE-page row's own Notion URL, so triage.py's Slack line
+    can link straight to a person's editable page alongside the master's
+    (read-only) one."""
     db_id = ensure_ae_database(notion, person)
     master_url = master_row.get("url", "")
     facts = _master_facts(master_row)
@@ -79,8 +83,9 @@ def upsert_ae_row(notion: NotionClient, person: str, master_row: dict,
         database_id=db_id, limit=1)
     if existing:
         notion.update_properties(existing[0]["id"], props)
-        return
+        return existing[0].get("url", "")
 
     props["Project"] = {"title": [{"text": {"content": facts["title"][:200]}}]}
     props["Status"] = {"select": {"name": "This week"}}
-    notion.create_page(db_id, props)
+    created = notion.create_page(db_id, props)
+    return created.get("url", "")

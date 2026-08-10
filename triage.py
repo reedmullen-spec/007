@@ -80,21 +80,25 @@ def gather_for_list(notion: NotionClient, list_cfg: dict) -> tuple[list[dict], l
     and Notion 400s on it."""
     base = build_filter(list_cfg["filter"])
     today = _dt.date.today().isoformat()
+    # Fit=Disqualified means never, per the scorer's design — excluded from
+    # every branch, not just fresh picks. A row can be Status="This week"
+    # from an earlier run and only later get rescored to Disqualified (e.g.
+    # a retroactive rescore_existing.py pass); without this check here it
+    # would keep carrying over and re-triaging every week regardless (real
+    # incident: a rescored-Disqualified row reached a person via Slack).
+    not_dq = {"property": "Fit", "select": {"does_not_equal": "Disqualified"}}
     carry = notion.query_rows({"or": [
-        {"and": [base, {"property": "Status", "select": {"equals": "This week"}}]},
-        {"and": [base,
+        {"and": [base, not_dq, {"property": "Status", "select": {"equals": "This week"}}]},
+        {"and": [base, not_dq,
                 {"property": "Status", "select": {"equals": "Recontact later"}},
                 {"property": "Recontact date", "date": {"on_or_before": today}}]},
     ]})
-    # Fit=Disqualified means never, per the scorer's design — exclude it
-    # from fresh picks so it can't leak in as filler on a thin list.
-    fresh = notion.query_rows({"and": [base,
-                              {"property": "Status", "select": {"equals": "New"}},
-                              {"property": "Fit", "select": {"does_not_equal": "Disqualified"}}]})
+    fresh = notion.query_rows({"and": [base, not_dq,
+                              {"property": "Status", "select": {"equals": "New"}}]})
     return carry, fresh
 
 
-def _row_line(notion: NotionClient, row: dict, tag: str) -> str:
+def _row_line(notion: NotionClient, row: dict, tag: str, ae_url: str = "") -> str:
     title = notion.row_title(row)
     fit = _prop_select(row, "Fit")
     rich = ((row.get("properties") or {}).get("General contractor") or {}).get("rich_text", [])
@@ -103,7 +107,8 @@ def _row_line(notion: NotionClient, row: dict, tag: str) -> str:
     extra = f" · {gc}" if gc else ""
     mark = " (carried over)" if tag == "carried over" else ""
     src = " · from the team" if _prop_select(row, "Source") == "MANUAL" else ""
-    return f"• <{url}|{title[:80]}> — {fit} fit{extra}{src}{mark}"
+    my_page = f" · <{ae_url}|my page>" if ae_url else ""
+    return f"• <{url}|{title[:80]}> — {fit} fit{extra}{src}{mark}{my_page}"
 
 
 def main() -> int:
@@ -150,15 +155,11 @@ def main() -> int:
         if not carry and not picks:
             continue
 
-        lines = []
-        for tag, rows in (("carried over", carry), ("new", picks)):
-            for row in rows:
-                lines.append(_row_line(notion, row, tag))
-
         print(f"[{name}] {len(carry)} carried, {len(picks)} new")
         if args.dry_run:
-            for line in lines:
-                print("   " + line)
+            for tag, rows in (("carried over", carry), ("new", picks)):
+                for row in rows:
+                    print("   " + _row_line(notion, row, tag))
             continue
 
         for row in picks:
@@ -175,11 +176,20 @@ def main() -> int:
             reasons.setdefault(row["id"], "carried over")
         total_new += len(picks)
 
-        # Mirror this week's facts onto the person's own editable page.
-        # Only facts + "Why this project" are written here — see ae_pages.py.
+        # Mirror this week's facts onto the person's own editable page, and
+        # capture its URL so the Slack line can link straight to it
+        # alongside the master row — built after this, not before, since
+        # only a live run actually creates/updates that page.
+        ae_urls: dict[str, str] = {}
         for row in carry + picks:
-            upsert_ae_row(notion, name, row, reasons.get(row["id"], "default ranking"))
+            ae_urls[row["id"]] = upsert_ae_row(
+                notion, name, row, reasons.get(row["id"], "default ranking"))
             time.sleep(0.4)
+
+        lines = []
+        for tag, rows in (("carried over", carry), ("new", picks)):
+            for row in rows:
+                lines.append(_row_line(notion, row, tag, ae_urls.get(row["id"], "")))
 
         raw = channels.get(list_cfg["channel"])
         targets = raw if isinstance(raw, list) else [raw]

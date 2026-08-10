@@ -357,7 +357,8 @@ class NotionClient:
             "Fit": {"select": {"name": fields.get("fit", "Medium")}},
             "Fit reason": self._rt(fields.get("fit_reason", "")),
             "Fit dimensions": self._rt(fields.get("fit_dimensions", "")),
-            "Status": {"select": {"name": "New"}},
+            "Status": {"select": {"name": "Disqualified"
+                                  if fields.get("fit") == "Disqualified" else "New"}},
             "Summary": self._rt(fields.get("summary", "")),
         }
         if fields.get("fit_profile"):

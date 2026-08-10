@@ -292,6 +292,8 @@ def sweep_manual_rows(cfg: dict, api_key: str, notion: NotionClient) -> int:
         props = {
             cfg["notion"]["notice_id_property"]: NotionClient._rt(f"MANUAL:{slug}"),
             "Source": {"select": {"name": "MANUAL"}},
+            "Status": {"select": {"name": "Disqualified"
+                                  if fields["fit"] == "Disqualified" else "New"}},
             "Summary": NotionClient._rt(fields["summary"]),
             "General contractor": NotionClient._rt(fields["gc"]),
             "JV / parents": NotionClient._rt(fields["jv_parents"]),
