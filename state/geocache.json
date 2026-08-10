@@ -829,6 +829,7 @@
     52.3286463,
     -0.2120845
   ],
+  "hirschau, neckar, baden-württemberg, germany|de": null,
   "hohenbrunn, bavaria, germany|de": [
     48.048083,
     11.7021625
@@ -1281,6 +1282,10 @@
   "neckarsulm, baden-württemberg, germany|de": [
     49.1917156,
     9.2249261
+  ],
+  "netherlands|": [
+    52.2434979,
+    5.6343227
   ],
   "netherlands|nl": [
     52.2434979,
@@ -1922,7 +1927,15 @@
     51.940156,
     4.403521
   ],
+  "westfalen, germany|de": [
+    51.4789205,
+    7.5543751
+  ],
   "weurt and heumen, gelderland, netherlands|nl": null,
+  "wiesbaden biebrich, germany|de": [
+    50.0488229,
+    8.2363412
+  ],
   "wiesbaden, germany|de": [
     50.0820384,
     8.2416556
