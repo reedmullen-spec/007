@@ -287,6 +287,13 @@ class NotionClient:
         "Recontact date": {"date": {}},
         "Notice URL": {"url": {}},
         "HubSpot deal": {"url": {}},
+        # AE-owned, synced up from their own page nightly (sync.py) — see
+        # src/ae_pages.py's FACT_FIELDS for the other sync direction.
+        "Notes": {"rich_text": {}},
+        "Outcome": {"select": {"options": [{"name": s} for s in
+                    ("Meeting booked", "No interest", "Wrong contact",
+                     "Too early", "Already covered", "Other")]}},
+        "Correction needed": {"rich_text": {}},
     }
 
     def ensure_schema(self) -> None:

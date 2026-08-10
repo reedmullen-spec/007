@@ -1,10 +1,20 @@
 """007 nightly sync — pull AE-owned edits back to the master database.
 
-One rule prevents all sync fighting: the AE owns Status / Next action /
-Next action date; the master owns the facts (written by triage.py, Monday
-only). Notes, Outcome, and Correction needed stay on the AE's own page
-forever — a Correction needed entry is collected and DM'd to Reed instead
-of ever being auto-applied to the master.
+The AE owns Status / Next action / Next action date / Notes / Outcome /
+Correction needed — all pushed to the master here, every night, always
+(the master never writes any of these itself, so there's nothing to
+fight over). A Correction needed entry is ALSO collected and DM'd to Reed
+— written to the master for the record, but still surfaced directly since
+it usually means some other field needs a human's attention, not just
+this one.
+
+The master owns the facts (Fit/GC/Location/Expected concrete
+start/Expected completion/Value band), mirrored onto the AE's page only
+at Monday triage — except when a person edits one of those fields
+directly on their own page. That edit is authoritative: sync_fact_drift()
+(src/ae_pages.py) detects it against a snapshot of what was last mirrored
+and pushes it to the master immediately, so it doesn't have to wait for
+next Monday to take effect, and next Monday's mirror won't stomp it.
 
 Usage:
     python sync.py               # live
@@ -15,7 +25,7 @@ from __future__ import annotations
 import argparse
 
 from src import state
-from src.ae_pages import ensure_ae_database
+from src.ae_pages import ensure_ae_database, sync_fact_drift
 from src.config import env, load_config
 from src.notion_client import NotionClient
 from src.slack_client import SlackClient
@@ -76,6 +86,9 @@ def sync_person(notion: NotionClient, person: str, sync_state: dict,
         status = _prop_sel(row, "Status")
         next_action = _prop_rt(row, "Next action")
         next_action_date = _prop_date(row, "Next action date")
+        notes = _prop_rt(row, "Notes")
+        outcome = _prop_sel(row, "Outcome")
+        correction = _prop_rt(row, "Correction needed")
 
         props = {}
         if status:
@@ -88,13 +101,22 @@ def sync_person(notion: NotionClient, person: str, sync_state: dict,
                 # AE's Next action date doubles as the master's Recontact
                 # date — one field for the AE to fill in, not two.
                 props["Recontact date"] = {"date": {"start": next_action_date}}
+        if notes:
+            props["Notes"] = NotionClient._rt(notes)
+        if outcome:
+            props["Outcome"] = {"select": {"name": outcome}}
+        if correction:
+            props["Correction needed"] = NotionClient._rt(correction)
 
         print(f"[{person}] {_prop_title(row, 'Project')[:60]!r} -> "
               f"status={status or '-'} next_action_date={next_action_date or '-'}")
         if props and not dry_run:
             notion.update_properties(master_id, props)
+            # Facts (Fit/GC/Location/etc.) are separate from the props
+            # above — pushed only when the person actually edited one on
+            # their own page, detected against the last-mirrored snapshot.
+            sync_fact_drift(notion, row, master_id)
 
-        correction = _prop_rt(row, "Correction needed")
         if correction and row["id"] not in notified:
             corrections.append({"person": person, "project": _prop_title(row, "Project"),
                                 "text": correction, "url": row.get("url", "")})
