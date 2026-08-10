@@ -98,16 +98,23 @@ ask Reed before changing architecture, not just code.
   own `My week — {Name}` database (id cached in `state/ae_pages.json`).
   `triage.py` writes facts + `Why this project` there every Monday; the
   person owns `Status` / `Next action` / `Next action date` / `Notes` /
-  `Outcome` / `Correction needed`.
+  `Outcome` / `Correction needed`. If a person edits one of the mirrored
+  fact fields directly, that edit is authoritative — pushed to the master
+  and no longer overwritten by later mirrors (see `sync.py` / rule #11).
 - `sync.py` — weekdays 23:00 UTC. Pulls `Status` / `Next action` / `Next
-  action date` from each AE page back to the master (one direction only —
-  the master never overwrites those fields outside Monday's initial write).
-  When the incoming `Status` is "Recontact later", the AE's `Next action
-  date` also becomes the master's `Recontact date` — one field, not two.
-  `Notes` / `Outcome` / `Correction needed` never sync to the master;
-  non-empty `Correction needed` entries are DM'd to Reed once each
-  (`state/sync.json` tracks what's already been flagged) so a wrong fact can
-  be fixed by a human, never auto-applied.
+  action date` / `Notes` / `Outcome` / `Correction needed` from each AE page
+  back to the master, always (the master never writes any of these itself,
+  so there's nothing to fight over). When the incoming `Status` is
+  "Recontact later", the AE's `Next action date` also becomes the master's
+  `Recontact date` — one field, not two. Non-empty `Correction needed`
+  entries are ALSO DM'd to Reed once each (`state/sync.json` tracks what's
+  already been flagged) — written to the master for the record, but still
+  surfaced directly since it usually means some other field needs a human's
+  attention. Separately, `sync_fact_drift()` (`src/ae_pages.py`) pushes an
+  AE's direct edit to a mirrored fact field (`Fit`/`GC`/`Location`/`Expected
+  concrete start`/`Expected completion`/`Value band`) back to the master
+  immediately, detected against `state/ae_fact_snapshots.json` (what was
+  last mirrored) — see rule #11.
 - `recheck_awards.py` — weekly (Wednesday 04:00 UTC). Most TED/FTS rows
   have no `General contractor` because they're pre-award tender notices —
   the winner genuinely isn't known yet (confirmed live: TED ~1% GC
@@ -167,12 +174,24 @@ ask Reed before changing architecture, not just code.
     `state/ae_pages.json`); Reed must manually share each one with the right
     person the first time it's created (the create log line prints the URL
     as a reminder). Don't try to code around this — there's no endpoint.
-11. **AE-owned fields sync one way only.** `triage.py` writes facts to a
-    person's page every Monday but never touches `Status`/`Next
-    action`/`Next action date`/`Notes`/`Outcome`/`Correction needed` on an
-    existing row. `sync.py` writes the reverse (`Status`/`Next
-    action`/`Next action date` only) back to the master. Widening either
-    direction re-creates the sync-fighting this split was built to avoid.
+11. **AE-owned fields sync one way, fact fields the other — except when a
+    person edits one.** `triage.py` writes facts to a person's page every
+    Monday but never touches `Status`/`Next action`/`Next action
+    date`/`Notes`/`Outcome`/`Correction needed` on an existing row.
+    `sync.py` writes all of those back to the master, always (the master
+    never writes them itself, so no fight). Fact fields (`Fit`/`GC`/
+    `Location`/`Expected concrete start`/`Expected completion`/`Value
+    band`) are the one case that CAN go either way: normally master ->
+    AE page only, but if a person edits one directly, `sync_fact_drift()`
+    (`src/ae_pages.py`) detects it against `state/ae_fact_snapshots.json`
+    (a snapshot of what was last mirrored — Notion has no per-property
+    edit history, only page-level `last_edited_time`) and pushes it to the
+    master immediately; future mirrors leave that field alone from then on
+    since the snapshot now matches the person's value, not the old
+    master's. This is a real distinction from a plain two-way sync: without
+    the snapshot, there'd be no way to tell "person edited this" apart from
+    "unchanged since we wrote it," and mirroring would either always win
+    (silently discarding edits) or always lose (fighting the next rescore).
 12. **The master "007 Projects" database is restricted to Reed + Issam.**
     Anyone else who needs to add a project uses the separate "007 —
     Submit a project" intake database (`ensure_intake_database`,
