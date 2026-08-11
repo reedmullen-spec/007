@@ -28,9 +28,8 @@ class HubSpotClient:
         })
 
     # ------------------------------------------------------------ property
-    def ensure_notice_property(self) -> None:
-        """Create the tender_notice_id deal property if it doesn't exist."""
-        name = self.cfg["notice_id_property"]
+    def _ensure_property(self, name: str, label: str, description: str,
+                         field_type: str = "text") -> None:
         r = self.session.get(f"{BASE}/crm/v3/properties/deals/{name}", timeout=30)
         if r.status_code == 200:
             return
@@ -38,11 +37,11 @@ class HubSpotClient:
             r.raise_for_status()
         payload = {
             "name": name,
-            "label": "Tender notice ID",
+            "label": label,
             "type": "string",
-            "fieldType": "text",
+            "fieldType": field_type,
             "groupName": "dealinformation",
-            "description": "Stable dedup key stamped by 007 tender-radar.",
+            "description": description,
         }
         create = self.session.post(f"{BASE}/crm/v3/properties/deals", json=payload, timeout=30)
         if create.status_code not in (200, 201):
@@ -52,6 +51,21 @@ class HubSpotClient:
                 f"Either add the crm.schemas.deals.write scope to the private "
                 f"app, or create the property manually in HubSpot settings."
             )
+
+    def ensure_notice_property(self) -> None:
+        """Create the tender_notice_id deal property if it doesn't exist."""
+        self._ensure_property(self.cfg["notice_id_property"], "Tender notice ID",
+                              "Stable dedup key stamped by 007 tender-radar.")
+
+    def ensure_summary_property(self) -> None:
+        """Create the enrichment-summary deal property if it doesn't exist.
+        Holds the research pack's TL;DR so the deal is readable without
+        opening the Notion pack — written by both directions of the
+        enrich <-> create-deal actions (src/../enrich.py, actions.py),
+        whichever runs first."""
+        self._ensure_property(self.cfg["summary_property"], "007 enrichment summary",
+                              "Research-pack TL;DR, stamped by 007 tender-radar.",
+                              field_type="textarea")
 
     # --------------------------------------------------------------- dedup
     def find_deal_by_notice_id(self, notice_id: str) -> dict | None:
@@ -73,7 +87,8 @@ class HubSpotClient:
         return results[0] if results else None
 
     # -------------------------------------------------------------- create
-    def create_deal(self, name: str, notice_id: str, ae: str | None) -> dict:
+    def create_deal(self, name: str, notice_id: str, ae: str | None,
+                    summary: str | None = None) -> dict:
         owners = self.cfg["owners"]
         if self.cfg.get("deal_owner_mode") == "ae" and ae and ae in owners:
             owner_id = owners[ae]
@@ -87,6 +102,8 @@ class HubSpotClient:
             "hubspot_owner_id": owner_id,
             self.cfg["notice_id_property"]: notice_id,
         }
+        if summary:
+            properties[self.cfg["summary_property"]] = summary[:5000]
         r = self.session.post(
             f"{BASE}/crm/v3/objects/deals",
             json={"properties": properties},
@@ -100,6 +117,18 @@ class HubSpotClient:
             f"https://app.hubspot.com/contacts/{self.cfg['portal_id']}/deal/{deal_id}"
         )
         return deal
+
+    # ------------------------------------------------------------ summary
+    def update_deal_summary(self, deal_id: str, summary: str) -> None:
+        """Backfill the enrichment TL;DR onto an already-existing deal —
+        used when research runs after the deal was created."""
+        r = self.session.patch(
+            f"{BASE}/crm/v3/objects/deals/{deal_id}",
+            json={"properties": {self.cfg["summary_property"]: summary[:5000]}},
+            timeout=30,
+        )
+        if r.status_code != 200:
+            raise RuntimeError(f"Deal summary update failed ({r.status_code}): {r.text[:300]}")
 
     # ---------------------------------------------------------- deal read
     def get_deal(self, deal_id: str) -> dict:

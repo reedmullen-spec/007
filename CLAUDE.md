@@ -147,7 +147,22 @@ ask Reed before changing architecture, not just code.
 - `contacts.py` — step 3, Amplemarket buying group (15–20, persona titles by
   framework). Belgium refuses by design (see Hakron). Enginy may replace
   Amplemarket later — treat this module as a swap point, don't extend it.
-- `approvals.py` — several times daily. Processes ✅ reactions on cards.
+- `approvals.py` — several times daily. Processes ✅ reactions on cards
+  (the digest.py/news.py legacy card flow only — see rule #13).
+- `actions.py` — polls every 20 minutes (plus `workflow_dispatch` for an
+  immediate on-demand run). Self-serve alternative for
+  ingest.py-sourced rows, which never get a Slack card: three checkboxes on
+  the master row — `Enrich`, `Create deal`, `Build contacts` — independent
+  of each other and of Status, tickable at any time in any combination.
+  `Enrich` creates the HubSpot deal first if none exists yet (the pack needs
+  one to pin its note to, same as `enrich.py --title`); `Create deal` reuses
+  `find_deal_by_notice_id` for the same dedup guarantee as every other path
+  (rule #2) and is a no-op if `Enrich` already created one in the same run.
+  `Build contacts` needs `General contractor` filled in first and honours
+  the Belgium/Hakron skip (rule #3) as a silent no-op, not a retry-forever
+  failure. A box that succeeds is unchecked (so it doesn't re-fire); a box
+  that fails is left checked (so the next run retries it) — same guard
+  philosophy as the 🏁 stamp in approvals.py.
 - `digest.py` / `news.py` — legacy Slack card flows. Schedules retired
   (workflow_dispatch only); superseded by ingest+triage. Don't delete yet.
 
@@ -215,6 +230,21 @@ ask Reed before changing architecture, not just code.
     `Fit`/`AE`/`SDR`) to whoever could submit it. Don't add a form view
     directly on the master database — route new manual-entry ideas
     through the intake database instead.
+13. **Two separate trigger surfaces feed the same enrich/deal/contacts
+    engine, and they don't talk to each other.** digest.py/news.py post
+    Slack cards; a ✅ reaction is read by approvals.py, which creates the
+    deal and (secrets permitting) chains straight into `enrich_deal()` then
+    offers a checkpoint-2 card for `build_buying_group()`. ingest.py rows
+    never get a card, so `actions.py` polls the master row's checkboxes
+    instead and calls the identical `enrich_deal()`/`build_buying_group()`/
+    `hubspot.create_deal()` functions directly — no Slack, no staging.
+    Both paths still land on the same HubSpot dedup key, so a row touched by
+    one is safely inert to the other. `cfg["hubspot"]["summary_property"]`
+    (`tender_summary`) is the one piece of state either direction writes:
+    `enrich_deal()` always backfills it from the pack's TL;DR, and
+    `create_deal()` reads the Notion `Enrichment summary` property to seed
+    it if research already ran — so it ends up correct regardless of which
+    of Enrich/Create-deal a person ticks first.
 
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage

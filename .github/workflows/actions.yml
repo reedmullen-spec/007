@@ -1,0 +1,47 @@
+name: Self-serve actions
+
+# Polls every 20 minutes so ticking Enrich / Create deal / Build contacts
+# in Notion feels close to instant without needing Notion automations (a
+# paid-plan feature) or a webhook. Also runnable on demand from the Actions
+# tab / `gh workflow run actions.yml`. No git state to commit (actions.py
+# only writes to Notion/HubSpot/Amplemarket) — the concurrency group just
+# guards against a scheduled and a manual run overlapping.
+on:
+  schedule:
+    - cron: "*/20 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (print pending actions, change nothing)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: tender-radar-state
+  cancel-in-progress: false
+
+jobs:
+  actions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run actions
+        env:
+          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          AMPLEMARKET_TOKEN: ${{ secrets.AMPLEMARKET_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python actions.py --dry-run
+          else
+            python actions.py
+          fi

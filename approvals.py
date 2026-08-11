@@ -25,8 +25,9 @@ def main() -> int:
     slack = SlackClient(env("SLACK_BOT_TOKEN"))
     hubspot = HubSpotClient(env("HUBSPOT_TOKEN"), cfg)
 
-    # One-off bootstrap: make sure the custom property exists.
+    # One-off bootstrap: make sure the custom properties exist.
     hubspot.ensure_notice_property()
+    hubspot.ensure_summary_property()
 
     approver = cfg["slack"].get("approver_user_id", "")
     if approver.startswith("TODO"):
