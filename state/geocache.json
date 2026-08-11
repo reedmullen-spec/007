@@ -1028,6 +1028,10 @@
     7.9538203
   ],
   "keighley, west yorkshire, uk|ca": null,
+  "kelsey drive, st. john's, newfoundland, canada|ca": [
+    47.5503466,
+    -52.7792747
+  ],
   "kettering, northamptonshire|gb": [
     52.3994233,
     -0.728004
@@ -1308,6 +1312,10 @@
   "mauel, germany|de": [
     50.0734596,
     6.3937514
+  ],
+  "mayo, yukon, canada|ca": [
+    63.5926909,
+    -135.8961421
   ],
   "meaux, île-de-france, france|fr": [
     48.9582708,
@@ -1890,6 +1898,10 @@
   "st. ingbert, saarland, germany|de": [
     49.2788378,
     7.1156707
+  ],
+  "st. john's, newfoundland, canada|ca": [
+    47.5646794,
+    -52.7066964
   ],
   "stadthagen, lower saxony, germany|de": [
     52.3289688,

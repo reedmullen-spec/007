@@ -44,6 +44,9 @@
   "CANADA:cb-757-77151780": {
     "ingested": true
   },
+  "CANADA:cb-769-89556177": {
+    "ingested": true
+  },
   "CANADA:cb-817-34155413": {
     "ingested": true
   },
@@ -288,6 +291,9 @@
   "NEWS:4a21c0016a7edc2f": {
     "ingested": true
   },
+  "NEWS:4e337e94048470ad": {
+    "ingested": true
+  },
   "NEWS:5762c1aaa25c1c8b": {
     "ts": [
       "1784824896.543879"
@@ -347,6 +353,9 @@
       "1785772723.459269"
     ]
   },
+  "NEWS:9e2b771af49c9fa7": {
+    "ingested": true
+  },
   "NEWS:a4b4cec5d6f571a3": {
     "ts": [
       "1784824884.189469"
@@ -358,6 +367,9 @@
     ]
   },
   "NEWS:b1bd1e16d87a4bb9": {
+    "ingested": true
+  },
+  "NEWS:b6bfb14083ea4392": {
     "ingested": true
   },
   "NEWS:c08e29498a46934d": {
