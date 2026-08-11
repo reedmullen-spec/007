@@ -74,6 +74,11 @@ hubspot:
   # crm.schemas.deals.write scope on your private app).
   notice_id_property: "tender_notice_id"
 
+  # Deal property holding the research pack's TL;DR — bootstrapped the same
+  # way as notice_id_property, written by enrich.py/actions.py from either
+  # direction (whichever of enrich/create-deal runs first).
+  summary_property: "tender_summary"
+
 # ------------------------------------------------------------ AE routing ----
 routing:
   # Country -> AE. Anything in eu_countries not listed falls to eu_default.

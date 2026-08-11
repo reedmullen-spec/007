@@ -287,6 +287,19 @@ class NotionClient:
         "Recontact date": {"date": {}},
         "Notice URL": {"url": {}},
         "HubSpot deal": {"url": {}},
+        # Self-serve triggers, polled + processed by actions.py. Independent
+        # of each other and of Status — any box can be ticked at any time.
+        # A successfully-processed box is unchecked so it doesn't re-fire; a
+        # failed one is left checked so the next run retries it.
+        "Enrich": {"checkbox": {}},
+        "Create deal": {"checkbox": {}},
+        "Build contacts": {"checkbox": {}},
+        # Written by actions.py/enrich.py once a research pack exists — the
+        # pack's TL;DR, mirrored onto the HubSpot deal too (see
+        # src/hubspot_client.py's summary_property) so either side can be
+        # read without opening the other.
+        "Enrichment summary": {"rich_text": {}},
+        "Contacts list": {"url": {}},
         # AE-owned, synced up from their own page nightly (sync.py) — see
         # src/ae_pages.py's FACT_FIELDS for the other sync direction.
         "Notes": {"rich_text": {}},

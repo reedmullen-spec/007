@@ -36,6 +36,15 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")[:60]
 
 
+def _extract_tldr(pack: str, limit: int = 1800) -> str:
+    """Pull the pack's TL;DR section for embedding as a HubSpot deal
+    property / Notion field — the full pack stays in Notion; this is just
+    enough to read the gist without opening it."""
+    match = re.search(r"##\s*TL;DR\s*\n(.*?)(?=\n##\s|\Z)", pack, re.S | re.I)
+    text = (match.group(1) if match else pack).strip()
+    return text[:limit]
+
+
 def resolve_target(args, hubspot: HubSpotClient, cfg: dict) -> tuple[str, str, str, str]:
     """Return (deal_id, deal_name, notice_id, ae)."""
     if args.deal_id:
@@ -112,6 +121,16 @@ def enrich_deal(cfg: dict, hubspot: HubSpotClient, *, deal_id: str,
         pin=True,
     )
 
+    tldr = _extract_tldr(pack)
+    try:
+        notion.update_properties(row["id"], {"Enrichment summary": notion._rt(tldr)})
+    except Exception:
+        pass  # row may predate the extended schema; never block the pack
+    try:
+        hubspot.update_deal_summary(deal_id, tldr)
+    except Exception as exc:
+        print(f"WARNING: could not write summary to deal {deal_id}: {exc}", file=sys.stderr)
+
     if slack is not None:
         import time as _time
         from src import state
@@ -150,6 +169,7 @@ def main() -> int:
     cfg = load_config()
     hubspot = HubSpotClient(env("HUBSPOT_TOKEN"), cfg)
     hubspot.ensure_notice_property()
+    hubspot.ensure_summary_property()
     slack = None if args.no_slack else SlackClient(env("SLACK_BOT_TOKEN"))
 
     deal_id, deal_name, notice_id, ae = resolve_target(args, hubspot, cfg)
