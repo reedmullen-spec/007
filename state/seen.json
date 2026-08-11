@@ -2,6 +2,51 @@
   "AUSTENDER:prod-c8d3d190e5454d6aa55ff883b418cbe3": {
     "ingested": true
   },
+  "CANADA:WS4269028690-Doc4269063119": {
+    "ingested": true
+  },
+  "CANADA:WS5176878164-Doc5803119702": {
+    "ingested": true
+  },
+  "CANADA:WS5319554310-Doc5683435732": {
+    "ingested": true
+  },
+  "CANADA:WS5545065916-Doc5821064315": {
+    "ingested": true
+  },
+  "CANADA:WS5644885780-Doc5644898669": {
+    "ingested": true
+  },
+  "CANADA:WS5692700454-Doc5697247389": {
+    "ingested": true
+  },
+  "CANADA:WS5729079606-Doc5766153088": {
+    "ingested": true
+  },
+  "CANADA:WS5760592917-Doc5811217213": {
+    "ingested": true
+  },
+  "CANADA:WS5799028446-Doc5802879921": {
+    "ingested": true
+  },
+  "CANADA:WS5810721272-Doc5810910947": {
+    "ingested": true
+  },
+  "CANADA:cb-146-71340635": {
+    "ingested": true
+  },
+  "CANADA:cb-443-53628671": {
+    "ingested": true
+  },
+  "CANADA:cb-674-86589304": {
+    "ingested": true
+  },
+  "CANADA:cb-757-77151780": {
+    "ingested": true
+  },
+  "CANADA:cb-817-34155413": {
+    "ingested": true
+  },
   "FTS:ocds-h6vhtk-02874b": {
     "ingested": true
   },
@@ -327,6 +372,9 @@
     "ts": [
       "1785772717.089169"
     ]
+  },
+  "NEWS:cece0ff7c4056cb5": {
+    "ingested": true
   },
   "NEWS:d6c72863f4240c57": {
     "ts": [

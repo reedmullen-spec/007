@@ -4,6 +4,10 @@
     -73.9454962
   ],
   "54-42 2nd street, hunters point south, long island city, queens, new york|": null,
+  "98 manitoba street, bracebridge, ontario, canada|ca": [
+    45.0421317,
+    -79.3126537
+  ],
   "a-4 motorway, toledo and ciudad real provinces, spain|es": null,
   "a-5 motorway, alcorcón / móstoles / navalcarnero, madrid, spain|es": null,
   "a-6 motorway, lugo province, galicia, spain|es": null,
@@ -293,6 +297,10 @@
     48.0245814,
     -1.7471629
   ],
+  "burlington, ontario, canada|ca": [
+    43.3248924,
+    -79.7966835
+  ],
   "bussy-saint-georges, seine-et-marne, france|fr": [
     48.8389953,
     2.7171086
@@ -313,9 +321,17 @@
     43.8216342,
     11.1366776
   ],
+  "canada|ca": [
+    61.0666922,
+    -107.991707
+  ],
   "canal del flumen, huesca, aragón, spain|es": [
     42.0055985,
     -0.3834784
+  ],
+  "carillon, quebec, canada|ca": [
+    45.5672971,
+    -74.375248
   ],
   "casatejada, cáceres, extremadura, spain|es": [
     39.8861732,
@@ -978,6 +994,7 @@
     56.7494892,
     22.9518816
   ],
+  "jc van horne bridge, canada|ca": null,
   "jfk airport, queens, new york|": [
     40.6429479,
     -73.7793734
@@ -1082,6 +1099,10 @@
     44.238366,
     9.6912326
   ],
+  "lachine canal, montreal, quebec, canada|ca": [
+    45.4607603,
+    -73.6043939
+  ],
   "lahn-dill, hesse, germany|de": [
     50.6388777,
     8.408633
@@ -1147,6 +1168,10 @@
     53.5690389,
     10.0301006
   ],
+  "lethbridge, alberta, canada|ca": [
+    49.6945782,
+    -112.8331033
+  ],
   "leutkirch, baden-württemberg, germany|de": [
     47.8263961,
     10.0162238
@@ -1200,6 +1225,7 @@
     40.7159357,
     -73.9868057
   ],
+  "lower liard river, northwest territories / yukon, canada|ca": null,
   "lugo, galicia, spain|es": [
     43.0395266,
     -7.4567985
@@ -1493,6 +1519,10 @@
     51.9866376,
     8.6460129
   ],
+  "ottawa, ontario, canada|ca": [
+    45.4208777,
+    -75.6901106
+  ],
   "ottignies, belgium|be": [
     50.666357,
     4.5690502
@@ -1529,6 +1559,10 @@
   "passau, bavaria, germany|de": [
     48.5748229,
     13.4609744
+  ],
+  "pelly crossing, yukon, canada|ca": [
+    62.8228024,
+    -136.5742005
   ],
   "peregrinastraße, stuttgart, germany|de": [
     48.7450919,
@@ -1578,6 +1612,10 @@
   "priestfield, west midlands|gb": [
     52.5715528,
     -2.0939272
+  ],
+  "prince edward island national park, prince edward island, canada|ca": [
+    46.4146236,
+    -63.0106555
   ],
   "prospect heights, brooklyn, new york city|": [
     40.6778708,
@@ -1649,6 +1687,10 @@
     8.069646
   ],
   "rhine corridor (right rhine), germany|de": null,
+  "riding mountain national park, manitoba, canada|ca": [
+    50.7605068,
+    -100.0491992
+  ],
   "riga, latvia|lv": [
     56.9493977,
     24.1051846
