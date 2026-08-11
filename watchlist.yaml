@@ -43,6 +43,7 @@ contractors:
   - { name: "HG Construction",       region: uk }
   - { name: "Keltbray",              region: uk }
   - { name: "Careys construction",   region: uk }
+  - { name: "Graham Construction UK", region: uk }
 
   # ── EU Tier 1s (Lisa default; Italy → Aled) ───────────────────────────────
   - { name: "BESIX",           region: eu, hl: en, gl: BE, ceid: "BE:en" }
@@ -104,7 +105,6 @@ contractors:
   - { name: "Aecon",                 region: ca }
   - { name: "Pomerleau",             region: ca }
   - { name: "Ledcor",                region: ca }
-  - { name: "Graham Construction",   region: ca }
   - { name: "Bird Construction",     region: ca }
   - { name: "Kiewit Canada",         region: ca }
 
