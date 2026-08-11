@@ -260,6 +260,10 @@
     10.5236066
   ],
   "brescia province, lombardy, italy|it": null,
+  "bronx / new york city, new york, usa|": [
+    40.8227531,
+    -73.9124302
+  ],
   "bronx, new york city, usa|": [
     40.8466508,
     -73.8785937
@@ -404,6 +408,7 @@
     51.7567447,
     14.3357307
   ],
+  "crailsheim - bad mergentheim, baden-württemberg, germany|de": null,
   "crailsheim, baden-württemberg, germany|de": [
     49.1365626,
     10.0720195
@@ -1187,6 +1192,10 @@
     51.5074456,
     -0.1277653
   ],
+  "long beach, california|us": [
+    33.7690164,
+    -118.191604
+  ],
   "lower east side, manhattan, new york city, ny|": [
     40.7159357,
     -73.9868057
@@ -1426,6 +1435,10 @@
     51.4789205,
     7.5543751
   ],
+  "north shore, staten island, new york, usa|": [
+    40.647715,
+    -74.0817455
+  ],
   "northampton, england|gb": [
     52.2343297,
     -0.9028043
@@ -1495,6 +1508,10 @@
   "pantin, île-de-france, france|fr": [
     48.8965023,
     2.4019804
+  ],
+  "pape, toronto, ontario, canada|ca": [
+    43.6799212,
+    -79.3449046
   ],
   "papenburg, lower saxony, germany|de": [
     53.0822606,
@@ -1722,6 +1739,10 @@
     48.734239,
     7.0557352
   ],
+  "scarborough, ontario, canada|ca": [
+    43.7729744,
+    -79.2576479
+  ],
   "schaarbeek, brussels, belgium|be": [
     50.878395,
     4.3784579
@@ -1820,6 +1841,10 @@
     38.0297889,
     13.5708828
   ],
+  "st. george, staten island, new york, usa|": [
+    40.6439626,
+    -74.0734416
+  ],
   "st. ingbert, saarland, germany|de": [
     49.2788378,
     7.1156707
@@ -1831,6 +1856,14 @@
   "stalden, valais, switzerland|ch": [
     46.2325963,
     7.8704203
+  ],
+  "stapleton, staten island, new york, usa|": [
+    40.6264774,
+    -74.0776361
+  ],
+  "staten island, new york, usa|": [
+    40.5834557,
+    -74.1496048
   ],
   "steinheim am albuch, baden-württemberg, germany|de": [
     48.692598,

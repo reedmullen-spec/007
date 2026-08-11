@@ -256,6 +256,12 @@
   "NEWS:5a17281d216c1cae": {
     "ingested": true
   },
+  "NEWS:5e2b1fbc9edc74e5": {
+    "ingested": true
+  },
+  "NEWS:626658aa56e7856f": {
+    "ingested": true
+  },
   "NEWS:6e694e55f05f0587": {
     "ts": [
       "1785772711.063979",
@@ -338,6 +344,9 @@
     ]
   },
   "NEWS:e78fdc594f70773e": {
+    "ingested": true
+  },
+  "NEWS:e79c3b8e84f48e82": {
     "ingested": true
   },
   "NEWS:f6575e51d75035fc": {
@@ -3707,6 +3716,15 @@
     "ingested": true
   },
   "TED:552557-2026": {
+    "ingested": true
+  },
+  "TED:555254-2026": {
+    "ingested": true
+  },
+  "TED:556049-2026": {
+    "ingested": true
+  },
+  "TED:556900-2026": {
     "ingested": true
   }
 }
