@@ -31,7 +31,7 @@ from src.notion_client import NotionClient
 from src.qualify import qualify
 from src.routing import resolve_ae
 from src.scoring import resolve_date, score_project
-from src.sources import austender, fts, sam, ted
+from src.sources import austender, canada, fts, sam, ted
 
 from news import collect as collect_news, REGION_COUNTRY
 
@@ -62,8 +62,8 @@ def gather(cfg: dict, days_back: int, historical: bool = False) -> list[dict]:
     out: list[dict] = []
 
     projects: list[Project] = []
-    for name, source in (("TED", ted), ("FTS", fts),
-                         ("AUSTENDER", austender), ("SAM", sam)):
+    for name, source in (("TED", ted), ("FTS", fts), ("AUSTENDER", austender),
+                         ("SAM", sam), ("CANADA", canada)):
         try:
             kwargs = {"days_back": days_back}
             if historical:
@@ -84,7 +84,8 @@ def gather(cfg: dict, days_back: int, historical: bool = False) -> list[dict]:
             continue
         region = ("au" if p.source == "AUSTENDER"
                   else getattr(p, "us_side", "us") if p.source == "SAM"
-                  else "uk" if p.source == "FTS" else "eu")
+                  else "uk" if p.source == "FTS"
+                  else "ca" if p.source == "CANADA" else "eu")
         out.append({"dedup_key": p.dedup_key, "notice_id": p.notice_id,
                     "title": p.title, "source": p.source, "region": region,
                     "country": p.country, "buyer": p.buyer, "value": p.value,

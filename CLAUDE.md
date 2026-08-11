@@ -18,8 +18,15 @@ ask Reed before changing architecture, not just code.
 ## Architecture (current, V1)
 - `ingest.py` — weekdays 02:00 + 13:00 UTC. Fetch TED (EU) + FTS (UK) +
   AusTender (AU federal awards) + SAM.gov (US federal; needs SAM_API_KEY,
-  skips politely without it) + news RSS (trade press + ~84 generated Google
-  News contractor queries from `watchlist.yaml`). Filter → dedup → qualify
+  skips politely without it) + CanadaBuys (Canada federal tenders;
+  `src/sources/canada.py` — a static, unauthenticated CSV refreshed every 2
+  hours, not a live-query API like the others, so no historical/pagination
+  mode; needs a browser-like User-Agent or canadabuys.canada.ca 403s the
+  default `requests` one) + news RSS (trade press + ~84 generated Google
+  News contractor queries from `watchlist.yaml`). CanadaBuys' tender
+  notices carry no disclosed estimated value at all (verified live) — value
+  only appears once awarded, via `recheck_awards.py`'s Canada reconciliation.
+  Filter → dedup → qualify
   (one small Anthropic API call per candidate: summary, canonical GC,
   project type, work nature, project stage, expected concrete start +
   completion, location, use cases — observations only, no fit; see
@@ -126,6 +133,12 @@ ask Reed before changing architecture, not just code.
   buyer's others — a fuzzy match, flagged in `Fit reason`, `Verified`
   stays False. FTS: exact OCID match (an award-stage OCDS release shares
   its OCID with the original tender release) — `Verified` set True.
+  CANADA: exact `referenceNumber`/`solicitationNumber` match against the
+  CanadaBuys contract history CSV (same field names as the tender-notices
+  file) — also exact, `Verified` set True. Also backfills `Value`, since
+  it's only disclosed post-award there — except when the award's value is
+  literally `0`, which means undisclosed (verified live), not a genuine
+  free contract, so it's left blank rather than written as real data.
 - `enrich.py` — deep research (step 2). Standalone: `--deal-id` / `--title` /
   `--notice-id`. Anthropic API + web search, system prompt = the SKILL.md
   for the framework (concretedna for Lisa/Aled, fieldatlas for Avi). Writes
