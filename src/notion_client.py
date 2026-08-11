@@ -235,7 +235,7 @@ class NotionClient:
 
     SCHEMA = {
         "Source": {"select": {"options": [{"name": s} for s in
-                   ("TED", "FTS", "AUSTENDER", "SAM", "NEWS", "MANUAL")]}},
+                   ("TED", "FTS", "AUSTENDER", "SAM", "CANADA", "NEWS", "MANUAL")]}},
         "Summary": {"rich_text": {}},
         "Location": {"rich_text": {}},
         "Country": {"rich_text": {}},

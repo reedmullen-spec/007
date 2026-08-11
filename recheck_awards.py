@@ -24,6 +24,15 @@ FTS: exact OCID match. An award-stage OCDS release shares its OCID with
 the original tender release for the same procurement (verified live,
 Aug 2026) — not a guess, so "Verified" is set True.
 
+CANADA: exact referenceNumber/solicitationNumber match against the
+CanadaBuys contract history CSV (same field names as the tender-notices
+file it's matched against — verified live, Aug 2026) — also an exact
+match, "Verified" set True. Also backfills Value, since CanadaBuys
+withholds estimated value pre-award but discloses the actual awarded
+value once a contract exists — except when that value is 0, which (also
+verified live) means undisclosed rather than a genuine free contract, so
+it's left blank rather than written as a real value.
+
 Known limitation: TED matching uses the row's stored "Client" field as a
 buyer-name proxy (qualify.py's model-chosen client, falling back to the
 raw buyer name) — if the model reworded the buyer's name rather than using
@@ -38,7 +47,9 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import csv
 import datetime as dt
+import io
 import re
 import time
 from collections import defaultdict
@@ -52,6 +63,8 @@ from src.sources.ted import _all_strings, _first_text
 ACTIVE_STATUSES = ["New", "This week", "Active Contact", "Recontact later"]
 TED_SEARCH_URL = "https://api.ted.europa.eu/v3/notices/search"
 FTS_SEARCH_URL = "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages"
+CANADA_CONTRACT_HISTORY_URL = ("https://canadabuys.canada.ca/opendata/pub/"
+                               "contractHistoryComplete-contratsOctroyesComplet.csv")
 
 
 def _title_tokens(title: str) -> set[str]:
@@ -206,6 +219,68 @@ def recheck_fts(notion: NotionClient, cfg: dict, args) -> None:
     print(f"FTS: backfilled {matched} rows")
 
 
+def recheck_canada(notion: NotionClient, cfg: dict, args) -> None:
+    rows = _pending_rows(notion, "CANADA")
+    print(f"CANADA: {len(rows)} pending rows (no GC, deadline passed)")
+    if not rows:
+        return
+
+    session = requests.Session()
+    resp = session.get(CANADA_CONTRACT_HISTORY_URL, timeout=60,
+                       headers={"User-Agent": "Mozilla/5.0 (compatible; 007RadarBot/1.0)"})
+    if resp.status_code != 200:
+        print(f"  WARNING: CanadaBuys contract history fetch failed ({resp.status_code})")
+        return
+
+    awards_by_ref: dict[str, dict] = {}
+    reader = csv.DictReader(io.StringIO(resp.content.decode("utf-8-sig")))
+    for r in reader:
+        ref = (r.get("referenceNumber-numeroReference") or "").strip()
+        sol = (r.get("solicitationNumber-numeroSollicitation") or "").strip()
+        if ref:
+            awards_by_ref.setdefault(ref, r)
+        if sol:
+            awards_by_ref.setdefault(sol, r)
+
+    matched = 0
+    for row in rows:
+        notice_id = _prop_rt(row, cfg["notion"]["notice_id_property"]).strip()
+        award = awards_by_ref.get(notice_id)
+        if not award:
+            continue
+        gc = (award.get("supplierLegalName-nomLegalFournisseur-eng")
+              or award.get("supplierOperatingName-nomCommercialFournisseur-eng")
+              or award.get("supplierStandardizedName-nomNormaliseFournisseur-eng")
+              or "").strip()
+        if not gc:
+            continue
+
+        value_raw = (award.get("totalContractValue-valeurTotaleContrat")
+                     or award.get("contractAmount-montantContrat") or "").strip()
+        try:
+            value = float(value_raw) if value_raw else None
+        except ValueError:
+            value = None
+        if value == 0:
+            value = None   # 0 means undisclosed here, not a genuine free contract
+
+        matched += 1
+        print(f"  {_prop_title(row)[:60]!r} -> {gc!r}"
+              + (f" (value={value:,.0f} CAD)" if value else ""))
+        if not args.dry_run:
+            props = {"General contractor": NotionClient._rt(gc),
+                     "Verified": {"checkbox": True}}
+            if value is not None:
+                band = ("Under 50M" if value < 50_000_000
+                        else "50-250M" if value < 250_000_000 else "250M+")
+                props["Value"] = {"number": value}
+                props["Currency"] = {"select": {"name": "CAD"}}
+                props["Value band"] = {"select": {"name": band}}
+            notion.update_properties(row["id"], props)
+            time.sleep(0.4)
+    print(f"CANADA: backfilled {matched} rows")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
@@ -220,6 +295,7 @@ def main() -> int:
 
     recheck_ted(notion, args)
     recheck_fts(notion, cfg, args)
+    recheck_canada(notion, cfg, args)
     return 0
 
 

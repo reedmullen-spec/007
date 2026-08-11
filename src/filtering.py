@@ -6,11 +6,12 @@ from .models import Project
 
 def _matches_codes(project: Project, f: dict) -> bool:
     """Classification match using the right code system per source:
-    TED/FTS carry CPV, AusTender carries UNSPSC, SAM carries NAICS."""
+    TED/FTS carry CPV, AusTender/CANADA carry UNSPSC, SAM carries NAICS."""
     prefix_map = {
         "TED": f.get("cpv_prefixes", []),
         "FTS": f.get("cpv_prefixes", []),
         "AUSTENDER": f.get("unspsc_prefixes", []),
+        "CANADA": f.get("unspsc_prefixes", []),
         "SAM": f.get("naics_codes", []),
     }
     prefixes = prefix_map.get(project.source, [])
