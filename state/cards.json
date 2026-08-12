@@ -1,7 +1,8 @@
 {
   "C0BGRLQ2BMH:1785336453.190469": {
     "channel": "C0BGRLQ2BMH",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "aled",
       "country": "GB",
@@ -17,7 +18,8 @@
   },
   "C0BGRLQ2BMH:1785336990.874459": {
     "channel": "C0BGRLQ2BMH",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "aled",
       "country": "GB",
