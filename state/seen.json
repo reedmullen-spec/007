@@ -41,6 +41,9 @@
   "CANADA:cb-674-86589304": {
     "ingested": true
   },
+  "CANADA:cb-746-9352283": {
+    "ingested": true
+  },
   "CANADA:cb-757-77151780": {
     "ingested": true
   },
@@ -268,6 +271,9 @@
       "1784824889.781529"
     ]
   },
+  "NEWS:25f6298fea7cc815": {
+    "ingested": true
+  },
   "NEWS:31afa9a63d2af41c": {
     "ts": [
       "1785772728.057979"
@@ -277,6 +283,9 @@
     "ts": [
       "1785772722.121799"
     ]
+  },
+  "NEWS:3953b0bec28f7799": {
+    "ingested": true
   },
   "NEWS:4092b59c458f23b9": {
     "ts": [
@@ -298,6 +307,9 @@
     "ts": [
       "1784824896.543879"
     ]
+  },
+  "NEWS:579b16e443ff1e30": {
+    "ingested": true
   },
   "NEWS:57fccdd0a7cec9c1": {
     "ts": [
@@ -325,6 +337,9 @@
   "NEWS:718eeb60e6ec879d": {
     "ingested": true
   },
+  "NEWS:748cefa5bddd2c4b": {
+    "ingested": true
+  },
   "NEWS:74a73bde2900afd6": {
     "ts": [
       "1785772725.775649"
@@ -334,6 +349,12 @@
     "ts": [
       "1785772718.170929"
     ]
+  },
+  "NEWS:804a5119d88d466b": {
+    "ingested": true
+  },
+  "NEWS:905dd3d41b66f7dd": {
+    "ingested": true
   },
   "NEWS:9567fb64fa80a2d8": {
     "ts": [
@@ -355,6 +376,9 @@
     "ts": [
       "1785772723.459269"
     ]
+  },
+  "NEWS:9dcfb7892331ebba": {
+    "ingested": true
   },
   "NEWS:9e2b771af49c9fa7": {
     "ingested": true
@@ -413,6 +437,9 @@
     "ingested": true
   },
   "NEWS:e79c3b8e84f48e82": {
+    "ingested": true
+  },
+  "NEWS:efa8bd2113f21c1e": {
     "ingested": true
   },
   "NEWS:f6575e51d75035fc": {

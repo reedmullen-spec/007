@@ -767,6 +767,7 @@
     53.0618235,
     13.166625
   ],
+  "grasslands national park, west block, saskatchewan, canada|ca": null,
   "great britain|gb": [
     54.3151594,
     -1.9181532
@@ -1489,6 +1490,10 @@
     40.647715,
     -74.0817455
   ],
+  "north west england|gb": [
+    54.0680925,
+    -2.6852531
+  ],
   "northampton, england|gb": [
     52.2343297,
     -0.9028043
@@ -2166,6 +2171,10 @@
     7.5543751
   ],
   "weurt and heumen, gelderland, netherlands|nl": null,
+  "whitby, ontario, canada|ca": [
+    43.87982,
+    -78.9421751
+  ],
   "white street, chinatown, manhattan, new york city|": [
     40.7179212,
     -74.0028112
