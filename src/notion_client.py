@@ -310,16 +310,43 @@ class NotionClient:
     }
 
     def ensure_schema(self) -> None:
-        """Add any missing V1 properties to the database (idempotent)."""
+        """Add any missing V1 properties to the database (idempotent), and
+        add any missing select/multi_select OPTIONS to properties that
+        already exist — e.g. a new tender source added to SCHEMA later
+        (CANADA) never reaches Notion otherwise, because the property name
+        itself ("Source") was already present and the check above only
+        ever looked at names. Purely additive: never removes or renames an
+        existing option (renames still need a manual Notion edit — see the
+        STATUSES comment above)."""
         db_id = self.ensure_database()
         db = self._check(self.session.get(f"{BASE}/databases/{db_id}", timeout=30))
-        existing = set((db.get("properties") or {}).keys())
+        existing_props = db.get("properties") or {}
+        existing = set(existing_props.keys())
         missing = {k: v for k, v in self.SCHEMA.items() if k not in existing}
         if missing:
             self._check(self.session.patch(
                 f"{BASE}/databases/{db_id}",
                 json={"properties": missing}, timeout=30))
             print(f"Notion schema: added {sorted(missing)}")
+
+        option_patches = {}
+        for name, spec in self.SCHEMA.items():
+            if name in missing:
+                continue
+            for kind in ("select", "multi_select"):
+                wanted = (spec.get(kind) or {}).get("options")
+                if wanted is None:
+                    continue
+                live = ((existing_props.get(name) or {}).get(kind) or {}).get("options", [])
+                live_names = {o["name"] for o in live}
+                new_opts = [o for o in wanted if o["name"] not in live_names]
+                if new_opts:
+                    option_patches[name] = {kind: {"options": live + new_opts}}
+        if option_patches:
+            self._check(self.session.patch(
+                f"{BASE}/databases/{db_id}",
+                json={"properties": option_patches}, timeout=30))
+            print(f"Notion schema: added options for {sorted(option_patches)}")
 
     def get_data_source_id(self, database_id: str | None = None) -> str:
         """The Views API addresses a database's *data source*, not the

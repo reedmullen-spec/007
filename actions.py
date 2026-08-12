@@ -143,6 +143,11 @@ def main() -> int:
     notion = NotionClient(env("NOTION_TOKEN"), cfg)
     hubspot = HubSpotClient(env("HUBSPOT_TOKEN"), cfg)
     if not args.dry_run:
+        # Runs every 20 minutes, independent of ingest.py's 02:00/13:00
+        # UTC schedule — a schema property added in the same PR as this
+        # script (e.g. the Enrich/Create deal/Build contacts checkboxes)
+        # must not have to wait for ingest.py to happen to run first.
+        notion.ensure_schema()
         hubspot.ensure_notice_property()
         hubspot.ensure_summary_property()
 
