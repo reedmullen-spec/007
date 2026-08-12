@@ -8,6 +8,10 @@
     45.0421317,
     -79.3126537
   ],
+  "a coruña, galicia, spain|es": [
+    43.3466447,
+    -8.4127029
+  ],
   "a-4 motorway, toledo and ciudad real provinces, spain|es": null,
   "a-5 motorway, alcorcón / móstoles / navalcarnero, madrid, spain|es": null,
   "a-6 motorway, lugo province, galicia, spain|es": null,
@@ -231,6 +235,10 @@
   "bielefeld, north rhine-westphalia, germany|de": [
     52.0191005,
     8.531007
+  ],
+  "bilbao, basque country, spain|es": [
+    43.2630018,
+    -2.9350039
   ],
   "birkelandsvatn, norway|no": null,
   "blarghour, scotland|gb": null,
@@ -835,6 +843,10 @@
     10.0013165
   ],
   "hanau, am hauptbahnhof 1, germany|de": null,
+  "hanau, hesse, germany|de": [
+    50.132881,
+    8.9169797
+  ],
   "hannover, germany|de": [
     52.3744779,
     9.7385532
@@ -1445,6 +1457,10 @@
     40.7502382,
     -73.9928111
   ],
+  "newfoundland, canada|ca": [
+    49.1211912,
+    -56.6403402
+  ],
   "newry, mourne & down, northern ireland|gb": [
     54.1775283,
     -6.337506
@@ -1665,6 +1681,10 @@
     55.410164,
     -3.5334235
   ],
+  "reichenburg, schwyz, switzerland|ch": [
+    47.1691793,
+    8.9754615
+  ],
   "reims and bezannes, grand est, france|fr": null,
   "remseck am neckar, baden-württemberg, germany|de": [
     48.8727053,
@@ -1695,6 +1715,10 @@
     8.069646
   ],
   "rhine corridor (right rhine), germany|de": null,
+  "rhineland-palatinate, germany|de": [
+    49.9531599,
+    7.310646
+  ],
   "riding mountain national park, manitoba, canada|ca": [
     50.7605068,
     -100.0491992
@@ -2052,6 +2076,7 @@
     60.9291011,
     6.1078869
   ],
+  "via baltica corridor, lithuania|lt": null,
   "via magnagrecia 50, rome, italy|it": [
     41.8817659,
     12.5082314
