@@ -245,8 +245,6 @@ class NotionClient:
         "Client": {"rich_text": {}},
         "Concrete subcontractor": {"rich_text": {}},
         "Value": {"number": {}},
-        "Currency": {"select": {"options": [{"name": s} for s in
-                     ("EUR", "GBP", "USD", "AUD")]}},
         "Value band": {"select": {"options": [
             {"name": "Under 50M", "color": "gray"},
             {"name": "50-250M", "color": "yellow"},
@@ -422,7 +420,6 @@ class NotionClient:
             props["Project type"] = {"select": {"name": fields["project_type"]}}
         if fields.get("value") is not None:
             props["Value"] = {"number": fields["value"]}
-            props["Currency"] = {"select": {"name": fields.get("currency", "EUR")}}
         if fields.get("lat") is not None:
             props["Lat"] = {"number": fields["lat"]}
             props["Lng"] = {"number": fields["lng"]}

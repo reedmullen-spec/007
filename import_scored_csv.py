@@ -149,7 +149,6 @@ def build_properties(row: dict, cfg: dict, notion: NotionClient, notice_id: str)
         props["Region"] = {"select": {"name": region}}
     if value_raw is not None:
         props["Value"] = {"number": value_raw}
-        props["Currency"] = {"select": {"name": (row.get("Currency") or "USD").strip() or "USD"}}
         band = ("Under 50M" if value_raw < 50_000_000
                 else "50-250M" if value_raw < 250_000_000 else "250M+")
         props["Value band"] = {"select": {"name": band}}

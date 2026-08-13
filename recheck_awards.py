@@ -272,7 +272,6 @@ def recheck_canada(notion: NotionClient, cfg: dict, args) -> None:
                 band = ("Under 50M" if value < 50_000_000
                         else "50-250M" if value < 250_000_000 else "250M+")
                 props["Value"] = {"number": value}
-                props["Currency"] = {"select": {"name": "CAD"}}
                 props["Value band"] = {"select": {"name": band}}
             notion.update_properties(row["id"], props)
             time.sleep(0.4)
