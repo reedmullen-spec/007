@@ -302,6 +302,31 @@ ask Reed before changing architecture, not just code.
     alone here since dropping columns across 13 separate live databases
     wasn't part of what was asked.
 
+16. **Dropping a live Notion column and pushing its code fix are not
+    atomic — a cron tick in between resurrects it.** `ensure_schema()` is
+    additive-only: it re-adds any property in the code's SCHEMA dict
+    that's missing from the live database. `actions.py` runs every 20
+    minutes (plus `ingest.py` at 02:00/13:00 UTC) and calls it. If you
+    DROP COLUMN in Notion before the matching code change lands on
+    `main`, the next scheduled run — using whatever is still on `main` —
+    silently re-adds the column as empty, and any ingest that happens in
+    that window writes real data into the old field name again. This
+    happened during the Aug 2026 `General contractor`/`JV / parents`/
+    `Next action`/`Next action date`/`Recontact date`/`Currency` cleanup:
+    a stale-code `ingest.py` run resurrected all five removed properties
+    and wrote 7 new rows into the old `General contractor` field, and
+    separately ~19 rows of live manual research (Ontario Line packages,
+    GO Expansion, PORR, Bechtel, Bouygues UK, Ashbridges Bay, Gardiner
+    Expressway, Darlington SMR, Ottawa O-Train) got entered directly in
+    Notion during the same window using the resurrected `JV / parents`/
+    `Next action` fields, because they were visible in the Notion UI
+    again. All of it was recovered by hand (merged into `General
+    contractor/JV` and archived into `Notes`) — nothing was lost, but it
+    required a second full reconciliation pass. **The fix**: push the
+    code change and confirm it's on `main` BEFORE dropping the Notion
+    column, not after — and re-check the live schema immediately before
+    calling a column removal done, since a resurrection is silent.
+
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage
   1326060402. Owners: Reed 90628877, Lisa 465940403, Aled 146637928,
