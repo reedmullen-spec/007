@@ -241,6 +241,10 @@
     -2.9350039
   ],
   "birkelandsvatn, norway|no": null,
+  "birmingham, alabama, us|us": [
+    33.5206824,
+    -86.8024326
+  ],
   "blarghour, scotland|gb": null,
   "boise river basin, idaho, usa|": null,
   "boise, idaho, usa|": [
@@ -296,6 +300,10 @@
   "brooklyn, new york city, usa|": [
     40.6526006,
     -73.9497211
+  ],
+  "brussels capital region, belgium|be": [
+    50.8416804,
+    4.3582377
   ],
   "bruyères-le-châtel, île-de-france, france|fr": [
     48.5922609,
@@ -528,6 +536,7 @@
     11.1989396
   ],
   "eifel line (strecke 2631), germany|de": null,
+  "eifel line, ehrang to nettersheim, rhineland-palatinate / north rhine-westphalia, germany|de": null,
   "eifel line, germany|de": null,
   "eisenach – bernterode – deuna, thuringia/lower saxony, germany|de": null,
   "eisenhüttenstadt, brandenburg, germany|de": [
@@ -554,6 +563,10 @@
     7.850993
   ],
   "emmerich–oberhausen corridor, north rhine-westphalia, germany|de": null,
+  "enge, zürich, switzerland|ch": [
+    47.3617894,
+    8.528708
+  ],
   "entre-deux, la réunion, france|fr": [
     -21.2486585,
     55.4700859
@@ -843,6 +856,10 @@
     53.5501721,
     10.0013165
   ],
+  "hampshire, england|gb": [
+    51.0449814,
+    -1.2433102
+  ],
   "hanau, am hauptbahnhof 1, germany|de": null,
   "hanau, hesse, germany|de": [
     50.132881,
@@ -1104,6 +1121,7 @@
     50.195133,
     8.4628165
   ],
+  "l27a km 44.835–45.066, belgium|be": null,
   "la ferté-macé, normandy, france|fr": [
     48.5895488,
     -0.3584924
@@ -1396,6 +1414,10 @@
   "munich, germany|de": [
     48.1371079,
     11.5753822
+  ],
+  "mutterstadt, rhineland-palatinate, germany|de": [
+    49.4422445,
+    8.3542306
   ],
   "märkisches kreis, north rhine-westphalia, germany|de": [
     51.4345446,
@@ -2133,6 +2155,10 @@
   "warnemünde, rostock, germany|de": [
     54.1779039,
     12.0812875
+  ],
+  "watzenseifen, germany|de": [
+    50.9891595,
+    8.1284743
   ],
   "wendlingen / esslingen, baden-württemberg, germany|de": [
     48.6727602,
