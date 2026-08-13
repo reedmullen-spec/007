@@ -200,7 +200,12 @@ def main() -> int:
 
         meta = {"k": i.dedup_key, "nid": i.dedup_key, "t": i.title[:120],
                 "ae": ae, "src": "NEWS", "cp": 1,
-                "country": country}
+                "country": country,
+                # The watchlist entry driving this feed's query is usually
+                # the contractor itself (news.py's ~67% GC-capture rate
+                # per CLAUDE.md) — good enough to seed the
+                # '[Contractor] — ...' deal name immediately.
+                "gc": i.entity}
         region_line = f"Region: {i.region.upper()}"
         if ae:
             region_line += f" · Suggested AE: {ae.capitalize()}"

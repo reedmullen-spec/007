@@ -120,7 +120,13 @@ def main() -> int:
             lines.append(f"Suggested AE: {ae.capitalize()}")
 
         meta = {"k": p.dedup_key, "nid": p.notice_id, "t": p.title[:120],
-                "ae": ae, "src": p.source, "cp": 1, "country": p.country}
+                "ae": ae, "src": p.source, "cp": 1, "country": p.country,
+                # Ground-truth winner from an award-type notice, when the
+                # source carries one (see Project.contractor) — lets a
+                # checkpoint-1 deal get the '[Contractor] — ...' naming
+                # convention immediately instead of always needing a
+                # manual rename once the contractor is later resolved.
+                "gc": p.contractor}
         chans, mentions = card_targets(p, ae, from_hubspot)
         stamps = []
         for channel in chans:

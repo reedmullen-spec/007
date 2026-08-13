@@ -8,9 +8,11 @@ independent checkboxes instead:
     Enrich          -> deep research pack (same engine as enrich.py).
                        Creates the HubSpot deal first if one doesn't exist
                        yet — the pack needs somewhere to pin its note.
-    Create deal     -> HubSpot deal at Identified, named '[GC] — [Title]'
-                       when a General contractor is known. Backfills the
-                       enrichment TL;DR onto it if Enrich already ran.
+                       Named '[GC] — [Title] — [Location]' (src/deal_naming.py),
+                       GC/Location segments dropped when not yet known.
+    Create deal     -> HubSpot deal at Identified, same naming convention.
+                       Backfills the enrichment TL;DR onto it if Enrich
+                       already ran.
     Build contacts  -> Amplemarket buying group (needs General contractor
                        filled in, AND a HubSpot deal already existing —
                        tick Enrich or Create deal first). Belgium/Hakron
@@ -42,6 +44,7 @@ import sys
 from contacts import build_buying_group
 from enrich import enrich_deal
 from src.config import env, load_config
+from src.deal_naming import build_deal_name
 from src.hubspot_client import HubSpotClient
 from src.notion_client import NotionClient
 
@@ -80,8 +83,11 @@ def _run_enrich(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: di
         deal_id = existing["id"]
         deal_name = existing.get("properties", {}).get("dealname") or title
     else:
-        deal = hubspot.create_deal(name=title, notice_id=notice_id, ae=ae)
-        deal_id, deal_name = deal["id"], title
+        gc = _prop_rich(row, "General contractor")
+        location = _prop_rich(row, "Location")
+        deal_name = build_deal_name(title, contractor=gc, location=location)
+        deal = hubspot.create_deal(name=deal_name, notice_id=notice_id, ae=ae)
+        deal_id = deal["id"]
         print(f"Created deal {deal_id} to carry the research pack: {deal['portal_url']}")
 
     enrich_deal(cfg, hubspot, deal_id=deal_id, deal_name=deal_name, notice_id=notice_id,
@@ -93,7 +99,8 @@ def _run_create_deal(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, ro
     notice_id = _prop_rich(row, notion.cfg["notice_id_property"])
     ae = _prop_select(row, "AE") or "unassigned"
     gc = _prop_rich(row, "General contractor")
-    deal_name = f"{gc} — {title}" if gc else title
+    location = _prop_rich(row, "Location")
+    deal_name = build_deal_name(title, contractor=gc, location=location)
 
     existing = hubspot.find_deal_by_notice_id(notice_id)
     if existing:

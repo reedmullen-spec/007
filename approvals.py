@@ -16,6 +16,7 @@ import sys
 
 from src import state
 from src.config import env, load_config
+from src.deal_naming import build_deal_name, split_deal_name
 from src.hubspot_client import HubSpotClient
 from src.slack_client import SlackClient
 
@@ -69,9 +70,7 @@ def main() -> int:
             try:
                 if checkpoint == 2:
                     # ── CHECKPOINT 2: build the Amplemarket buying group ──
-                    company, project = title, title
-                    if "—" in title:
-                        company, project = [s.strip() for s in title.split("—", 1)]
+                    company, project = split_deal_name(title) if "—" in title else (title, title)
                     framework = cfg["enrichment"]["framework_by_ae"].get(ae, "concretedna")
                     result = build_buying_group(
                         cfg, company=company, project=project,
@@ -97,11 +96,17 @@ def main() -> int:
                     card["done"] = True
                     continue
 
-                deal = hubspot.create_deal(name=title, notice_id=notice_id, ae=ae)
+                gc = meta.get("gc", "")
+                deal_name = build_deal_name(title, contractor=gc,
+                                            location=meta.get("country", ""))
+                deal = hubspot.create_deal(name=deal_name, notice_id=notice_id, ae=ae)
+                rename_hint = ("" if gc else
+                              "\nRename to add the contractor once it's resolved "
+                              "(`[Contractor] — [Project] — [Location]`).")
                 slack.reply_in_thread(
                     channel, ts,
-                    f"Deal created at Identified (owner: {ae}): {deal['portal_url']}\n"
-                    f"Rename to `[Contractor] — [Project]` once the contractor is resolved.")
+                    f"Deal created at Identified (owner: {ae}): {deal['portal_url']}"
+                    f"{rename_hint}")
                 slack.add_reaction(channel, ts)
                 card["done"] = True
                 created_log[meta.get("k", notice_id)] = {"deal_id": deal.get("id")}
@@ -110,7 +115,7 @@ def main() -> int:
                 if phase2_ready:
                     # Step 2 fires straight off the back of deal creation and
                     # ends with the checkpoint-2 card.
-                    enrich_deal(cfg, hubspot, deal_id=deal["id"], deal_name=title,
+                    enrich_deal(cfg, hubspot, deal_id=deal["id"], deal_name=deal_name,
                                 notice_id=notice_id, ae=ae,
                                 country=meta.get("country", ""), slack=slack)
                 else:

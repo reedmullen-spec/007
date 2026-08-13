@@ -5,7 +5,8 @@ on. Two ways in:
 
   python contacts.py --deal-id 12345678 [--company "BESIX"]
       Uses the deal. The contractor is taken from --company if given,
-      otherwise parsed from the deal name ('[Contractor] — [Project]').
+      otherwise parsed from the deal name (src/deal_naming.py's
+      '[Contractor] — [Project] — [Location]' convention).
 
   python contacts.py --company "Renaker" --project "Thames City" --ae aled
       No deal at all — pure list build.
@@ -24,6 +25,7 @@ import sys
 
 from src.amplemarket_client import AmplemarketClient
 from src.config import env, load_config
+from src.deal_naming import split_deal_name
 from src.hubspot_client import HubSpotClient
 from src.notion_client import NotionClient
 
@@ -133,13 +135,13 @@ def main() -> int:
         deal = hubspot.get_deal(args.deal_id)
         props = deal.get("properties", {})
         deal_name = props.get("dealname", "")
-        # Deal naming convention: '[Contractor] — [Project]'
         if not company and "—" in deal_name:
-            company, project = [s.strip() for s in deal_name.split("—", 1)]
+            company, project = split_deal_name(deal_name)
         elif not company:
             raise SystemExit(
                 f"Deal name '{deal_name}' has no contractor part yet "
-                f"(convention: '[Contractor] — [Project]'). Pass --company.")
+                f"(convention: '[Contractor] — [Project] — [Location]'). "
+                f"Pass --company.")
         project = project or deal_name
         for ae, oid in cfg["hubspot"]["owners"].items():
             if str(oid) == str(props.get("hubspot_owner_id")) and ae != "reed":
