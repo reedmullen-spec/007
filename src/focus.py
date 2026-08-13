@@ -87,7 +87,7 @@ def _candidate_line(idx: int, row: dict) -> str:
     title = "".join(t.get("plain_text", "") for t in (props.get("Name") or {}).get("title", []))
     value = (props.get("Value") or {}).get("number")
     return (f"{idx}. {title[:100]} | type={sel('Project type')} | use_case={ms('Use case')} | "
-            f"gc={rt('General contractor')} | location={rt('Location')} | value={value} | "
+            f"gc={rt('General contractor/JV')} | location={rt('Location')} | value={value} | "
             f"fit={sel('Fit')} | stage={sel('Project stage')} | "
             f"concrete_start={rt('Expected concrete start')}")
 

@@ -13,7 +13,7 @@ independent checkboxes instead:
     Create deal     -> HubSpot deal at Identified, same naming convention.
                        Backfills the enrichment TL;DR onto it if Enrich
                        already ran.
-    Build contacts  -> Amplemarket buying group (needs General contractor
+    Build contacts  -> Amplemarket buying group (needs General contractor/JV
                        filled in, AND a HubSpot deal already existing —
                        tick Enrich or Create deal first). Belgium/Hakron
                        rows are skipped by design, same rule as
@@ -83,7 +83,7 @@ def _run_enrich(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: di
         deal_id = existing["id"]
         deal_name = existing.get("properties", {}).get("dealname") or title
     else:
-        gc = _prop_rich(row, "General contractor")
+        gc = _prop_rich(row, "General contractor/JV")
         location = _prop_rich(row, "Location")
         deal_name = build_deal_name(title, contractor=gc, location=location)
         deal = hubspot.create_deal(name=deal_name, notice_id=notice_id, ae=ae)
@@ -98,7 +98,7 @@ def _run_create_deal(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, ro
     title = notion.row_title(row)
     notice_id = _prop_rich(row, notion.cfg["notice_id_property"])
     ae = _prop_select(row, "AE") or "unassigned"
-    gc = _prop_rich(row, "General contractor")
+    gc = _prop_rich(row, "General contractor/JV")
     location = _prop_rich(row, "Location")
     deal_name = build_deal_name(title, contractor=gc, location=location)
 
@@ -120,11 +120,11 @@ def _run_create_deal(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, ro
 
 def _run_contacts(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: dict) -> None:
     title = notion.row_title(row)
-    gc = _prop_rich(row, "General contractor")
+    gc = _prop_rich(row, "General contractor/JV")
     country = _prop_rich(row, "Country")
     ae = _prop_select(row, "AE") or "aled"
     if not gc:
-        raise RuntimeError("General contractor is blank — fill it in before requesting contacts.")
+        raise RuntimeError("General contractor/JV is blank — fill it in before requesting contacts.")
 
     notice_id = _prop_rich(row, notion.cfg["notice_id_property"])
     deal = hubspot.find_deal_by_notice_id(notice_id)

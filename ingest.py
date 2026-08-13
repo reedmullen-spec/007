@@ -296,8 +296,8 @@ def sweep_manual_rows(cfg: dict, api_key: str, notion: NotionClient) -> int:
             "Status": {"select": {"name": "Disqualified"
                                   if fields["fit"] == "Disqualified" else "New"}},
             "Summary": NotionClient._rt(fields["summary"]),
-            "General contractor": NotionClient._rt(fields["gc"]),
-            "JV / parents": NotionClient._rt(fields["jv_parents"]),
+            "General contractor/JV": NotionClient._rt(
+                NotionClient._gc_jv_text(fields["gc"], fields["jv_parents"])),
             "Project stage": {"select": {"name": fields["stage"]}},
             "Work nature": {"select": {"name": fields["work_nature"]}},
             "Expected concrete start": NotionClient._rt(fields["concrete_start"]),

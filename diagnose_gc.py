@@ -1,5 +1,5 @@
-"""One-off diagnostic: GC/JV capture rate by source, to confirm whether
-missing General contractor / JV parents is expected (pre-award notices
+"""One-off diagnostic: General contractor/JV capture rate by source, to
+confirm whether a missing contractor is expected (pre-award notices
 genuinely don't have one) or something worth investigating further.
 
 Usage:
@@ -32,21 +32,17 @@ def main() -> int:
 
     totals = defaultdict(int)
     has_gc = defaultdict(int)
-    has_jv = defaultdict(int)
     for row in rows:
         source = _prop_select(row, "Source") or "(none)"
         totals[source] += 1
-        if _prop_rt(row, "General contractor").strip():
+        if _prop_rt(row, "General contractor/JV").strip():
             has_gc[source] += 1
-        if _prop_rt(row, "JV / parents").strip():
-            has_jv[source] += 1
 
-    print(f"{'Source':<12} {'Total':>6} {'Has GC':>8} {'GC %':>7} {'Has JV':>8} {'JV %':>7}")
+    print(f"{'Source':<12} {'Total':>6} {'Has GC/JV':>10} {'%':>6}")
     for source in sorted(totals, key=lambda s: -totals[s]):
         t = totals[source]
         g = has_gc[source]
-        j = has_jv[source]
-        print(f"{source:<12} {t:>6} {g:>8} {g/t*100:>6.0f}% {j:>8} {j/t*100:>6.0f}%")
+        print(f"{source:<12} {t:>6} {g:>10} {g/t*100:>5.0f}%")
     return 0
 
 

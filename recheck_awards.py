@@ -97,7 +97,7 @@ def _pending_rows(notion: NotionClient, source: str) -> list[dict]:
         {"or": [{"property": "Status", "select": {"equals": s}} for s in ACTIVE_STATUSES]},
         {"property": "Tender deadline", "date": {"before": today}},
     ]})
-    return [r for r in rows if not _prop_rt(r, "General contractor").strip()]
+    return [r for r in rows if not _prop_rt(r, "General contractor/JV").strip()]
 
 
 def _ted_awards_for_buyer(session: requests.Session, buyer: str, since: str) -> list[dict]:
@@ -156,8 +156,7 @@ def recheck_ted(notion: NotionClient, args) -> None:
                         f"{award.get('publication-number')} "
                         f"(fuzzy title match {sim:.2f} — verify)")
                 notion.update_properties(row["id"], {
-                    "General contractor": NotionClient._rt(gc),
-                    "JV / parents": NotionClient._rt(jv),
+                    "General contractor/JV": NotionClient._rt(NotionClient._gc_jv_text(gc, jv)),
                     "Fit reason": NotionClient._rt(f"{existing} · {note}" if existing else note),
                 })
                 time.sleep(0.4)
@@ -211,8 +210,7 @@ def recheck_fts(notion: NotionClient, cfg: dict, args) -> None:
         print(f"  {_prop_title(row)[:60]!r} -> {gc!r}" + (f" (jv={jv!r})" if jv else ""))
         if not args.dry_run:
             notion.update_properties(row["id"], {
-                "General contractor": NotionClient._rt(gc),
-                "JV / parents": NotionClient._rt(jv),
+                "General contractor/JV": NotionClient._rt(NotionClient._gc_jv_text(gc, jv)),
                 "Verified": {"checkbox": True},
             })
             time.sleep(0.4)
@@ -268,7 +266,7 @@ def recheck_canada(notion: NotionClient, cfg: dict, args) -> None:
         print(f"  {_prop_title(row)[:60]!r} -> {gc!r}"
               + (f" (value={value:,.0f} CAD)" if value else ""))
         if not args.dry_run:
-            props = {"General contractor": NotionClient._rt(gc),
+            props = {"General contractor/JV": NotionClient._rt(gc),
                      "Verified": {"checkbox": True}}
             if value is not None:
                 band = ("Under 50M" if value < 50_000_000

@@ -7,8 +7,8 @@ the view can edit any row. Each person instead gets a small "My week —
 
 Sync direction (see sync.py for the nightly pull the other way):
   master -> AE page:  facts (FACT_FIELDS), mirrored at Monday triage.
-  AE page -> master:  Status, Next action, Next action date, Notes,
-                       Outcome, Correction needed — nightly, always.
+  AE page -> master:  Status, Notes, Outcome, Correction needed —
+                       nightly, always.
   AE page -> master, fact fields: only when a person edits one of the
                        mirrored facts directly. That edit is treated as
                        authoritative — pushed to the master immediately,
@@ -30,7 +30,7 @@ AE_DB_TITLE = "My week — {name}"
 # one directly on their own page, it flows back — see sync_fact_drift().
 FACT_FIELDS = {
     "Fit": ("Fit", "fit", "select"),
-    "GC": ("General contractor", "gc", "rich_text"),
+    "GC": ("General contractor/JV", "gc", "rich_text"),
     "Location": ("Location", "location", "rich_text"),
     "Expected concrete start": ("Expected concrete start", "concrete_start", "rich_text"),
     "Expected completion": ("Expected completion", "completion", "date"),
@@ -64,7 +64,7 @@ def _master_facts(master_row: dict) -> dict:
     return {
         "title": title,
         "fit": sel("Fit"),
-        "gc": rt("General contractor"),
+        "gc": rt("General contractor/JV"),
         "location": rt("Location"),
         "concrete_start": rt("Expected concrete start"),
         "completion": date("Expected completion"),

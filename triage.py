@@ -5,7 +5,8 @@ Reads the Notion database, picks the top-N "New" projects per triage list
 week", and posts one Slack message per list with links to the Notion rows.
 Unfinished "This week" rows from last week stay in the list (one in, one
 out): they count toward the cap and are re-listed. "Recontact later" rows
-resurface once their Recontact date has passed.
+no longer auto-resurface (Recontact date was removed) — a human moves them
+back to "New" or "This week" manually when ready.
 
 One list = one person's page (config `triage.lists`) — filters can match on
 AE, Region, SDR (derived from AE via routing.ae_sdr_map — Alex/Jamie's own
@@ -21,7 +22,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import datetime as _dt
 import time
 
 from src.ae_pages import upsert_ae_row
@@ -71,7 +71,9 @@ def build_filter(filter_spec: dict) -> dict:
 
 def gather_for_list(notion: NotionClient, list_cfg: dict) -> tuple[list[dict], list[dict]]:
     """Returns (carryover rows, fresh 'New' candidates), unranked.
-    Carryover = still "This week", or "Recontact later" past its date.
+    Carryover = still "This week". "Recontact later" rows do NOT carry over
+    — there's no Recontact date to resurface them by anymore, so they stay
+    parked until a human moves them back to "New" or "This week" by hand.
 
     Notion's filter API only allows compound and/or nesting two levels
     deep, so `base` (a leaf condition for every list.filter in current
@@ -79,7 +81,6 @@ def gather_for_list(notion: NotionClient, list_cfg: dict) -> tuple[list[dict], l
     wrapping the whole "or" in an outer "and" — that would be three levels
     and Notion 400s on it."""
     base = build_filter(list_cfg["filter"])
-    today = _dt.date.today().isoformat()
     # Fit=Disqualified means never, per the scorer's design — excluded from
     # every branch, not just fresh picks. A row can be Status="This week"
     # from an earlier run and only later get rescored to Disqualified (e.g.
@@ -87,12 +88,8 @@ def gather_for_list(notion: NotionClient, list_cfg: dict) -> tuple[list[dict], l
     # would keep carrying over and re-triaging every week regardless (real
     # incident: a rescored-Disqualified row reached a person via Slack).
     not_dq = {"property": "Fit", "select": {"does_not_equal": "Disqualified"}}
-    carry = notion.query_rows({"or": [
-        {"and": [base, not_dq, {"property": "Status", "select": {"equals": "This week"}}]},
-        {"and": [base, not_dq,
-                {"property": "Status", "select": {"equals": "Recontact later"}},
-                {"property": "Recontact date", "date": {"on_or_before": today}}]},
-    ]})
+    carry = notion.query_rows({"and": [base, not_dq,
+                              {"property": "Status", "select": {"equals": "This week"}}]})
     fresh = notion.query_rows({"and": [base, not_dq,
                               {"property": "Status", "select": {"equals": "New"}}]})
     return carry, fresh
@@ -101,7 +98,7 @@ def gather_for_list(notion: NotionClient, list_cfg: dict) -> tuple[list[dict], l
 def _row_line(notion: NotionClient, row: dict, tag: str, ae_url: str = "") -> str:
     title = notion.row_title(row)
     fit = _prop_select(row, "Fit")
-    rich = ((row.get("properties") or {}).get("General contractor") or {}).get("rich_text", [])
+    rich = ((row.get("properties") or {}).get("General contractor/JV") or {}).get("rich_text", [])
     gc = rich[0].get("plain_text", "") if rich else ""
     url = row.get("url", "")
     extra = f" · {gc}" if gc else ""

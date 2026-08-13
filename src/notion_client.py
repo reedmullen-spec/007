@@ -198,8 +198,8 @@ class NotionClient:
             "intake_database_id", "007 — Submit a project", self.INTAKE_SCHEMA)
 
     # Per-AE page: master owns everything except the AE-owned block below
-    # (Status / Next action / Next action date / Notes / Outcome /
-    # Correction needed) — see src/ae_pages.py and sync.py.
+    # (Status / Notes / Outcome / Correction needed) — see src/ae_pages.py
+    # and sync.py.
     AE_PAGE_SCHEMA = {
         "Project": {"title": {}},
         "Master row": {"url": {}},
@@ -219,8 +219,6 @@ class NotionClient:
             {"name": "250M+", "color": "red"}]}},
         "Status": {"select": {"options": [{"name": s, "color": c}
                                           for s, c in STATUSES]}},
-        "Next action": {"rich_text": {}},
-        "Next action date": {"date": {}},
         "Notes": {"rich_text": {}},
         "Outcome": {"select": {"options": [{"name": s} for s in
                     ("Meeting booked", "No interest", "Wrong contact",
@@ -243,8 +241,7 @@ class NotionClient:
                    ("uk", "eu", "us_east", "us_west", "us", "ca", "au")]}},
         "Lat": {"number": {}},
         "Lng": {"number": {}},
-        "General contractor": {"rich_text": {}},
-        "JV / parents": {"rich_text": {}},
+        "General contractor/JV": {"rich_text": {}},
         "Client": {"rich_text": {}},
         "Concrete subcontractor": {"rich_text": {}},
         "Value": {"number": {}},
@@ -282,9 +279,6 @@ class NotionClient:
         "Partner route": {"select": {"options": [{"name": s} for s in
                           ("Direct", "White Cap", "Hakron", "Agency", "TBD")]}},
         "Partner contact": {"rich_text": {}},
-        "Next action": {"rich_text": {}},
-        "Next action date": {"date": {}},
-        "Recontact date": {"date": {}},
         "Notice URL": {"url": {}},
         "HubSpot deal": {"url": {}},
         # Self-serve triggers, polled + processed by actions.py. Independent
@@ -384,6 +378,21 @@ class NotionClient:
     def _rt(text: str) -> dict:
         return {"rich_text": [{"text": {"content": (text or "")[:1900]}}]}
 
+    @staticmethod
+    def _gc_jv_text(gc: str, jv_parents: str) -> str:
+        """Combines a contractor name and its JV parent companies into the
+        single stored 'General contractor/JV' field (consolidated from two
+        separate properties — see CLAUDE.md). jv_parents is dropped if
+        blank or already substring-contained in gc (a JV entity name
+        sometimes already lists both parents)."""
+        gc = (gc or "").strip()
+        jv = (jv_parents or "").strip()
+        if not jv or jv in gc:
+            return gc
+        if not gc:
+            return jv
+        return f"{gc} (JV: {jv})"
+
     def create_project_row(self, fields: dict) -> dict:
         """Create a fully-populated V1 project row."""
         props = {
@@ -394,7 +403,6 @@ class NotionClient:
             "Region": {"select": {"name": fields["region"]}},
             "Country": self._rt(fields.get("country", "")),
             "Location": self._rt(fields.get("location", "")),
-            "General contractor": self._rt(fields.get("gc", "")),
             "Project stage": {"select": {"name": fields.get("stage", "Unknown")}},
             "Work nature": {"select": {"name": fields.get("work_nature", "Unknown")}},
             "Concrete opportunity": {"select": {"name": fields.get("concrete_opportunity", "Unknown")}},
@@ -422,7 +430,8 @@ class NotionClient:
             props["Notice URL"] = {"url": fields["url"]}
         # extended criteria
         props["Client"] = self._rt(fields.get("client", ""))
-        props["JV / parents"] = self._rt(fields.get("jv_parents", ""))
+        props["General contractor/JV"] = self._rt(
+            self._gc_jv_text(fields.get("gc", ""), fields.get("jv_parents", "")))
         props["Concrete subcontractor"] = self._rt(fields.get("subcontractor", ""))
         if fields.get("use_case"):
             props["Use case"] = {"multi_select": [

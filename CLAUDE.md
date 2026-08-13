@@ -78,8 +78,10 @@ ask Reed before changing architecture, not just code.
   MANUAL-first (human/White Cap intel beats scraped), then fit, then value —
   unless the person left a **weekly focus** (see below), in which case a
   small Anthropic call ranks against that instead. Carry-over: "This week"
-  rows persist and consume slots; "Recontact later" rows resurface once
-  their `Recontact date` has passed. Flips picks to "This week", posts one
+  rows persist and consume slots; "Recontact later" rows do NOT carry over
+  (Aug 2026: `Recontact date`/`Next action`/`Next action date` were
+  removed — see rule 15) — a person moves one back to "New" or "This
+  week" by hand when it's worth revisiting. Flips picks to "This week", posts one
   Slack list per list (channel from `slack.news_channels`, mention from
   `slack.ae_slack_ids[name]`), and mirrors that week's facts onto the
   person's own `My week — {Name}` page (`src/ae_pages.py`). Lists are never
@@ -108,12 +110,12 @@ ask Reed before changing architecture, not just code.
   `Outcome` / `Correction needed`. If a person edits one of the mirrored
   fact fields directly, that edit is authoritative — pushed to the master
   and no longer overwritten by later mirrors (see `sync.py` / rule #11).
-- `sync.py` — weekdays 23:00 UTC. Pulls `Status` / `Next action` / `Next
-  action date` / `Notes` / `Outcome` / `Correction needed` from each AE page
-  back to the master, always (the master never writes any of these itself,
-  so there's nothing to fight over). When the incoming `Status` is
-  "Recontact later", the AE's `Next action date` also becomes the master's
-  `Recontact date` — one field, not two. Non-empty `Correction needed`
+- `sync.py` — weekdays 23:00 UTC. Pulls `Status` / `Notes` / `Outcome` /
+  `Correction needed` from each AE page back to the master, always (the
+  master never writes any of these itself, so there's nothing to fight
+  over). `Next action` / `Next action date` / `Recontact date` were
+  removed (Aug 2026) — see rule 15; "Recontact later" no longer carries a
+  date anywhere. Non-empty `Correction needed`
   entries are ALSO DM'd to Reed once each (`state/sync.json` tracks what's
   already been flagged) — written to the master for the record, but still
   surfaced directly since it usually means some other field needs a human's
@@ -123,7 +125,7 @@ ask Reed before changing architecture, not just code.
   immediately, detected against `state/ae_fact_snapshots.json` (what was
   last mirrored) — see rule #11.
 - `recheck_awards.py` — weekly (Wednesday 04:00 UTC). Most TED/FTS rows
-  have no `General contractor` because they're pre-award tender notices —
+  have no `General contractor/JV` because they're pre-award tender notices —
   the winner genuinely isn't known yet (confirmed live: TED ~1% GC
   capture, FTS ~0%, vs NEWS ~67% since "awarded"/"breaking ground" stories
   inherently name one). This backfills existing rows past their `Tender
@@ -168,7 +170,7 @@ ask Reed before changing architecture, not just code.
   one to pin its note to, same as `enrich.py --title`); `Create deal` reuses
   `find_deal_by_notice_id` for the same dedup guarantee as every other path
   (rule #2) and is a no-op if `Enrich` already created one in the same run.
-  `Build contacts` needs `General contractor` filled in AND a HubSpot deal
+  `Build contacts` needs `General contractor/JV` filled in AND a HubSpot deal
   already existing (checked via `find_deal_by_notice_id` — tick
   `Enrich`/`Create deal` first, or it must predate this row), and honours
   the Belgium/Hakron skip (rule #3) as a silent no-op, not a retry-forever
@@ -220,9 +222,9 @@ ask Reed before changing architecture, not just code.
     as a reminder). Don't try to code around this — there's no endpoint.
 11. **AE-owned fields sync one way, fact fields the other — except when a
     person edits one.** `triage.py` writes facts to a person's page every
-    Monday but never touches `Status`/`Next action`/`Next action
-    date`/`Notes`/`Outcome`/`Correction needed` on an existing row.
-    `sync.py` writes all of those back to the master, always (the master
+    Monday but never touches `Status`/`Notes`/`Outcome`/`Correction
+    needed` on an existing row. `sync.py` writes all of those back to
+    the master, always (the master
     never writes them itself, so no fight). Fact fields (`Fit`/`GC`/
     `Location`/`Expected concrete start`/`Expected completion`/`Value
     band`) are the one case that CAN go either way: normally master ->
@@ -262,6 +264,44 @@ ask Reed before changing architecture, not just code.
     it if research already ran — so it ends up correct regardless of which
     of Enrich/Create-deal a person ticks first.
 
+14. **`General contractor/JV` is one field, not two.** Consolidated
+    (Aug 2026) from separate `General contractor` + `JV / parents`
+    properties — both had drifted (JV/parents held richer manually-
+    researched detail than the "canonical name" GC field was supposed
+    to carry, and 32 rows disagreed between the two). `NotionClient.
+    _gc_jv_text(gc, jv_parents)` is the one place that combines a
+    contractor name with its JV parents into the stored string; every
+    writer (ingest.py, recheck_awards.py, import_scored_csv.py) goes
+    through it rather than formatting its own. Notion column deletion
+    isn't auto-migrated (same as the "Active Contact" rename above) —
+    the two old properties were dropped from the live database by
+    hand, and `ensure_schema()`'s SCHEMA dict now only knows about the
+    merged field, so a stale local checkout that still assumes
+    `General contractor` exists will silently read blank, not error.
+15. **`Next action` / `Next action date` / `Recontact date` were removed
+    from the master (Aug 2026)** — Reed's call: follow-up/recontact
+    tracking is meant to live in the HubSpot deal, not duplicated in
+    Notion too. Note this is a stated intent, not yet a built integration
+    — `src/hubspot_client.py` has no next-action/task property or
+    reminder logic of its own as of this change; until that exists,
+    there is genuinely no automated "what's due" surface anywhere.
+    `sync.py` no longer pulls or writes any of the three, and
+    `triage.py`'s carry-over query no longer has a `Recontact date` to
+    filter on, so **"Recontact later" no longer auto-resurfaces**. A row
+    sent there stays there until a human manually flips its Status back
+    to "New" or "This week" — there is no automated path back anymore.
+    Before removal, 70 rows had live `Next action` text; that text was
+    archived into each row's `Notes` field (prefixed `Next action
+    (archived): ...`) so it wasn't silently destroyed — check `Notes`
+    before assuming a row has no history. `Next action` / `Next action
+    date` still exist as live, fillable fields on the 13 per-AE "My week"
+    pages (`AE_PAGE_SCHEMA` was NOT changed there) — nothing writes them
+    to the master anymore, so anything an AE types into those two fields
+    on their own page now goes nowhere. If that turns out to matter,
+    those per-AE fields need removing too; they were deliberately left
+    alone here since dropping columns across 13 separate live databases
+    wasn't part of what was asked.
+
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage
   1326060402. Owners: Reed 90628877, Lisa 465940403, Aled 146637928,
@@ -292,8 +332,9 @@ see the note on `triage.lists` above.
 New (grey) → This week (blue) → Active Contact (amber, renamed live from
 "Working on" — code and Notion must be kept in sync by hand, ensure_schema()
 only adds missing properties, never renames existing options) / Recontact
-later (hollow amber, has date) → On the project (green) / Disqualified /
-Lost (both red — kept separate for partner conversations, never delete rows).
+later (hollow amber — no longer has a date, see rule 15) → On the project
+(green) / Disqualified / Lost (both red — kept separate for partner
+conversations, never delete rows).
 
 ## Roadmap context
 - V2: static HTML portal generated from the Notion DB — list + Rightmove-

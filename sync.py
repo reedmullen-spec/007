@@ -1,9 +1,9 @@
 """007 nightly sync — pull AE-owned edits back to the master database.
 
-The AE owns Status / Next action / Next action date / Notes / Outcome /
-Correction needed — all pushed to the master here, every night, always
-(the master never writes any of these itself, so there's nothing to
-fight over). A Correction needed entry is ALSO collected and DM'd to Reed
+The AE owns Status / Notes / Outcome / Correction needed — all pushed to
+the master here, every night, always (the master never writes any of
+these itself, so there's nothing to fight over). A Correction needed
+entry is ALSO collected and DM'd to Reed
 — written to the master for the record, but still surfaced directly since
 it usually means some other field needs a human's attention, not just
 this one.
@@ -43,11 +43,6 @@ def _prop_sel(row: dict, name: str) -> str:
     return (((row.get("properties") or {}).get(name) or {}).get("select") or {}).get("name", "")
 
 
-def _prop_date(row: dict, name: str) -> str:
-    d = ((row.get("properties") or {}).get(name) or {}).get("date") or {}
-    return d.get("start") or ""
-
-
 def _prop_url(row: dict, name: str) -> str:
     return (row.get("properties") or {}).get(name, {}).get("url") or ""
 
@@ -84,8 +79,6 @@ def sync_person(notion: NotionClient, person: str, sync_state: dict,
             continue
         master_id = _master_id_from_url(master_url)
         status = _prop_sel(row, "Status")
-        next_action = _prop_rt(row, "Next action")
-        next_action_date = _prop_date(row, "Next action date")
         notes = _prop_rt(row, "Notes")
         outcome = _prop_sel(row, "Outcome")
         correction = _prop_rt(row, "Correction needed")
@@ -93,14 +86,6 @@ def sync_person(notion: NotionClient, person: str, sync_state: dict,
         props = {}
         if status:
             props["Status"] = {"select": {"name": status}}
-        if next_action:
-            props["Next action"] = NotionClient._rt(next_action)
-        if next_action_date:
-            props["Next action date"] = {"date": {"start": next_action_date}}
-            if status == "Recontact later":
-                # AE's Next action date doubles as the master's Recontact
-                # date — one field for the AE to fill in, not two.
-                props["Recontact date"] = {"date": {"start": next_action_date}}
         if notes:
             props["Notes"] = NotionClient._rt(notes)
         if outcome:
@@ -108,8 +93,7 @@ def sync_person(notion: NotionClient, person: str, sync_state: dict,
         if correction:
             props["Correction needed"] = NotionClient._rt(correction)
 
-        print(f"[{person}] {_prop_title(row, 'Project')[:60]!r} -> "
-              f"status={status or '-'} next_action_date={next_action_date or '-'}")
+        print(f"[{person}] {_prop_title(row, 'Project')[:60]!r} -> status={status or '-'}")
         if props and not dry_run:
             notion.update_properties(master_id, props)
             # Facts (Fit/GC/Location/etc.) are separate from the props

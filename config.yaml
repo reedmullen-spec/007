@@ -60,13 +60,26 @@ hubspot:
   dealstage_id: "1326060402"     # Identified stage (confirmed)
   portal_id: "2061231"
 
-  owners:                        # confirmed owner IDs
-    reed: "90628877"
-    lisa: "465940403"
-    aled: "146637928"
-    avi:  "32656681"
+  owners:                        # confirmed owner IDs (HubSpot search_owners, Aug 2026)
+    reed:     "90628877"
+    lisa:     "465940403"
+    aled:     "146637928"
+    avi:      "32656681"
+    jeremy:   "54207400"         # Jeremy Pownall
+    justin:   "91237056"         # Justin Johnson
+    lawson:   "95471488"         # Lawson Sanford
+    alicia:   "94766473"         # Alicia Spence
+    ben:      "78432283"         # Benjamin McKnight (not the inactive Ben Miller)
+    britain:  "78432282"         # Britain Morris
+    brady:    "96595739"         # Brady Waltz
+    dan:      "91237055"         # Daniel St. John (not the inactive Daniel Porus/Aluf)
+    # alex, jamie deliberately excluded — SDR squad, never deal owners
+    # (region-filtered in triage.lists, not AE-assigned; see CLAUDE.md).
+    # A deal for them, or for AE=unassigned, falls back to reed below.
 
-  # Who owns the deal on creation: "ae" = the resolved AE, "reed" = you.
+  # Who owns the deal on creation: "ae" = the resolved AE, "reed" = you
+  # (the fallback — now only hit for alex/jamie/unassigned, everyone else
+  # in `owners` above gets their own deals since Aug 2026).
   deal_owner_mode: "ae"
 
   # Custom deal property used as the stable dedup key. The first approvals

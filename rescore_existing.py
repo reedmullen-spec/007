@@ -72,7 +72,7 @@ def row_to_fields(row: dict) -> dict:
         "concrete_opportunity": _prop_select(row, "Concrete opportunity"),
         "expected_concrete_start": _prop_rt(row, "Expected concrete start"),
         "expected_completion": _prop_date(row, "Expected completion"),
-        "gc": _prop_rt(row, "General contractor"),
+        "gc": _prop_rt(row, "General contractor/JV"),
         "value": _prop_number(row, "Value"),
         "ae": _prop_select(row, "AE") or "unassigned",
         "partner_route": _prop_select(row, "Partner route") or "TBD",

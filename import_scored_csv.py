@@ -153,11 +153,13 @@ def build_properties(row: dict, cfg: dict, notion: NotionClient, notice_id: str)
         band = ("Under 50M" if value_raw < 50_000_000
                 else "50-250M" if value_raw < 250_000_000 else "250M+")
         props["Value band"] = {"select": {"name": band}}
-    if gc:
-        props["General contractor"] = notion._rt(gc)
+    jv = (row.get("JV / parents") or "").strip()
+    gc_jv = N._gc_jv_text(gc, jv)
+    if gc_jv:
+        props["General contractor/JV"] = notion._rt(gc_jv)
 
     text_fields = {
-        "Location": row.get("Location", ""), "JV / parents": row.get("JV / parents", ""),
+        "Location": row.get("Location", ""),
         "Client": row.get("Client", ""), "Concrete subcontractor": row.get("Concrete subcontractor", ""),
         "Competitor present": row.get("Competitor present", ""),
         "Expected concrete start": row.get("Expected concrete start", ""),
