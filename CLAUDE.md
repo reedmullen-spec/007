@@ -141,7 +141,8 @@ ask Reed before changing architecture, not just code.
   free contract, so it's left blank rather than written as real data.
 - `enrich.py` — deep research (step 2). Standalone: `--deal-id` / `--title` /
   `--notice-id`. Anthropic API + web search, system prompt = the SKILL.md
-  for the framework (concretedna for Lisa/Aled, fieldatlas for Avi). Writes
+  for the framework (concretedna for every AE except Avi, who gets
+  fieldatlas — `enrichment.framework_by_ae`). Writes
   pack to Notion, pins link on HubSpot deal, posts checkpoint-2 Slack card.
   Packs must start with a 5-bullet TL;DR, max 600 words (AE feedback).
 - `contacts.py` — step 3, Amplemarket buying group (15–20, persona titles by

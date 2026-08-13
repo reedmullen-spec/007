@@ -161,7 +161,7 @@ def main() -> int:
     parser.add_argument("--notice-id")
     parser.add_argument("--title")
     parser.add_argument("--country", default="")
-    parser.add_argument("--ae", choices=["lisa", "aled", "avi"])
+    parser.add_argument("--ae", choices=[a for a in NotionClient.AES if a != "unassigned"])
     parser.add_argument("--no-slack", action="store_true",
                         help="Skip posting the checkpoint-2 card")
     args = parser.parse_args()

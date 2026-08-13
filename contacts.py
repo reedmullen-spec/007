@@ -25,6 +25,7 @@ import sys
 from src.amplemarket_client import AmplemarketClient
 from src.config import env, load_config
 from src.hubspot_client import HubSpotClient
+from src.notion_client import NotionClient
 
 
 def build_buying_group(cfg: dict, *, company: str, project: str,
@@ -70,7 +71,8 @@ def main() -> int:
     parser.add_argument("--company")
     parser.add_argument("--project", default="")
     parser.add_argument("--country", default="")
-    parser.add_argument("--ae", choices=["lisa", "aled", "avi"], default="aled")
+    parser.add_argument("--ae", choices=[a for a in NotionClient.AES if a != "unassigned"],
+                        default="aled")
     parser.add_argument("--force", action="store_true",
                         help="Build contacts even on the Hakron path")
     args = parser.parse_args()

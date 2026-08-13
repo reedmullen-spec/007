@@ -329,11 +329,21 @@ enrichment:
   # Model used for the background research pack (step 2).
   anthropic_model: "claude-sonnet-4-6"
   max_tokens: 4000
-  # Framework by AE: ConcreteDNA for Lisa/Aled, FieldAtlas for Avi.
+  # Framework by AE: ConcreteDNA for everyone except Avi, who gets FieldAtlas.
   framework_by_ae:
     lisa: concretedna
     aled: concretedna
     avi: fieldatlas
+    alex: concretedna
+    jamie: concretedna
+    jeremy: concretedna
+    justin: concretedna
+    lawson: concretedna
+    alicia: concretedna
+    ben: concretedna
+    britain: concretedna
+    brady: concretedna
+    dan: concretedna
 
 notion:
   # Research packs live in a "007 Projects" database that 007 creates
