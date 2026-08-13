@@ -75,7 +75,8 @@ def main() -> int:
                     framework = cfg["enrichment"]["framework_by_ae"].get(ae, "concretedna")
                     result = build_buying_group(
                         cfg, company=company, project=project,
-                        framework=framework, country=meta.get("country", ""))
+                        framework=framework, country=meta.get("country", ""),
+                        hubspot=hubspot, deal_id=meta.get("deal"))
                     slack.reply_in_thread(
                         channel, ts,
                         f"Buying group created in Amplemarket: "

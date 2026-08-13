@@ -147,7 +147,16 @@ ask Reed before changing architecture, not just code.
   Packs must start with a 5-bullet TL;DR, max 600 words (AE feedback).
 - `contacts.py` — step 3, Amplemarket buying group (15–20, persona titles by
   framework). Belgium refuses by design (see Hakron). Enginy may replace
-  Amplemarket later — treat this module as a swap point, don't extend it.
+  Amplemarket later — the search + lead-list creation is the swap point,
+  don't extend that part. When called with a HubSpot deal (`hubspot` +
+  `deal_id`, always true via the `Build contacts` checkbox and the
+  checkpoint-2 Slack path; optional on the bare `--company` CLI build),
+  every matched person is ALSO pushed into HubSpot as a contact
+  (`HubSpotClient.upsert_contact`, deduped on email when known) and
+  associated to that deal (`associate_default`, HubSpot's v4
+  default-association endpoint — no hardcoded association type ID). This
+  push logic sits after the Amplemarket-specific call, deliberately, so an
+  Enginy swap only touches the search/list-creation half.
 - `approvals.py` — several times daily. Processes ✅ reactions on cards
   (the digest.py/news.py legacy card flow only — see rule #13).
 - `actions.py` — polls every 20 minutes (plus `workflow_dispatch` for an
@@ -159,11 +168,17 @@ ask Reed before changing architecture, not just code.
   one to pin its note to, same as `enrich.py --title`); `Create deal` reuses
   `find_deal_by_notice_id` for the same dedup guarantee as every other path
   (rule #2) and is a no-op if `Enrich` already created one in the same run.
-  `Build contacts` needs `General contractor` filled in first and honours
+  `Build contacts` needs `General contractor` filled in AND a HubSpot deal
+  already existing (checked via `find_deal_by_notice_id` — tick
+  `Enrich`/`Create deal` first, or it must predate this row), and honours
   the Belgium/Hakron skip (rule #3) as a silent no-op, not a retry-forever
-  failure. A box that succeeds is unchecked (so it doesn't re-fire); a box
-  that fails is left checked (so the next run retries it) — same guard
-  philosophy as the 🏁 stamp in approvals.py.
+  failure. Never actually a same-run ordering problem: `ACTIONS`' fixed
+  order (Enrich, Create deal, Build contacts) always processes `Build
+  contacts` last, so a deal created by either of the other two boxes on
+  the same row in the same run already exists by the time it fires. A box
+  that succeeds is unchecked (so it doesn't re-fire); a box that fails is
+  left checked (so the next run retries it) — same guard philosophy as the
+  🏁 stamp in approvals.py.
 - `digest.py` / `news.py` — legacy Slack card flows. Schedules retired
   (workflow_dispatch only); superseded by ingest+triage. Don't delete yet.
 

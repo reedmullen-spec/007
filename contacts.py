@@ -28,11 +28,54 @@ from src.hubspot_client import HubSpotClient
 from src.notion_client import NotionClient
 
 
+def _split_name(person: dict) -> tuple[str, str]:
+    """Amplemarket's /people/search result shape for a person's name isn't
+    pinned down anywhere in this codebase yet (create_lead_list only ever
+    needed linkedin_url/title/company) — try the field names people-search
+    APIs commonly use rather than assume one and crash on the others."""
+    first = person.get("first_name") or ""
+    last = person.get("last_name") or ""
+    if first or last:
+        return first, last
+    full = person.get("name") or person.get("full_name") or ""
+    parts = full.split(None, 1)
+    return (parts[0], parts[1]) if len(parts) == 2 else (full, "")
+
+
+def _push_to_hubspot(hubspot: HubSpotClient, people: list[dict],
+                     company: str, deal_id: str) -> None:
+    """Push each matched person into HubSpot as a contact, associated to
+    the deal that gated this build (rule: Build contacts requires a deal
+    to already exist — see actions.py's _run_contacts). Best-effort per
+    contact: one bad record shouldn't sink the rest of the buying group."""
+    hubspot.ensure_linkedin_property()
+    pushed = 0
+    for person in people:
+        first, last = _split_name(person)
+        try:
+            contact = hubspot.upsert_contact(
+                email=person.get("email", ""), first_name=first, last_name=last,
+                title=person.get("title", ""), company_name=company,
+                linkedin_url=person.get("linkedin_url", ""))
+            hubspot.associate_default("contacts", contact["id"], "deals", deal_id)
+            pushed += 1
+        except Exception as exc:
+            print(f"WARNING: could not push {person.get('linkedin_url', '(no linkedin)')} "
+                 f"to HubSpot: {exc}", file=sys.stderr)
+    print(f"Pushed {pushed}/{len(people)} contacts to HubSpot deal {deal_id}")
+
+
 def build_buying_group(cfg: dict, *, company: str, project: str,
                        framework: str, country: str = "",
-                       force: bool = False) -> dict:
+                       force: bool = False, hubspot: HubSpotClient | None = None,
+                       deal_id: str | None = None) -> dict:
     """Search + create the lead list. Returns the lead list object.
-    Reused by approvals.py after checkpoint 2."""
+    Reused by approvals.py after checkpoint 2.
+
+    When hubspot + deal_id are given, every matched person is also pushed
+    into HubSpot as a contact associated to that deal — the CLI's pure
+    --company path (no deal at all) skips this and stays a plain
+    Amplemarket-only list build."""
     skip_countries = [c.upper() for c in cfg.get("hakron_skip_contacts_countries", [])]
     if country.upper() in skip_countries and not force:
         raise RuntimeError(
@@ -62,6 +105,10 @@ def build_buying_group(cfg: dict, *, company: str, project: str,
     list_name = f"007 — {company} — {project}" if project else f"007 — {company}"
     result = am.create_lead_list(name=list_name, people=people)
     print(f"Lead list created ({len(people)} leads): {result.get('url', result.get('id'))}")
+
+    if hubspot is not None and deal_id:
+        _push_to_hubspot(hubspot, people, company, deal_id)
+
     return result
 
 
@@ -79,6 +126,7 @@ def main() -> int:
 
     cfg = load_config()
     company, project, framework = args.company, args.project, None
+    hubspot = None
 
     if args.deal_id:
         hubspot = HubSpotClient(env("HUBSPOT_TOKEN"), cfg)
@@ -103,7 +151,7 @@ def main() -> int:
     framework = cfg["enrichment"]["framework_by_ae"].get(args.ae, "concretedna")
     build_buying_group(cfg, company=company, project=project,
                        framework=framework, country=args.country,
-                       force=args.force)
+                       force=args.force, hubspot=hubspot, deal_id=args.deal_id)
     return 0
 
 

@@ -5,11 +5,15 @@ Responsibilities:
   * dedup pre-check: search deals on tender_notice_id (CRM = source of truth)
   * create deals in Sales Pipeline / Identified with the notice id stamped
   * company owner lookup for tier 1 of the AE resolver
+  * push the Amplemarket buying group (contacts.py) into HubSpot as
+    contacts, associated to the deal that gated the build
 
 Private-app scopes needed:
   crm.objects.deals.read, crm.objects.deals.write,
   crm.schemas.deals.write (property bootstrap),
-  crm.objects.companies.read (owner lookup)
+  crm.objects.companies.read (owner lookup),
+  crm.objects.contacts.read, crm.objects.contacts.write,
+  crm.schemas.contacts.write (linkedin_url property bootstrap)
 """
 from __future__ import annotations
 
@@ -29,8 +33,9 @@ class HubSpotClient:
 
     # ------------------------------------------------------------ property
     def _ensure_property(self, name: str, label: str, description: str,
-                         field_type: str = "text") -> None:
-        r = self.session.get(f"{BASE}/crm/v3/properties/deals/{name}", timeout=30)
+                         field_type: str = "text", object_type: str = "deals",
+                         group_name: str = "dealinformation") -> None:
+        r = self.session.get(f"{BASE}/crm/v3/properties/{object_type}/{name}", timeout=30)
         if r.status_code == 200:
             return
         if r.status_code != 404:
@@ -40,15 +45,16 @@ class HubSpotClient:
             "label": label,
             "type": "string",
             "fieldType": field_type,
-            "groupName": "dealinformation",
+            "groupName": group_name,
             "description": description,
         }
-        create = self.session.post(f"{BASE}/crm/v3/properties/deals", json=payload, timeout=30)
+        create = self.session.post(f"{BASE}/crm/v3/properties/{object_type}",
+                                   json=payload, timeout=30)
         if create.status_code not in (200, 201):
             raise RuntimeError(
-                f"Could not create deal property '{name}' "
+                f"Could not create {object_type} property '{name}' "
                 f"({create.status_code}): {create.text[:300]}. "
-                f"Either add the crm.schemas.deals.write scope to the private "
+                f"Either add the crm.schemas.{object_type}.write scope to the private "
                 f"app, or create the property manually in HubSpot settings."
             )
 
@@ -66,6 +72,15 @@ class HubSpotClient:
         self._ensure_property(self.cfg["summary_property"], "007 enrichment summary",
                               "Research-pack TL;DR, stamped by 007 tender-radar.",
                               field_type="textarea")
+
+    def ensure_linkedin_property(self) -> None:
+        """Create the linkedin_url contact property if it doesn't exist —
+        the identifier the Amplemarket buying-group contacts (contacts.py)
+        are matched on, kept on the HubSpot contact once pushed there."""
+        self._ensure_property("linkedin_url", "LinkedIn URL",
+                              "Buying-group contact's LinkedIn profile, "
+                              "stamped by 007 tender-radar.",
+                              object_type="contacts", group_name="contactinformation")
 
     # --------------------------------------------------------------- dedup
     def find_deal_by_notice_id(self, notice_id: str) -> dict | None:
@@ -172,6 +187,61 @@ class HubSpotClient:
             except Exception:
                 pass
         return note_id
+
+    # ------------------------------------------------------------ contacts
+    def find_contact_by_email(self, email: str) -> dict | None:
+        """Dedup pre-check, same pattern as find_deal_by_notice_id — email
+        is the only field Amplemarket people are reliably matchable on."""
+        body = {
+            "filterGroups": [{"filters": [
+                {"propertyName": "email", "operator": "EQ", "value": email}]}],
+            "properties": ["email", "firstname", "lastname"],
+            "limit": 1,
+        }
+        r = self.session.post(f"{BASE}/crm/v3/objects/contacts/search", json=body, timeout=30)
+        r.raise_for_status()
+        results = r.json().get("results", [])
+        return results[0] if results else None
+
+    def upsert_contact(self, *, email: str = "", first_name: str = "",
+                       last_name: str = "", title: str = "",
+                       company_name: str = "", linkedin_url: str = "") -> dict:
+        """Create or update (by email, if given) a buying-group contact.
+        Without an email there's no reliable dedup key, so it's always a
+        fresh create — acceptable here since re-running a buying-group
+        build for the same project is rare, and a duplicate is harmless
+        (never deleted, same as everything else in 007 — see CLAUDE.md)."""
+        properties = {k: v for k, v in {
+            "firstname": first_name, "lastname": last_name,
+            "jobtitle": title, "company": company_name, "email": email,
+            "linkedin_url": linkedin_url,
+        }.items() if v}
+
+        existing = self.find_contact_by_email(email) if email else None
+        if existing:
+            r = self.session.patch(f"{BASE}/crm/v3/objects/contacts/{existing['id']}",
+                                   json={"properties": properties}, timeout=30)
+            if r.status_code != 200:
+                raise RuntimeError(f"Contact update failed ({r.status_code}): {r.text[:300]}")
+            return r.json()
+
+        r = self.session.post(f"{BASE}/crm/v3/objects/contacts",
+                              json={"properties": properties}, timeout=30)
+        if r.status_code not in (200, 201):
+            raise RuntimeError(f"Contact creation failed ({r.status_code}): {r.text[:300]}")
+        return r.json()
+
+    def associate_default(self, from_type: str, from_id: str,
+                          to_type: str, to_id: str) -> None:
+        """Associate two objects using HubSpot's default association type
+        for the pair (v4 API) — deliberately not a hardcoded numeric
+        associationTypeId (see add_note's note->deal 214, which had to be
+        found by testing): this endpoint resolves the right default itself."""
+        r = self.session.put(
+            f"{BASE}/crm/v4/objects/{from_type}/{from_id}/associations/default/"
+            f"{to_type}/{to_id}", timeout=30)
+        if r.status_code not in (200, 201):
+            raise RuntimeError(f"Association failed ({r.status_code}): {r.text[:300]}")
 
     # ------------------------------------------------------- owner lookup
     def find_company_owner(self, company_name: str) -> str | None:

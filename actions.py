@@ -12,14 +12,23 @@ independent checkboxes instead:
                        when a General contractor is known. Backfills the
                        enrichment TL;DR onto it if Enrich already ran.
     Build contacts  -> Amplemarket buying group (needs General contractor
-                       filled in first). Belgium/Hakron rows are skipped by
-                       design, same rule as contacts.py.
+                       filled in, AND a HubSpot deal already existing —
+                       tick Enrich or Create deal first). Belgium/Hakron
+                       rows are skipped by design, same rule as
+                       contacts.py. Every matched person is also pushed
+                       into HubSpot as a contact, associated to that deal.
 
-Independent and order-agnostic: tick any one, any combination, any time.
-A box that succeeds is unchecked so it doesn't re-fire; a box that fails is
-left checked so the next run retries it. Ticking Enrich and Create deal in
-the same run is safe — Enrich runs first, creates the deal if needed, and
+Order-agnostic in practice: tick any combination, any time. A box that
+succeeds is unchecked so it doesn't re-fire; a box that fails is left
+checked so the next run retries it. Ticking Enrich and Create deal in the
+same run is safe — Enrich runs first, creates the deal if needed, and
 Create deal then just finds it already exists (HubSpot dedup, rule #2).
+Build contacts needing a deal is likewise never a problem within a single
+run: ACTIONS' fixed order (Enrich, Create deal, Build contacts) always
+processes it last, so a deal created by either of the other two boxes on
+the SAME row in the SAME run already exists by the time Build contacts
+fires. It only fails — leaving the box checked for the next run — when
+ticked alone with no deal yet at all.
 
 Usage:
     python actions.py               # live
@@ -110,6 +119,12 @@ def _run_contacts(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: 
     if not gc:
         raise RuntimeError("General contractor is blank — fill it in before requesting contacts.")
 
+    notice_id = _prop_rich(row, notion.cfg["notice_id_property"])
+    deal = hubspot.find_deal_by_notice_id(notice_id)
+    if not deal:
+        raise RuntimeError("No HubSpot deal exists yet for this project — "
+                           "tick Enrich or Create deal first.")
+
     skip_countries = [c.upper() for c in cfg.get("hakron_skip_contacts_countries", [])]
     if country.upper() in skip_countries:
         print(f"{country}: Hakron partner path — contact build skipped by design "
@@ -118,7 +133,7 @@ def _run_contacts(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: 
 
     framework = cfg["enrichment"]["framework_by_ae"].get(ae, "concretedna")
     result = build_buying_group(cfg, company=gc, project=title, framework=framework,
-                                country=country)
+                                country=country, hubspot=hubspot, deal_id=deal["id"])
     link = result.get("url") or ""
     if link.startswith("http"):
         try:
