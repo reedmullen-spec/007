@@ -111,6 +111,10 @@
     16.257127,
     -61.3086637
   ],
+  "ardwick, manchester|": [
+    53.4676745,
+    -2.2160104
+  ],
   "aschaffenburg, bavaria, germany|de": [
     49.9706701,
     9.1384857
@@ -271,11 +275,19 @@
     55.1431224,
     14.9226297
   ],
+  "brampton, ontario, canada|ca": [
+    43.685832,
+    -79.7599366
+  ],
   "braunschweig, germany|de": [
     52.2646577,
     10.5236066
   ],
   "brescia province, lombardy, italy|it": null,
+  "bristol, uk|": [
+    51.4430141,
+    -2.5816622
+  ],
   "bronx / new york city, new york, usa|": [
     40.8227531,
     -73.9124302
@@ -842,6 +854,10 @@
   "gößnitz–crimmitschau, saxony/thuringia, germany|de": null,
   "gößnitz–crimmitschau, thuringia/saxony, germany|de": null,
   "hachenburg / westerburg, westerwald, rhineland-palatinate, germany|de": null,
+  "hackney wick, london|": [
+    51.5434383,
+    -0.0241542
+  ],
   "hadamar, hesse, germany|de": [
     50.4587,
     8.05793
