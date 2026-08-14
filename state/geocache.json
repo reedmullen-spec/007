@@ -325,6 +325,10 @@
     49.1813403,
     -0.3635615
   ],
+  "cambridge biomedical campus, cambridge, uk|": [
+    52.1736913,
+    0.1379141
+  ],
   "cambridge, gb|gb": [
     52.1975846,
     0.1391537
@@ -466,6 +470,10 @@
     53.0271745,
     12.2418682
   ],
+  "darlington, ontario, canada|": [
+    43.8813976,
+    -78.7647293
+  ],
   "deffernikbrücke, strecke 5634, bavaria, germany|de": null,
   "den helder, netherlands|nl": [
     52.957976,
@@ -591,6 +599,7 @@
     48.5303402,
     2.2392918
   ],
+  "etobicoke and mississauga, ontario, canada|": null,
   "eur district, rome, italy|it": null,
   "euskirchen, germany|de": [
     50.6612623,
@@ -729,6 +738,7 @@
     48.2513878,
     11.6509662
   ],
+  "gare de rivage, liège, belgium|be": null,
   "gateshead / sheffield, gb|gb": null,
   "gb|gb": [
     54.7023545,
@@ -786,6 +796,11 @@
     -1.9181532
   ],
   "greater paris region, france|fr": null,
+  "greater toronto and hamilton region, ontario, canada|": null,
+  "greater toronto area, ontario, canada|": [
+    43.9019833,
+    -79.268313
+  ],
   "greifswald, mecklenburg-vorpommern, germany|de": [
     54.095791,
     13.3815238
@@ -866,6 +881,10 @@
     8.9169797
   ],
   "hannover, germany|de": [
+    52.3744779,
+    9.7385532
+  ],
+  "hannover, lower saxony, germany|": [
     52.3744779,
     9.7385532
   ],
@@ -1261,6 +1280,10 @@
     -73.9868057
   ],
   "lower liard river, northwest territories / yukon, canada|ca": null,
+  "lubiatowo-kopalino, choczewo, pomerania, poland|": [
+    54.8106578,
+    17.8354045
+  ],
   "lugo, galicia, spain|es": [
     43.0395266,
     -7.4567985
@@ -1372,6 +1395,10 @@
   "minden, north rhine-westphalia, germany|de": [
     52.2881045,
     8.9168852
+  ],
+  "mississauga, ontario, canada|": [
+    43.5884727,
+    -79.643658
   ],
   "mittelfranken, bavaria, germany|de": [
     49.3232741,
@@ -1521,6 +1548,10 @@
     -0.9028043
   ],
   "northern france (canal seine-nord europe corridor)|fr": null,
+  "northern norway|no": [
+    68.1633439,
+    15.2994537
+  ],
   "northumberland, gb|gb": [
     55.25,
     -2.000559
@@ -1570,6 +1601,10 @@
     51.9866376,
     8.6460129
   ],
+  "ottawa, ontario, canada|": [
+    45.4208777,
+    -75.6901106
+  ],
   "ottawa, ontario, canada|ca": [
     45.4208777,
     -75.6901106
@@ -1589,6 +1624,10 @@
   "pantin, île-de-france, france|fr": [
     48.8965023,
     2.4019804
+  ],
+  "pape avenue, toronto, ontario, canada|": [
+    43.6923033,
+    -79.3498941
   ],
   "pape, toronto, ontario, canada|ca": [
     43.6799212,
@@ -1844,6 +1883,10 @@
     43.7729744,
     -79.2576479
   ],
+  "scarborough, toronto, ontario, canada|": [
+    43.7729744,
+    -79.2576479
+  ],
   "schaarbeek, brussels, belgium|be": [
     50.878395,
     4.3784579
@@ -2045,6 +2088,15 @@
   "tongeren, belgium|be": [
     50.7806267,
     5.4639172
+  ],
+  "toronto and york region (richmond hill / vaughan / markham), ontario, canada|": null,
+  "toronto and york region, ontario, canada|": [
+    43.7863298,
+    -79.5326467
+  ],
+  "toronto, ontario, canada|": [
+    43.6534817,
+    -79.3839347
   ],
   "torrevieja, alicante, spain|es": [
     37.9775416,
