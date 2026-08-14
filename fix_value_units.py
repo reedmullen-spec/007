@@ -1,20 +1,24 @@
-"""One-off: fixes the ~32 rows (all Source=NEWS, all blank Notice ID)
-whose Value is stored in millions instead of raw dollars — found via
-scope_check.py while investigating why real megaprojects (JFK Terminal,
-Hudson Tunnel, Second Avenue Subway, NYC jails, etc.) were scoring
-"value below the 5,000,000 floor" in a full-database rescore dry-run.
+"""One-off, re-runnable: fixes rows whose Value is stored in millions
+instead of raw dollars — a recurring data-entry pattern (a human or a
+model naturally types "400" to mean "€400m"), not tied to one source.
+First found via scope_check.py (Source=NEWS, blank Notice ID, ~32 rows)
+while investigating why real megaprojects were scoring "value below the
+5,000,000 floor" in a full-database rescore dry-run. Recurred Aug 2026
+for 46 Source=MANUAL rows (hand-researched — Ontario Line, Darlington
+SMR, PORR, Bechtel, etc.), fixed by hand that time; generalized here so
+the next occurrence, on any source, is one command.
 
-Targets exactly the rows matching that signature (Source=NEWS, notice_id
-empty, 0 < Value < --max-value) and multiplies Value by 1e6. Deliberately
-does NOT touch Fit/Status here — these rows' current Fit was computed
-correctly back when the value was presumably entered right, and a
-subsequent rescore (once Value is fixed) will re-derive Value band
-correctly too. Run this BEFORE any rescore_existing.py pass, or the
-rescore will wrongly disqualify all of them.
+Targets any row matching the signature (0 < Value < --max-value) and
+multiplies Value by 1e6. Recomputes Value band alongside it, since that's
+mechanical. Deliberately does NOT touch Fit/Status/Fit reason/Fit
+dimensions here — scoring is a separate, deterministic step; run
+rescore_existing.py (or the equivalent for a specific batch) after this,
+not before, or the rescore will still see the wrong Value.
 
 Usage:
-    python fix_value_units.py               # live
+    python fix_value_units.py               # live, scans every row
     python fix_value_units.py --dry-run     # print what would change
+    python fix_value_units.py --source MANUAL   # scope to one Source
 """
 from __future__ import annotations
 
@@ -31,23 +35,25 @@ def main() -> int:
                         help="Only fix rows with a stored Value below this "
                              "(a real raw-dollar value this low never "
                              "happens in this system's domain)")
+    parser.add_argument("--source", default="",
+                        help="Restrict to one Source (e.g. MANUAL, NEWS). "
+                             "Default: scan every row regardless of source.")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
     cfg = load_config()
     notion = NotionClient(env("NOTION_TOKEN"), cfg)
-    nid_prop = cfg["notion"]["notice_id_property"]
 
-    rows = notion.query_all_rows({"property": "Source", "select": {"equals": "NEWS"}})
-    print(f"Scanning {len(rows)} Source=NEWS rows")
+    filter_obj = ({"property": "Source", "select": {"equals": args.source}}
+                  if args.source else {})
+    rows = notion.query_all_rows(filter_obj)
+    print(f"Scanning {len(rows)} rows" + (f" (Source={args.source})" if args.source else ""))
 
     fixed = 0
     for row in rows:
         props = row.get("properties") or {}
-        nid_vals = (props.get(nid_prop) or {}).get("rich_text", [])
-        notice_id = nid_vals[0].get("plain_text", "") if nid_vals else ""
         value = (props.get("Value") or {}).get("number")
-        if notice_id or value is None or not (0 < value < args.max_value):
+        if value is None or not (0 < value < args.max_value):
             continue
 
         title = "".join(t.get("plain_text", "") for t in

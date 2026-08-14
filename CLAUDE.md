@@ -345,6 +345,22 @@ ask Reed before changing architecture, not just code.
     path are untouched — the CLI is a deliberate one-off per its own
     docstring, and checkpoint-2 already has its own per-card guard
     (`card["done"]`, rule 13).
+18. **`Value` must be raw dollars, never millions-shorthand** — `_disqualify()`
+    (`src/scoring.py`) compares it directly against `disqualify_below_value`
+    (5,000,000) with no unit conversion, and Value band thresholds
+    (50M/250M) assume the same. Typing "400" to mean "€400m" reads as
+    $400 against a $5M floor and kills the row. This has now happened
+    twice: first for ~32 `Source=NEWS` rows (found via `scope_check.py`),
+    then Aug 2026 for 46 `Source=MANUAL` hand-researched rows (Ontario
+    Line, Darlington SMR, PORR, Bechtel, etc. — genuinely large projects,
+    all wrongly disqualified). `fix_value_units.py` is now source-agnostic
+    (originally NEWS-only) — run it, THEN `rescore_existing.py` (or a
+    scoped equivalent) to re-derive Fit from the corrected Value; running
+    rescore first just re-disqualifies everything against the still-wrong
+    number. `Concrete opportunity` — "our prize, not the project size"
+    (§1) — is a separate field entirely and never substitutes for a
+    correct `Value`; don't try to soften the floor check against it
+    instead of just fixing the data.
 
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage
