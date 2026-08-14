@@ -361,6 +361,22 @@ ask Reed before changing architecture, not just code.
     (§1) — is a separate field entirely and never substitutes for a
     correct `Value`; don't try to soften the floor check against it
     instead of just fixing the data.
+19. **`rescore_existing.py` used to only ever set `Status=Disqualified`,
+    never revive it** — it wrote Status when a fresh score came back
+    Disqualified, but did nothing when a rescore un-disqualified a row
+    that already had Status=Disqualified from an earlier pass. Real
+    incident (Aug 2026): 670 rows sat invisible in every AE's triage
+    despite a legitimate, non-Disqualified `Fit` — 28 of them High. Fixed:
+    the script now flips `Status` back to `New` when `old_status ==
+    "Disqualified"` and the fresh score isn't — but ONLY then, and ONLY
+    when the old `Fit reason` doesn't contain "Auto-disqualified" (that
+    tag means `cleanup_low_value.py`/`cleanup_filters.py` disqualified it
+    on a criterion — value floor, keyword filters — that `score_project()`
+    never checks, so a clean rescore can't tell whether that separate
+    reason still applies). New `--include-disqualified` flag sweeps
+    Status=Disqualified rows too, not just Status=New — run this
+    periodically (not just after ingest) so a stale Disqualified Status
+    doesn't silently outlive whatever originally caused it.
 
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage

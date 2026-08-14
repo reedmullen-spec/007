@@ -89,6 +89,14 @@ def main() -> int:
                              "of every Status=New row — use this to run "
                              "scoring on one import batch regardless of the "
                              "Status values it was imported with.")
+    parser.add_argument("--include-disqualified", action="store_true",
+                        help="Also sweep rows currently Status=Disqualified, "
+                             "not just Status=New. A rescore can revive one "
+                             "of these back to New (see the old_status check "
+                             "below) if whatever made it Disqualified no "
+                             "longer applies (fixed Value, a scoring rule "
+                             "change, corrected data, etc.) — run this "
+                             "periodically, not just after ingest.")
     args = parser.parse_args()
 
     cfg = load_config()
@@ -100,15 +108,23 @@ def main() -> int:
             "rich_text": {"starts_with": args.notice_id_prefix}})
         print(f"Rescoring {len(rows)} rows with notice_id starting "
               f"'{args.notice_id_prefix}'")
+    elif args.include_disqualified:
+        rows = notion.query_all_rows({"or": [
+            {"property": "Status", "select": {"equals": "New"}},
+            {"property": "Status", "select": {"equals": "Disqualified"}},
+        ]})
+        print(f"Rescoring {len(rows)} rows (Status=New or Disqualified)")
     else:
         rows = notion.query_all_rows({"property": "Status", "select": {"equals": "New"}})
         print(f"Rescoring {len(rows)} 'New' rows")
 
-    changed = disqualified = 0
+    changed = disqualified = revived = 0
     for row in rows:
         fields = row_to_fields(row)
         scored = score_project(fields, cfg)
         old_fit = _prop_select(row, "Fit")
+        old_status = _prop_select(row, "Status")
+        old_fit_reason = _prop_rt(row, "Fit reason")
         title = fields["title"] or "(untitled)"
 
         if scored["fit"] != old_fit:
@@ -136,12 +152,27 @@ def main() -> int:
                 {"name": p} for p in scored["products"]]}
         if scored["fit"] == "Disqualified":
             props["Status"] = {"select": {"name": "Disqualified"}}
+        elif old_status == "Disqualified" and "Auto-disqualified" not in old_fit_reason:
+            # The mirror case this script used to miss entirely: Status was
+            # set Disqualified by an earlier scoring pass and never revived
+            # once a later rescore un-disqualified the row (real incident,
+            # Aug 2026 — 664 rows sat invisible in triage despite a legit
+            # Fit). Only touch Status when it's currently Disqualified —
+            # never overwrite "This week"/"Active Contact"/etc., which are
+            # AE-owned (see CLAUDE.md rule 11). The "Auto-disqualified"
+            # exclusion is deliberate: cleanup_low_value.py/cleanup_filters.py
+            # disqualify on a criterion (value floor, keyword filters) that
+            # score_project() never checks, so a clean rescore here can't
+            # tell whether that separate reason still applies — leave those
+            # for a human, or a rerun of the cleanup script itself.
+            props["Status"] = {"select": {"name": "New"}}
+            revived += 1
         notion.update_properties(row["id"], props)
         time.sleep(0.4)
 
     verb = "Would change" if args.dry_run else "Changed"
     print(f"{verb} {changed} of {len(rows)} rows' Fit band "
-          f"({disqualified} now Disqualified)")
+          f"({disqualified} now Disqualified, {revived} revived from a stale Disqualified Status)")
     return 0
 
 
