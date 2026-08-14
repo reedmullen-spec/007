@@ -326,6 +326,25 @@ ask Reed before changing architecture, not just code.
     code change and confirm it's on `main` BEFORE dropping the Notion
     column, not after — and re-check the live schema immediately before
     calling a column removal done, since a resurrection is silent.
+17. **`Build contacts` re-firing is a no-op if `Contacts list` is already
+    set** (`actions.py`'s `_run_contacts`, Aug 2026). `build_buying_group()`
+    has no dedup of its own — every call searches Amplemarket and creates
+    a brand-new lead list, full stop. The checkbox is the only guard
+    against re-firing, and `actions.py` correctly unchecks it after every
+    success, so the only way to get duplicates is a human re-ticking it.
+    Real incident: three manually-researched rows (Bouygues UK, PORR,
+    Bechtel) each got 4 duplicate Amplemarket lists from repeated ticks
+    over one morning, on top of a legitimate hand-built list from the day
+    before — 5 lists per project, only the last one ever linked from
+    `Contacts list` (a plain overwrite, not an append) so the other 3 per
+    project were silently orphaned. To force a genuine rebuild, clear
+    `Contacts list` first, then tick the box — ticking it while a list
+    already exists just prints a skip message and unchecks itself.
+    This guard is Notion-checkbox-specific (`actions.py`); the bare CLI
+    (`contacts.py --company X`, no deal) and `approvals.py`'s checkpoint-2
+    path are untouched — the CLI is a deliberate one-off per its own
+    docstring, and checkpoint-2 already has its own per-card guard
+    (`card["done"]`, rule 13).
 
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage

@@ -19,6 +19,10 @@ independent checkboxes instead:
                        rows are skipped by design, same rule as
                        contacts.py. Every matched person is also pushed
                        into HubSpot as a contact, associated to that deal.
+                       A no-op if Contacts list is already set — re-ticking
+                       does NOT rebuild (build_buying_group() has no dedup
+                       of its own; clear Contacts list first to force a
+                       genuine rebuild).
 
 Order-agnostic in practice: tick any combination, any time. A box that
 succeeds is unchecked so it doesn't re-fire; a box that fails is left
@@ -120,6 +124,18 @@ def _run_create_deal(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, ro
 
 def _run_contacts(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: dict) -> None:
     title = notion.row_title(row)
+    # build_buying_group() has no dedup of its own — it always searches
+    # Amplemarket and creates a fresh list. The checkbox is the only guard
+    # against re-firing, and a human re-ticking it after Contacts list is
+    # already set (real incident, Aug 2026: Bouygues/PORR/Bechtel each got
+    # 4 duplicate lists from repeated ticks) must be a no-op, not another
+    # list. Untick manually + clear Contacts list to force a genuine rebuild.
+    existing_list = _prop_url(row, "Contacts list")
+    if existing_list:
+        print(f"Contacts list already exists for '{title[:70]}' ({existing_list}) — "
+             f"skipping, not building a duplicate.")
+        return
+
     gc = _prop_rich(row, "General contractor/JV")
     country = _prop_rich(row, "Country")
     ae = _prop_select(row, "AE") or "aled"
