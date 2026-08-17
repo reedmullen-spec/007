@@ -1,0 +1,946 @@
+{
+  "3b8a315b-1b00-8101-ae7c-e27abc375b99": {
+    "Expected completion": "2041-12-31",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Lynnwood to Everett, WA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-810b-ac0e-fcd57b130e86": {
+    "Expected completion": "2028-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "NOT YET IDENTIFIED - immediate research task",
+    "Location": "Osborne Naval Shipyard, Lefevre Peninsula, Adelaide, South Australia",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-810c-bf99-d6cf36722a63": {
+    "Expected completion": "2030-12-31",
+    "Expected concrete start": "2026",
+    "Fit": "High",
+    "GC": "",
+    "Location": "Salem, OR",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-8110-b135-d16a925acbb6": {
+    "Expected completion": "2029-09-30",
+    "Expected concrete start": "Live now",
+    "Fit": "Medium",
+    "GC": "MWH-Kiewit JV (Construction Manager / General Contractor) | JV: MWH Constructors (Broomfield, CO) + Kiewit (Omaha, NE). Filtration Facility Construction PM: Tom Paul (",
+    "Location": "east Multnomah County (35320 Carpenter Lane), OR",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-811a-8e0e-f4fdbe2da7ca": {
+    "Expected completion": "2030-12-31",
+    "Expected concrete start": "2026",
+    "Fit": "High",
+    "GC": "",
+    "Location": "Salem, OR",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-8121-a370-e5f0bea01fdb": {
+    "Expected completion": "",
+    "Expected concrete start": "Q3 2026",
+    "Fit": "High",
+    "GC": "",
+    "Location": "Boardman, Morrow County, OR",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-8124-a1e8-fe7ba4ca12ed": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Los Banos, Merced County, CA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-812b-8b10-f61fff02fb3a": {
+    "Expected completion": "",
+    "Expected concrete start": "Spring 2028",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Naval Base Kitsap-Bremerton, WA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-8135-8189-dd1837acb9aa": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Quincy, Grant County, WA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-813d-832a-eed51f5c8504": {
+    "Expected completion": "",
+    "Expected concrete start": "Q4 2026",
+    "Fit": "High",
+    "GC": "STADSBADER CONTRACTORS | JV: STADSBADER CONTRACTORS, JACOPS",
+    "Location": "Schaarbeek, Brussels, Belgium",
+    "Value band": "Under 50M"
+  },
+  "3b8a315b-1b00-813f-9ad2-e2187bc06fe8": {
+    "Expected completion": "2031-09-30",
+    "Expected concrete start": "Q2 2026",
+    "Fit": "High",
+    "GC": "FlatironDragados-Aecon JV",
+    "Location": "Ravensdale (Green River), King County, WA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-8140-aae5-d82375079954": {
+    "Expected completion": "2041-12-31",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Lynnwood to Everett, WA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-815b-82f8-e01870c1ad46": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Gresham, OR",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-8167-84b7-d2deb56080ac": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "John Holland",
+    "Location": "Eagle St, Brisbane CBD, QLD",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-816b-8767-f3e635f1eb66": {
+    "Expected completion": "",
+    "Expected concrete start": "Q3 2026",
+    "Fit": "High",
+    "GC": "",
+    "Location": "Boardman, Morrow County, OR",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-816b-ba00-c5e685e144ab": {
+    "Expected completion": "",
+    "Expected concrete start": "Q2 2027",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Genoa, Italy",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-816b-bc7a-d23d04e8d547": {
+    "Expected completion": "2031-09-30",
+    "Expected concrete start": "Q2 2026",
+    "Fit": "High",
+    "GC": "FlatironDragados-Aecon JV",
+    "Location": "Ravensdale (Green River), King County, WA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-8171-8a72-e05421b1a47c": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Pittsburg, CA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-8177-99e8-f85581195e37": {
+    "Expected completion": "",
+    "Expected concrete start": "Live",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Great Britain",
+    "Value band": ""
+  },
+  "3b8a315b-1b00-8182-a257-e0f9d29ee836": {
+    "Expected completion": "",
+    "Expected concrete start": "Q2 2027",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Naples, Italy",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-8185-b0c8-fa8fa4921a56": {
+    "Expected completion": "2028-12-31",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Sacramento (Natomas), CA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-8189-bb74-efd0091631ee": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Low",
+    "GC": "",
+    "Location": "Viterbo, Lazio, Italy",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-8190-9747-eb0919f7753a": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Medium",
+    "GC": "DEME Group",
+    "Location": "Netherlands",
+    "Value band": ""
+  },
+  "3b8a315b-1b00-819c-9d6c-d3014791b9fb": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Santa Clara County, CA",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-819d-8278-ec8281255949": {
+    "Expected completion": "2029-09-30",
+    "Expected concrete start": "Live now",
+    "Fit": "Medium",
+    "GC": "MWH-Kiewit JV (Construction Manager / General Contractor) | JV: MWH Constructors (Broomfield, CO) + Kiewit (Omaha, NE). Filtration Facility Construction PM: Tom Paul (",
+    "Location": "east Multnomah County (35320 Carpenter Lane), OR",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-81ac-ad88-daad14776ca3": {
+    "Expected completion": "",
+    "Expected concrete start": "Q4 2026",
+    "Fit": "High",
+    "GC": "ATI CLEA-COSMO-TSB | JV: CLEA, COSMO, TSB",
+    "Location": "Noale, Venice, Italy",
+    "Value band": ""
+  },
+  "3b8a315b-1b00-81ae-b8ce-ff43af867cbb": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Prineville, Crook County, OR",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-81b5-beb5-fef037f69dd0": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Tulare / Kern counties, CA",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-81be-a980-e4dcad8438f0": {
+    "Expected completion": "2027-10-31",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "Granite (Reach 6)",
+    "Location": "Watsonville / Pajaro, Santa Cruz & Monterey counties, CA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-81ce-87be-c17c25eb9e8c": {
+    "Expected completion": "",
+    "Expected concrete start": "Q2 2026",
+    "Fit": "Low",
+    "GC": "",
+    "Location": "A4 motorway, S. Donà di Piave to Portogruaro, Veneto, Italy",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-81d5-8494-c6bc0dcc577c": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "Granite",
+    "Location": "West Sacramento, Yolo County, CA",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-81db-bb22-c6b56a16b2b3": {
+    "Expected completion": "",
+    "Expected concrete start": "Spring 2028",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Naval Base Kitsap-Bremerton, WA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-81e1-8720-f097c906aa15": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "John Holland",
+    "Location": "Cairns, QLD",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-81e4-8c35-cd335bf1ffbe": {
+    "Expected completion": "2028-06-30",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "HNTB (architect) - main works contractor not yet identified",
+    "Location": "Sacramento Railyards, CA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-81e7-a4d4-d7bcf0892490": {
+    "Expected completion": "",
+    "Expected concrete start": "Summer 2026",
+    "Fit": "High",
+    "GC": "Kiewit Infrastructure West",
+    "Location": "Gorst / Port Orchard, Kitsap County, WA",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-81f2-ac6a-c5730379b99e": {
+    "Expected completion": "",
+    "Expected concrete start": "Summer 2026",
+    "Fit": "High",
+    "GC": "Kiewit Infrastructure West",
+    "Location": "Gorst / Port Orchard, Kitsap County, WA",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-81f3-af39-c4a1b6fe16f6": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "NE Portland, OR",
+    "Value band": "50-250M"
+  },
+  "3b8a315b-1b00-81f5-937a-ed01840ad0b5": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "I-5 to 24th Ave South, King County, WA",
+    "Value band": "250M+"
+  },
+  "3b8a315b-1b00-81f6-9ea8-c55dbe79df7f": {
+    "Expected completion": "",
+    "Expected concrete start": "Q4 2026",
+    "Fit": "Medium",
+    "GC": "BG R. Lange GmbH, Schachtbau Nordhausen GmbH, Stahlbau Raulf GmbH, Hans Tiefenbach GmbH, Teupe Infra Gerüstbau GmbH",
+    "Location": "Düsseldorf, Germany",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-8103-8449-c1a3a5bc60de": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Q2 2026",
+    "Fit": "Medium",
+    "GC": "NOT YET NAMED. Architect: Perkins Eastman.",
+    "Location": "South Ozone Park, Queens, New York City, NY",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8105-a38b-e0899b5416bb": {
+    "Expected completion": "2033-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "ED+PCL Healthcare Partners (JV: EllisDon Corporation, PCL Constructors Canada Inc.)",
+    "Location": "Mississauga, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-810c-8218-f844a211ea3e": {
+    "Expected completion": "2030-08-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Tutor Perini",
+    "Location": "Midtown Manhattan, New York City, NY",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-810f-9dc8-ffa5f5fc6342": {
+    "Expected completion": "",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Ontario Transit Group",
+    "Location": "Toronto, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8111-88b0-eef3fffbb954": {
+    "Expected completion": "",
+    "Expected concrete start": "Q3 2026",
+    "Fit": "High",
+    "GC": "Multiple by package - see JV / parents. Package 1C: Traylor/Walsh/Skanska JV. Package 1B: Frontier-Kemper/Tutor Perini JV. Ground stabilization: Weeks Marine. | JV: Traylor Bros. Inc., Walsh Construction Co. II LLC, Skanska USA Civil",
+    "Location": "Hudson River, Weehawken NJ to Manhattan West Side, New York",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8114-a008-c1341f5f5dcf": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Western Washington (statewide)",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-8118-8145-e733b782be24": {
+    "Expected completion": "2028-06-15",
+    "Expected concrete start": "Q4 2026",
+    "Fit": "Medium",
+    "GC": "MFB Bauunternehmen GmbH & Co. KG",
+    "Location": "Georgsheil, Landkreis Aurich, Lower Saxony, Germany",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-811a-84c4-fe8f0c2eb3a3": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Low",
+    "GC": "NONE APPOINTED - Diode Ventures is developer; no operator or GC announced, no construction timetable published",
+    "Location": "Kuna, Idaho, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-811d-8f3c-ea0550727257": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "East Wenatchee, Douglas/Chelan County, WA",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-811e-94e4-fc0ea2ae0107": {
+    "Expected completion": "",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "FOUR PACKAGES, FOUR CONTRACTORS: (1) Southern Civil, Stations & Tunnel - Ontario Transit Group, C$6bn, awarded Nov 2022. (2) Rolling Stock, Systems, Operations & Maintenance - Connect 6ix (JV: Plenary Americas, Hitachi Rail, Webuild Group, Transdev Canada), C$9bn, Nov 2022. (3) Pape Tunnel & Underground Stations - C$4.32bn, contract signed Aug 2026 (see conflict note in Summary on contractor identity). (4) Elevated Guideway & Stations - Trillium Guideway Partners (JV: Acciona Infrastructure Canada, Amico Major Projects), value still to be announced at financial close. AECOM provides technical design leadership across the full ~10km of tunnel works and three complex interchange stations.",
+    "Location": "Toronto, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-811e-b503-ff585c22b2a5": {
+    "Expected completion": "2027-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "MULTIPLE / PER PHASE - Turner Construction on Etihad Park; housing, school and hotel phase contractors NOT YET IDENTIFIED",
+    "Location": "Willets Point, Queens, New York City, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8126-a252-e0572319e7f2": {
+    "Expected completion": "2027-06-15",
+    "Expected concrete start": "Q1 2025",
+    "Fit": "Medium",
+    "GC": "Kier Group",
+    "Location": "London, UK",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-8129-840a-d63d86acaf8a": {
+    "Expected completion": "",
+    "Expected concrete start": "Q4 2026",
+    "Fit": "High",
+    "GC": "NOT YET AWARDED - live tender window | Traylor Bros. / Walsh Construction / Skanska JV | JV: Traylor Bros. Inc., Walsh Construction Co., Skanska",
+    "Location": "Hudson River, Weehawken NJ to Manhattan West Side, New York",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-812c-ba9d-d033695cbd36": {
+    "Expected completion": "2027-02-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Turner Construction",
+    "Location": "Willets Point, Queens, New York City, NY",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-812d-a51e-c20061084b65": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Q1 2024",
+    "Fit": "Medium",
+    "GC": "Ghella-Delgado JV (JV: Ghella, Dragados)",
+    "Location": "Pape Avenue, Toronto, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8139-9576-e05526f2de6a": {
+    "Expected completion": "2027-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Exyte (removed by Micron effective 2 Sept 2025); replacement not publicly named; ESI, Hensel Phelps, Kiewit across packages",
+    "Location": "Boise, Idaho, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-813e-829b-e7327322f34a": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Low",
+    "GC": "NOT PUBLICLY NAMED for Fab 2 - Exyte removed Sept 2025; ESI, Hensel Phelps and Kiewit all hold/held packages; McAlvain Companies local subcontractor",
+    "Location": "Boise, Idaho, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8142-8fef-c82df4ec4a2e": {
+    "Expected completion": "",
+    "Expected concrete start": "Q4 2025",
+    "Fit": "High",
+    "GC": "HG Construction",
+    "Location": "Bristol, UK",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-8142-94e6-ddbda2872351": {
+    "Expected completion": "2030-08-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Tutor Perini",
+    "Location": "Midtown Manhattan, New York City, NY",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8146-b735-e1b510df1b39": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Medium",
+    "GC": "Connect 6ix (Plenary Americas / Hitachi Rail / Webuild Group / Transdev Canada JV) (JV: Plenary Americas, Hitachi Rail, Webuild Group, Transdev Canada)",
+    "Location": "Toronto, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8149-84d2-d6e31c0f44d0": {
+    "Expected completion": "",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "FOUR PACKAGES, FOUR CONTRACTORS: (1) Southern Civil, Stations & Tunnel - Ontario Transit Group, C$6bn, awarded Nov 2022. (2) Rolling Stock, Systems, Operations & Maintenance - Connect 6ix (JV: Plenary Americas, Hitachi Rail, Webuild Group, Transdev Canada), C$9bn, Nov 2022. (3) Pape Tunnel & Underground Stations - C$4.32bn, contract signed Aug 2026 (see conflict note in Summary on contractor identity). (4) Elevated Guideway & Stations - Trillium Guideway Partners (JV: Acciona Infrastructure Canada, Amico Major Projects), value still to be announced at financial close. AECOM provides technical design leadership across the full ~10km of tunnel works and three complex interchange stations.",
+    "Location": "Toronto, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8149-9803-f0f6696cdf72": {
+    "Expected completion": "2032-06-15",
+    "Expected concrete start": "Q2 2027",
+    "Fit": "Medium",
+    "GC": "UTE BYCAM + A.URIA + JAIZUBIA BURTXAKO RIO CASTAÑOS | JV: UTE BYCAM + A.URIA + JAIZUBIA BURTXAKO RIO CASTAÑOS, P20027458 - FERROVIAL CONSTRUCCION, S.A., CONSTRUCCIONES AMENABAR, S.A. y CONSTRUCCIONES MARIEZCURRENA, S.L., UTE VIUDA DE SAINZ - LURPELAN - COPASA, FCC - NORTUNEL - CYCASA, UTE CAMPEZO - AZVI - IZA, TECSA, EMPRESA CONSTRUCTORA, S.A.",
+    "Location": "Bilbao, Basque Country, Spain",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-814b-8cae-fb03b99fbc8d": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Scarborough Transit Connect",
+    "Location": "Scarborough, Toronto, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-814e-8347-ffc41090eb54": {
+    "Expected completion": "",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Eastern section: Concrete Placing Co. Inc. | Western section: Western Construction, Inc. | Concrete Placing Co. Inc. / Western Construction, Inc.",
+    "Location": "Treasure Valley, Idaho (I-84 corridor near Boise/Caldwell)",
+    "Value band": "50-250M"
+  },
+  "3bfa315b-1b00-8155-96a0-c1ec0d036cea": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "NW Construction (Phase 2, $255m)",
+    "Location": "Los Banos, Merced County, CA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-815e-afcb-e8f46e9d0074": {
+    "Expected completion": "2027-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "MULTIPLE / PER PHASE - Turner Construction on Etihad Park; housing, school and hotel phase contractors NOT YET IDENTIFIED",
+    "Location": "Willets Point, Queens, New York City, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-815e-bcf4-e9b69c06f2c1": {
+    "Expected completion": "2031-06-15",
+    "Expected concrete start": "Q1 2025",
+    "Fit": "Medium",
+    "GC": "Leon D. DeMatteis Construction Corp.",
+    "Location": "Queens, New York City, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8160-8d02-eab56635d64a": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Q3 2025",
+    "Fit": "High",
+    "GC": "Tutor Perini (team selected to propose the Manhattan jail plan) | Tutor Perini / O&G Industries JV | JV: Tutor Perini Corp., O&G Industries Inc.",
+    "Location": "White Street, Chinatown, Manhattan, New York City",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8164-9113-ee2fa219c3c0": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Medium",
+    "GC": "NONE APPOINTED - final design completed April 2026; construction contracting follows completion of environmental compliance. TENDER IMMINENT.",
+    "Location": "Anderson Ranch Dam, Boise River Basin, Idaho, USA",
+    "Value band": "50-250M"
+  },
+  "3bfa315b-1b00-8166-bbbf-f4cff116f8bb": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Aecon Kiewit Nuclear Partners (JV: Aecon Group, Kiewit Nuclear Canada)",
+    "Location": "Darlington, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-816b-a91f-cc5bf431c7a2": {
+    "Expected completion": "2031-06-15",
+    "Expected concrete start": "Q3 2026",
+    "Fit": "High",
+    "GC": "Tutor Perini (Phase 1 ramp + interim terminal, $1.87bn GMP). CM: STV Construction + Turner Construction JV. Deck-overs: MLJ Contracting with AECOM Tishman as CM. Overall CM: AECOM. | STV / Turner Construction JV | JV: STV, Turner Construction",
+    "Location": "Midtown Manhattan, New York City, NY",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-816c-9ce0-da5c64ae0e6f": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Prineville, Crook County, OR",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8170-91d2-c5e7152cd42f": {
+    "Expected completion": "2035-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "NOT APPOINTED for remaining buildings - developer-led, appointed per building. Project largely stalled.",
+    "Location": "Prospect Heights, Brooklyn, New York City",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8173-a7a9-ff8f483c5c32": {
+    "Expected completion": "2032-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "ALL FOUR RESOLVED - Brooklyn: Tutor Perini ($2.95bn). Queens: Leon D. DeMatteis Construction ($3.9bn+). Bronx: Transformative Reform Group, led by SLSCO and Sciame ($2.9bn+). Manhattan: Tutor Perini-led team.",
+    "Location": "New York City (Brooklyn, Queens, Bronx, Manhattan), USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8178-b978-f2841d94bd2e": {
+    "Expected completion": "",
+    "Expected concrete start": "2027",
+    "Fit": "High",
+    "GC": "Laing O'Rourke + Amentum Australia JV (Capability Partner) | Laing O'Rourke Amentum | JV: Laing O'Rourke, Amentum Australia",
+    "Location": "Osborne, South Australia, Australia",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8179-8ebf-dc4acb9b2ca6": {
+    "Expected completion": "",
+    "Expected concrete start": "Live",
+    "Fit": "Medium",
+    "GC": "West End Connectors (JV: Aecon, Dragados, Ghella) plus STRABAG - central to tunnelling and civil works. Aecon also leads the ONxpress civil JV on GO Expansion and sits in Aecon Kiewit Nuclear Partners at Darlington. STRABAG is one of Lisa's EU target accounts. Dragados sits within ACS, the same group as Flatiron Dragados on Anderson Dam and Howard A. Hanson in Lawson's territory.",
+    "Location": "Etobicoke and Mississauga, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8179-afa7-f65d90a8153a": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Low",
+    "GC": "NOT PUBLICLY NAMED for Fab 2 - Exyte removed Sept 2025; ESI, Hensel Phelps and Kiewit all hold/held packages; McAlvain Companies local subcontractor",
+    "Location": "Boise, Idaho, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-817a-a200-e73506a7e1ab": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Q3 2026",
+    "Fit": "High",
+    "GC": "Traylor Bros / Walsh Group / Skanska USA JV | Traylor-Walsh-Skanska JV | JV: Traylor Bros., Walsh Construction, Skanska",
+    "Location": "Hudson River, New York/New Jersey",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-817b-8402-f3031448ba6b": {
+    "Expected completion": "2035-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "MULTIPLE / ROLLING - Frontier-Kemper on the KEC Tunnel; other package contractors to be identified as awards are made | Tutor Perini",
+    "Location": "Mt. Pleasant, Westchester County, New York",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8180-9798-f0dae25f54e4": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Low",
+    "GC": "NOT CONFIRMED for this segment - Concrete Placing Co. and Western Construction are the recurring ITD Treasure Valley primes; verify against ITD award records",
+    "Location": "Idaho, USA",
+    "Value band": "50-250M"
+  },
+  "3bfa315b-1b00-8188-94fc-fb3d33b041c4": {
+    "Expected completion": "2032-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "ALL FOUR RESOLVED - Brooklyn: Tutor Perini ($2.95bn). Queens: Leon D. DeMatteis Construction ($3.9bn+). Bronx: Transformative Reform Group, led by SLSCO and Sciame ($2.9bn+). Manhattan: Tutor Perini-led team.",
+    "Location": "New York City (Brooklyn, Queens, Bronx, Manhattan), USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-818a-a5ab-d4ed7192adc4": {
+    "Expected completion": "2035-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "MULTIPLE / ROLLING - Frontier-Kemper on the KEC Tunnel; other package contractors to be identified as awards are made | Tutor Perini",
+    "Location": "Mt. Pleasant, Westchester County, New York",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-818d-aed8-f6377831f727": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Scarborough Transit Connect",
+    "Location": "Scarborough, Toronto, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-818e-8405-ec585076a2d7": {
+    "Expected completion": "2027-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "NOT IDENTIFIED in sources reviewed - design-build delivery; MTA published a qualified bidders list. Research task: confirm the awarded design-build contractor via MTA C&D records.",
+    "Location": "Bronx / New York City, New York, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8197-945c-e25d3824a51b": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Q1 2025",
+    "Fit": "Medium",
+    "GC": "ONxpress Transportation Partners (JV: Aecon Construction Group, Alstom Holdings, FCC Construcción, Deutsche Bahn International Operations)",
+    "Location": "Greater Toronto and Hamilton Region, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-8197-a388-c33a126fde31": {
+    "Expected completion": "2027-06-15",
+    "Expected concrete start": "Q4 2025",
+    "Fit": "High",
+    "GC": "HG Construction",
+    "Location": "Hackney Wick, London",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-819e-930c-f0c549a7b1f9": {
+    "Expected completion": "2032-06-15",
+    "Expected concrete start": "Q1 2026",
+    "Fit": "High",
+    "GC": "Connect Plus Partners (Halmar International + FCC Construction) | JV: Halmar International, FCC Construction",
+    "Location": "Second Avenue, East Harlem, New York City, NY",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-819e-ae46-c813184e9d06": {
+    "Expected completion": "2033-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "ED+PCL Healthcare Partners (JV: EllisDon Corporation, PCL Constructors Canada Inc.)",
+    "Location": "Mississauga, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81a0-a8c4-d58d6152e461": {
+    "Expected completion": "2027-06-15",
+    "Expected concrete start": "Q4 2026",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Gare de Rivage, Liège, Belgium",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-81a2-9de9-d8d36675bbad": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "Medium",
+    "GC": "AECOM Tishman (AECOM with Tishman Construction)",
+    "Location": "JFK Airport, Queens, New York",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81aa-aa5d-db302ccd2556": {
+    "Expected completion": "",
+    "Expected concrete start": "Q4 2025",
+    "Fit": "High",
+    "GC": "HG Construction",
+    "Location": "Ardwick, Manchester",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-81ab-92e6-c1a33470f768": {
+    "Expected completion": "2028-06-15",
+    "Expected concrete start": "Q4 2026",
+    "Fit": "Medium",
+    "GC": "Sächsische Bau GmbH",
+    "Location": "Forst (Lausitz), Brandenburg, Germany",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-81ab-9fc1-d66d7bfb6100": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Low",
+    "GC": "NONE APPOINTED - not authorised or funded; evaluation only",
+    "Location": "Boise River Basin, Idaho, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81b2-b697-f5c9930d8736": {
+    "Expected completion": "2028-06-15",
+    "Expected concrete start": "Q4 2026",
+    "Fit": "Medium",
+    "GC": "IHT Ingenieur-, Hoch- und Tiefbau G",
+    "Location": "Hundem, Sauerland, North Rhine-Westphalia, Germany",
+    "Value band": ""
+  },
+  "3bfa315b-1b00-81b6-b40d-ef7be0d07b17": {
+    "Expected completion": "2031-06-15",
+    "Expected concrete start": "Q1 2027",
+    "Fit": "High",
+    "GC": "Trillium Guideway Partners (JV: Acciona Infrastructure Canada, Amico Major Projects)",
+    "Location": "Toronto, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81b9-8861-e80db622afed": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Low",
+    "GC": "NONE APPOINTED - Diode Ventures is developer; no operator or GC announced, no construction timetable published",
+    "Location": "Kuna, Idaho, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81bf-8cd4-f84e644e6a1d": {
+    "Expected completion": "2029-06-15",
+    "Expected concrete start": "Q2 2026",
+    "Fit": "High",
+    "GC": "Bouygues UK",
+    "Location": "Cambridge Biomedical Campus, Cambridge, UK",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81c0-a061-e33be44668bc": {
+    "Expected completion": "2027-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "NOT IDENTIFIED in sources reviewed - design-build delivery; MTA published a qualified bidders list. Research task: confirm the awarded design-build contractor via MTA C&D records.",
+    "Location": "Bronx / New York City, New York, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81c2-a315-c39fdae91fd5": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Q2 2026",
+    "Fit": "Medium",
+    "GC": "NOT YET NAMED. Architects: HKS (design), Gensler (interiors).",
+    "Location": "Ferry Point Park, Bronx, New York City",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81c2-aac5-ebbd8de62c3a": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "I-5 to 24th Ave South, King County, WA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81c5-9e68-e225a2c473a6": {
+    "Expected completion": "2035-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "NOT APPOINTED for remaining buildings - developer-led, appointed per building. Project largely stalled.",
+    "Location": "Prospect Heights, Brooklyn, New York City",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81c6-b989-db26dd48f0ff": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Aecon Kiewit Nuclear Partners (JV: Aecon Group, Kiewit Nuclear Canada)",
+    "Location": "Darlington, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81d1-867b-fd3686d002d8": {
+    "Expected completion": "2031-06-15",
+    "Expected concrete start": "Q3 2026",
+    "Fit": "High",
+    "GC": "Tutor Perini (Phase 1 ramp + interim terminal, $1.87bn GMP). CM: STV Construction + Turner Construction JV. Deck-overs: MLJ Contracting with AECOM Tishman as CM. Overall CM: AECOM. | STV / Turner Construction JV | JV: STV, Turner Construction",
+    "Location": "Midtown Manhattan, New York City, NY",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81d4-a2a4-e3f9d72ab533": {
+    "Expected completion": "2030-11-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "PORR / Hagedorn (JV: PORR, Hagedorn)",
+    "Location": "Hannover, Lower Saxony, Germany",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81d7-aa3b-d84c1732ae9f": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Q3 2025",
+    "Fit": "Medium",
+    "GC": "NOT YET NAMED - construction prep underway, formal groundbreaking not yet held. Architects: SHoP Architects + Field Operations. Turner Construction is next door on Etihad Park.",
+    "Location": "Flushing, Queens, New York",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81d7-b3d2-cdf836b78140": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Low",
+    "GC": "NOT CONFIRMED for this segment - Concrete Placing Co. and Western Construction are the recurring ITD Treasure Valley primes; verify against ITD award records",
+    "Location": "Idaho, USA",
+    "Value band": "50-250M"
+  },
+  "3bfa315b-1b00-81da-ab4d-e3f8775a0d29": {
+    "Expected completion": "2030-08-15",
+    "Expected concrete start": "Q3 2026",
+    "Fit": "High",
+    "GC": "Skanska USA / Walsh Group / Traylor Bros JV | Skanska / Traylor Bros. / Walsh Construction JV | JV: Skanska, Traylor Bros., Walsh Construction",
+    "Location": "106th Street, East Harlem, New York City, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81da-aef3-df62edc36275": {
+    "Expected completion": "",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Eastern section: Concrete Placing Co. Inc. | Western section: Western Construction, Inc. | Concrete Placing Co. Inc. / Western Construction, Inc.",
+    "Location": "Treasure Valley, Idaho (I-84 corridor near Boise/Caldwell)",
+    "Value band": "50-250M"
+  },
+  "3bfa315b-1b00-81db-b8e2-d82b584df380": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Medium",
+    "GC": "NONE APPOINTED - final design completed April 2026; construction contracting follows completion of environmental compliance. TENDER IMMINENT.",
+    "Location": "Anderson Ranch Dam, Boise River Basin, Idaho, USA",
+    "Value band": "50-250M"
+  },
+  "3bfa315b-1b00-81de-b342-cfe6525618bc": {
+    "Expected completion": "",
+    "Expected concrete start": "Q3 2026",
+    "Fit": "High",
+    "GC": "Multiple by package - see JV / parents. Package 1C: Traylor/Walsh/Skanska JV. Package 1B: Frontier-Kemper/Tutor Perini JV. Ground stabilization: Weeks Marine. | JV: Traylor Bros. Inc., Walsh Construction Co. II LLC, Skanska USA Civil",
+    "Location": "Hudson River, Weehawken NJ to Manhattan West Side, New York",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81e3-bb5d-cbfb7465438f": {
+    "Expected completion": "",
+    "Expected concrete start": "Unknown",
+    "Fit": "Low",
+    "GC": "NONE APPOINTED - not authorised or funded; evaluation only",
+    "Location": "Boise River Basin, Idaho, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81e8-9387-fcd6d9e66633": {
+    "Expected completion": "2035-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Frontier-Kemper Constructors (Tutor Perini subsidiary)",
+    "Location": "Mt. Pleasant, Westchester County, New York",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81ec-981f-c8ff4284221a": {
+    "Expected completion": "2035-06-15",
+    "Expected concrete start": "Q4 2025",
+    "Fit": "High",
+    "GC": "Bechtel",
+    "Location": "Lubiatowo-Kopalino, Choczewo, Pomerania, Poland",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81ee-9f6e-fd66949df3fc": {
+    "Expected completion": "2032-06-15",
+    "Expected concrete start": "Q1 2026",
+    "Fit": "High",
+    "GC": "Connect Plus Partners (Halmar International + FCC Construction) | JV: Halmar International, FCC Construction",
+    "Location": "Second Avenue, East Harlem, New York City, NY",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81f3-9be1-d5b3884d5341": {
+    "Expected completion": "",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "Beerwah Coast Connect (Georgiou/Strabag + Hatch + Laing O'Rourke) - brownfield; CoastalTraX (Acciona + Georgiou) - greenfield | JV: Beerwah Coast Connect = Georgiou (acquired by STRABAG in 2025) + Hatch + Laing O'Rourke. CoastalTraX = Acciona + Georgiou, with Aurecon, Mott MacDonald and DT Infrastructure (specialist rail subcontractor). Signalling (ETCS): Alstom + UGL.",
+    "Location": "Sunshine Coast, QLD",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81f4-9803-d1787699d98a": {
+    "Expected completion": "2030-06-15",
+    "Expected concrete start": "Q3 2025",
+    "Fit": "High",
+    "GC": "Tutor Perini (team selected to propose the Manhattan jail plan) | Tutor Perini / O&G Industries JV | JV: Tutor Perini Corp., O&G Industries Inc.",
+    "Location": "White Street, Chinatown, Manhattan, New York City",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81f5-afe0-c6baa457b1ad": {
+    "Expected completion": "",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Ontario Transit Group",
+    "Location": "Toronto, Ontario, Canada",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81f6-b228-ea12bbca146f": {
+    "Expected completion": "2027-06-15",
+    "Expected concrete start": "Live",
+    "Fit": "High",
+    "GC": "Exyte (removed by Micron effective 2 Sept 2025); replacement not publicly named; ESI, Hensel Phelps, Kiewit across packages",
+    "Location": "Boise, Idaho, USA",
+    "Value band": "250M+"
+  },
+  "3bfa315b-1b00-81fe-866d-f86d469eaffe": {
+    "Expected completion": "2028-12-31",
+    "Expected concrete start": "",
+    "Fit": "Medium",
+    "GC": "",
+    "Location": "Sacramento (Natomas), CA",
+    "Value band": "250M+"
+  }
+}
