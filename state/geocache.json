@@ -452,6 +452,10 @@
     57.6522463,
     -3.3104713
   ],
+  "cornwall, uk|gb": [
+    50.416667,
+    -4.75
+  ],
   "cottbus, brandenburg, germany|de": [
     51.7567447,
     14.3357307
@@ -507,6 +511,10 @@
   "dobeles novads, latvia|lv": [
     56.561572,
     23.1046096
+  ],
+  "dortmund-hafen, germany|de": [
+    51.5222933,
+    7.3801052
   ],
   "drammen, norway|no": [
     59.6964936,
@@ -763,6 +771,10 @@
   "genova, italy|it": [
     44.40726,
     8.9338624
+  ],
+  "georgsheil, landkreis aurich, lower saxony, germany|de": [
+    53.4732716,
+    7.3246405
   ],
   "gerlingen, baden-württemberg, germany|de": [
     48.7983947,
@@ -1157,6 +1169,7 @@
     8.4628165
   ],
   "l27a km 44.835–45.066, belgium|be": null,
+  "l27a railway line, belgium (near luitenant nayaertplein and oudstrijdersstraat)|be": null,
   "la ferté-macé, normandy, france|fr": [
     48.5895488,
     -0.3584924
@@ -1225,6 +1238,7 @@
     40.1522173,
     18.2260628
   ],
+  "lehrte–oebisfelde corridor, lower saxony / saxony-anhalt, germany|de": null,
   "leipzig (engelsdorf / leipzig-stötteritz), germany|de": [
     51.3187023,
     12.4189573
@@ -1259,6 +1273,10 @@
     3.0635282
   ],
   "limoges, france|fr": [
+    45.8354243,
+    1.2644847
+  ],
+  "limoges, haute-vienne, france|fr": [
     45.8354243,
     1.2644847
   ],
@@ -1596,6 +1614,7 @@
     49.453872,
     11.077298
   ],
+  "nygårdstunnelen, national road 555, norway|no": null,
   "osborne naval shipyard, lefevre peninsula, adelaide, south australia|": null,
   "osborne, south australia, australia|": [
     -34.7859285,
@@ -1711,6 +1730,10 @@
     2.1008067
   ],
   "potsdam, brandenburg, germany|de": [
+    52.4009309,
+    13.0591397
+  ],
+  "potsdam, germany|de": [
     52.4009309,
     13.0591397
   ],
@@ -1919,6 +1942,7 @@
     50.081242,
     12.2283415
   ],
+  "schladern, rhineland-palatinate, germany|de": null,
   "schleswig-holstein, germany|de": [
     54.1853998,
     9.8220089
@@ -2028,6 +2052,10 @@
   "staten island, new york, usa|": [
     40.5834557,
     -74.1496048
+  ],
+  "steinburg, schleswig-holstein, germany|de": [
+    53.9409342,
+    9.5157896
   ],
   "steinheim am albuch, baden-württemberg, germany|de": [
     48.692598,
