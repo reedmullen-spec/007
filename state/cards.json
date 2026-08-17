@@ -35,7 +35,8 @@
   },
   "C0BGRLQ2BMH:1785772715.873969": {
     "channel": "C0BGRLQ2BMH",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "aled",
       "country": "GB",
@@ -50,7 +51,8 @@
   },
   "C0BGRLQ2BMH:1785772717.089169": {
     "channel": "C0BGRLQ2BMH",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "lisa",
       "country": "GB",
@@ -80,7 +82,8 @@
   },
   "C0BGRLQ2BMH:1785772719.660709": {
     "channel": "C0BGRLQ2BMH",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "lisa",
       "country": "GB",
@@ -95,7 +98,8 @@
   },
   "C0BGRLQ2BMH:1785772720.930639": {
     "channel": "C0BGRLQ2BMH",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "aled",
       "country": "",
@@ -3678,7 +3682,8 @@
   },
   "C0BJS20BUDB:1785772711.063979": {
     "channel": "C0BJS20BUDB",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "",
       "country": "US",
@@ -3693,7 +3698,8 @@
   },
   "C0BJS20BUDB:1785772722.121799": {
     "channel": "C0BJS20BUDB",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "",
       "country": "US",
@@ -3708,7 +3714,8 @@
   },
   "C0BJS20BUDB:1785772723.459269": {
     "channel": "C0BJS20BUDB",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "",
       "country": "US",
@@ -3723,7 +3730,8 @@
   },
   "C0BJX8B028Z:1785772728.057979": {
     "channel": "C0BJX8B028Z",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "",
       "country": "AU",
@@ -4234,7 +4242,8 @@
   },
   "C0BJXLBT8RF:1785772713.528299": {
     "channel": "C0BJXLBT8RF",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "",
       "country": "US",
@@ -4249,7 +4258,8 @@
   },
   "C0BK21UMHK3:1785772725.775649": {
     "channel": "C0BK21UMHK3",
-    "done": false,
+    "done": true,
+    "expired": true,
     "meta": {
       "ae": "aled",
       "country": "CA",
