@@ -397,40 +397,65 @@ ask Reed before changing architecture, not just code.
     Four things about this that look arbitrary:
     - **AND, not OR** (Reed's call). With OR, every UK PCSA project — a
       highway widening at PCSA, say — would get a modular research pack and
-      modular personas. The cost of the AND is that the gate fires on very
-      few rows; that is accepted, and `explain()` exists so a surprising
-      concretedna choice is debuggable without reading the module.
-    - **GB only, and IE is excluded.** Ireland is not the UK. It stays on
-      concretedna even though `country_ae_map` sends both GB and IE to Aled.
+      modular personas. The cost is real: verified against the live database
+      (893 rows, Aug 2026) the gate matches **exactly one row** — Bouygues UK
+      / Cambridge Children's Hospital, `AE=avi`, Fit High. That is not a bug,
+      it is the only UK PCSA project in the database at all (31 rows are at
+      PCSA; 30 of them are US/CA/AU). `explain()` prints which leg closed so
+      a surprising concretedna choice is debuggable without reading the code.
+      If the count needs to go up, dropping the PCSA leg is the lever — UK +
+      structured-DfMA alone matches 3.
+    - **`Region`, NOT `Country`.** `Country` is not normalised in the live
+      database: it holds both `GB` (71 rows) and `United Kingdom` (4), and
+      likewise `US`/`United States`, `CA`/`Canada`, `AU`/`Australia`,
+      `DE`/`Germany`. `Region` is a canonical select, so it is the reliable
+      test. **The first version of this gate matched `Country == "GB"`
+      exactly and therefore matched zero rows — including the single row it
+      was designed for, whose Country is `United Kingdom`.** Country is still
+      accepted as a fallback for CLI paths with no row, normalised through
+      `fieldatlas_gate.country_aliases`. IE is still excluded: Ireland is not
+      the UK, even though `country_ae_map` sends both GB and IE to Aled.
     - **Avi's non-UK DfMA work now gets concretedna**, deliberately. This
       reverses the old FieldAtlas skill line about "a UK prison and a
       European gigafactory are both Avi" — that line was removed from
       `skills/fieldatlas/SKILL.md` because the gate makes it false.
-    - **DfMA is keyword-only because there is no field for it.**
-      `WORK_NATURES` is New build / Extension / Replacement / Widening /
-      Refurbishment / Phase of larger scheme / Unknown — nothing captures
-      modular or offsite delivery. `qualify()` is not asked for it either. So
-      the signal is a keyword list in `enrichment.fieldatlas_gate`,
-      word-boundary matched per rule 9 (`commmodular` must not match
-      `modular` — the acronyms MMC and DfMA make this mandatory, not
-      cosmetic). **`precast` is deliberately NOT a keyword**: it appears in
-      ordinary in-situ concrete tenders constantly and would drag genuine
-      ConcreteDNA projects onto the wrong framework. Because it is a keyword
-      match and not a verified fact, the FieldAtlas skill is explicitly told
-      the gate may have misfired and to say so in the Snapshot.
+    - **DfMA IS a structured field — two of them.** `Use case`
+      (multi-select) has a canonical `DfMA / modular` option, set by
+      `qualify()` at ingest, and `Fit profile` has `Industrialised
+      construction / DfMA`, set by `scoring.py`. Either one satisfies the
+      leg. An earlier version of this rule claimed no such field existed,
+      having checked only `WORK_NATURES` (New build / Extension /
+      Replacement / Widening / Refurbishment / Phase / Unknown — which
+      genuinely has nothing) and stopped there; **do not repeat that, check
+      `Use case` and `Fit profile` before concluding a concept is
+      unmodelled.** `dfma_keywords` survives as a FALLBACK for rows whose
+      `Use case` is Unknown or blank, word-boundary matched per rule 9
+      (`commmodular` must not match `modular`; the MMC and DfMA acronyms make
+      that mandatory, not cosmetic). **`precast` is deliberately NOT a
+      keyword** — it appears in ordinary in-situ tenders constantly and would
+      drag genuine ConcreteDNA projects onto the wrong framework. Keywords
+      must not be the primary signal: the Cambridge row carries
+      `DfMA / modular` in `Use case` while its title and Summary contain no
+      DfMA keyword whatsoever, so a keyword-first gate rejected precisely the
+      row it was built to catch. Because the fallback can still fire on a
+      passing mention, the FieldAtlas skill is told the gate may have
+      misfired and to say so in the Snapshot.
     **The framework picks two things, and they must agree:** the research
     system prompt (`enrich.py`) AND the Amplemarket persona titles
     (`contacts.py`, `amplemarket.titles`). A modular pack matched against
     concrete personas is the failure mode. `resolve_framework()` is
-    deterministic from (country, stage, text) precisely so both paths reach
-    the same answer without storing it — except on the Slack card path, where
-    `enrich_deal()` stamps the resolved framework onto the checkpoint-2 card
-    meta as `fw` and `approvals.py` reuses it, because card meta carries no
-    `Project stage` and would otherwise re-derive a different answer.
-    Paths with no Notion row (`enrich.py --title`, `contacts.py --company`)
-    cannot see a stage, so the gate can never match PCSA there and always
-    returns concretedna — both grew a `--framework` flag to force it and a
-    `--stage` flag to supply the missing leg.
+    deterministic from the row's fields precisely so both paths reach the same
+    answer without storing it. `actions.py`'s `_gate_signals(notion, row)` is
+    the single place those fields are read, and both paths pass its result
+    straight through as `enrich_deal(gate=...)` / `resolve_framework(**...)`,
+    so they cannot drift apart. On the Slack card path `enrich_deal()` instead
+    stamps the resolved framework onto the checkpoint-2 card meta as `fw` and
+    `approvals.py` reuses it, because card meta carries no `Project stage` and
+    would otherwise re-derive a different answer. Paths with no Notion row
+    (`enrich.py --title`, `contacts.py --company`) cannot see a stage or a
+    `Use case`, so the gate can never match there and always returns
+    concretedna — both grew `--framework` to force it, plus `--stage` and
+    `--region` to supply the missing legs.
 
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage

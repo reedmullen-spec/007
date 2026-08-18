@@ -74,6 +74,25 @@ def _prop_url(row: dict, name: str) -> str:
     return ((row.get("properties") or {}).get(name) or {}).get("url") or ""
 
 
+def _prop_multi(row: dict, name: str) -> list[str]:
+    items = ((row.get("properties") or {}).get(name) or {}).get("multi_select") or []
+    return [i.get("name", "") for i in items if i.get("name")]
+
+
+def _gate_signals(notion: NotionClient, row: dict) -> dict:
+    """The fields the FieldAtlas gate reads (rule 20), in one place so the
+    enrich and contacts paths cannot drift apart and disagree."""
+    title = notion.row_title(row)
+    return {
+        "region": _prop_select(row, "Region"),
+        "country": _prop_rich(row, "Country"),
+        "stage": _prop_select(row, "Project stage"),
+        "use_cases": _prop_multi(row, "Use case"),
+        "fit_profile": _prop_select(row, "Fit profile"),
+        "text": f"{title} {_prop_rich(row, 'Summary')}",
+    }
+
+
 def _run_enrich(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: dict) -> None:
     title = notion.row_title(row)
     notice_id = _prop_rich(row, notion.cfg["notice_id_property"])
@@ -95,12 +114,10 @@ def _run_enrich(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: di
         deal_id = deal["id"]
         print(f"Created deal {deal_id} to carry the research pack: {deal['portal_url']}")
 
-    # Stage + Summary feed the FieldAtlas gate (rule 20). This is the one path
-    # that has the whole row, so it's the only one that can match PCSA.
+    # This path has the whole row, so it supplies every gate signal (rule 20).
     enrich_deal(cfg, hubspot, deal_id=deal_id, deal_name=deal_name, notice_id=notice_id,
                ae=ae, country=country, notice_url=notice_url,
-               stage=_prop_select(row, "Project stage"),
-               signal_text=f"{title} {_prop_rich(row, 'Summary')}", slack=None)
+               gate=_gate_signals(notion, row), slack=None)
 
 
 def _run_create_deal(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: dict) -> None:
@@ -159,11 +176,9 @@ def _run_contacts(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: 
              f"(the research pack goes to Hakron, not a contact list).")
         return
 
-    # Must resolve identically to _run_enrich above, or a modular pack gets
-    # matched against concrete personas (see src/framework.py).
-    framework = resolve_framework(cfg, country=country,
-                                  stage=_prop_select(row, "Project stage"),
-                                  text=f"{title} {_prop_rich(row, 'Summary')}")
+    # Same signals as _run_enrich, via the same helper — a modular pack matched
+    # against concrete personas is the failure mode (see src/framework.py).
+    framework = resolve_framework(cfg, **_gate_signals(notion, row))
     result = build_buying_group(cfg, company=gc, project=title, framework=framework,
                                 country=country, hubspot=hubspot, deal_id=deal["id"])
     link = result.get("url") or ""
