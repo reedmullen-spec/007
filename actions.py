@@ -49,6 +49,7 @@ from contacts import build_buying_group
 from enrich import enrich_deal
 from src.config import env, load_config
 from src.deal_naming import build_deal_name
+from src.framework import resolve_framework
 from src.hubspot_client import HubSpotClient
 from src.notion_client import NotionClient
 
@@ -94,8 +95,12 @@ def _run_enrich(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: di
         deal_id = deal["id"]
         print(f"Created deal {deal_id} to carry the research pack: {deal['portal_url']}")
 
+    # Stage + Summary feed the FieldAtlas gate (rule 20). This is the one path
+    # that has the whole row, so it's the only one that can match PCSA.
     enrich_deal(cfg, hubspot, deal_id=deal_id, deal_name=deal_name, notice_id=notice_id,
-               ae=ae, country=country, notice_url=notice_url, slack=None)
+               ae=ae, country=country, notice_url=notice_url,
+               stage=_prop_select(row, "Project stage"),
+               signal_text=f"{title} {_prop_rich(row, 'Summary')}", slack=None)
 
 
 def _run_create_deal(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: dict) -> None:
@@ -154,7 +159,11 @@ def _run_contacts(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: 
              f"(the research pack goes to Hakron, not a contact list).")
         return
 
-    framework = cfg["enrichment"]["framework_by_ae"].get(ae, "concretedna")
+    # Must resolve identically to _run_enrich above, or a modular pack gets
+    # matched against concrete personas (see src/framework.py).
+    framework = resolve_framework(cfg, country=country,
+                                  stage=_prop_select(row, "Project stage"),
+                                  text=f"{title} {_prop_rich(row, 'Summary')}")
     result = build_buying_group(cfg, company=gc, project=title, framework=framework,
                                 country=country, hubspot=hubspot, deal_id=deal["id"])
     link = result.get("url") or ""

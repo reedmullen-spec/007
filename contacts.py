@@ -26,6 +26,7 @@ import sys
 from src.amplemarket_client import AmplemarketClient
 from src.config import env, load_config
 from src.deal_naming import split_deal_name
+from src.framework import explain, resolve_framework
 from src.hubspot_client import HubSpotClient
 from src.notion_client import NotionClient
 
@@ -124,6 +125,14 @@ def main() -> int:
                         default="aled")
     parser.add_argument("--force", action="store_true",
                         help="Build contacts even on the Hakron path")
+    parser.add_argument("--stage", choices=list(NotionClient.PROJECT_STAGES),
+                        default="",
+                        help="Project stage, for the FieldAtlas gate (rule 20). "
+                             "Without it the gate cannot match PCSA.")
+    parser.add_argument("--framework", choices=["concretedna", "fieldatlas"],
+                        help="Force the persona set, bypassing the gate. Use "
+                             "for a manual modular build the keyword signal "
+                             "would miss.")
     args = parser.parse_args()
 
     cfg = load_config()
@@ -150,7 +159,20 @@ def main() -> int:
     if not company:
         raise SystemExit("Provide --deal-id or --company.")
 
-    framework = cfg["enrichment"]["framework_by_ae"].get(args.ae, "concretedna")
+    # Framework comes from the project, not the AE (rule 20). This bare CLI has
+    # no Notion row and therefore no Project stage, so the gate cannot match
+    # PCSA here and will always return concretedna — use --framework fieldatlas
+    # for a manual modular build. The automated path (actions.py) has the row
+    # and gates properly.
+    signal = f"{project or ''} {company or ''}"
+    if args.framework:
+        framework = args.framework
+        print(f"Framework: {framework} (forced, gate not consulted)")
+    else:
+        framework = resolve_framework(cfg, country=args.country,
+                                      stage=args.stage, text=signal)
+        print(f"Framework: {framework} — "
+              f"{explain(cfg, country=args.country, stage=args.stage, text=signal)}")
     build_buying_group(cfg, company=company, project=project,
                        framework=framework, country=args.country,
                        force=args.force, hubspot=hubspot, deal_id=args.deal_id)
