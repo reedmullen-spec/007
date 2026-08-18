@@ -17,6 +17,7 @@ import sys
 from src import state
 from src.config import env, load_config
 from src.deal_naming import build_deal_name, split_deal_name
+from src.framework import resolve_framework
 from src.hubspot_client import HubSpotClient
 from src.slack_client import SlackClient
 
@@ -71,7 +72,13 @@ def main() -> int:
                 if checkpoint == 2:
                     # ── CHECKPOINT 2: build the Amplemarket buying group ──
                     company, project = split_deal_name(title) if "—" in title else (title, title)
-                    framework = cfg["enrichment"]["framework_by_ae"].get(ae, "concretedna")
+                    # Prefer the framework the pack was researched with,
+                    # stamped on the card by enrich_deal. Older cards predate
+                    # "fw" — fall back to the gate, which without a Project
+                    # stage lands on the default, matching what checkpoint 1
+                    # would have used anyway (rule 20).
+                    framework = meta.get("fw") or resolve_framework(
+                        cfg, country=meta.get("country", ""), text=title)
                     result = build_buying_group(
                         cfg, company=company, project=project,
                         framework=framework, country=meta.get("country", ""),

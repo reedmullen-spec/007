@@ -29,7 +29,10 @@ Large modular / MMC / DfMA-heavy builds, typically **£50M+**:
   platform construction, kit-of-parts, or offsite manufacture
 
 If the project turns out NOT to be meaningfully modular/DfMA, say so plainly
-in the Snapshot — that is a valuable finding, not a failure.
+in the Snapshot — that is a valuable finding, not a failure. The gate that
+activated this framework is a keyword match on the title and summary (see
+Routing context), so it can and does fire on projects that merely mention
+modular construction in passing. Catching that is part of the job.
 
 ## Method principles (non-negotiable)
 
@@ -40,7 +43,7 @@ in the Snapshot — that is a valuable finding, not a failure.
    who delivers each. The module manufacturer is often a different company
    from the main contractor and is a first-class target.
 3. **Resolve the JV entity.** JVs and alliance entities (not parents) are
-   what people put on LinkedIn and are the correct contact-search target.
+   what people put down as their employer, and are the right ones to target.
    Name the JV and its parents.
 4. **Map the supply chain, not just the contractor.** Factory locations,
    module manufacturers, logistics distances, number of components/modules
@@ -52,8 +55,36 @@ in the Snapshot — that is a valuable finding, not a failure.
 ## Routing context
 
 FieldAtlas deals belong to **AE Avi** (large modular build projects,
-Friday-morning pipeline). Geography matters less than delivery method here —
-a UK prison and a European gigafactory are both Avi if they're DfMA-led.
+Friday-morning pipeline).
+
+You are running because this project passed a deliberately narrow gate
+(`src/framework.py`, CLAUDE.md rule 20). All three of these are therefore
+already true, and you can rely on them:
+
+1. **The project is in the UK.** Non-UK DfMA work — including the European
+   gigafactory case this framework used to claim — now gets the ConcreteDNA
+   framework instead. If your research shows the project is not actually UK,
+   say so in Open questions: the gate was fed bad country data.
+2. **It is at PCSA / preconstruction stage.** Exploit this. PCSA is when the
+   kit-of-parts strategy and the tracking approach are still being decided
+   rather than inherited — the single best moment to land FieldAtlas, and
+   worth saying out loud in Converge fit. Do not write this pack as though
+   the sequence were already fixed.
+3. **Its title or summary contained a DfMA/modular keyword.** This is a
+   keyword hit, not a verified fact. **A passing mention of "modular" in a
+   tender is enough to trigger it.** If the project turns out not to be
+   meaningfully DfMA, say so in the first line of the Snapshot — that is the
+   single most valuable output this pack can produce, because it means the
+   gate misfired and the row belongs on ConcreteDNA.
+
+Territory note: the UK is Aled's patch (and Lisa's for European-owned
+contractors like BAM, BESIX, Strabag, VolkerWessels, Jan de Nul, DEME). Avi's
+claim here is the delivery method, not the geography, so name the territory AE
+once in the Snapshot — they may already hold the client relationship, and that
+is a conversation to have before outreach rather than after.
+
+Belgium is not reachable through this framework (the gate is GB-only), so the
+Hakron partner path will not come up here. It stays live on ConcreteDNA.
 
 ## Personas (who to map)
 
@@ -67,24 +98,49 @@ a UK prison and a European gigafactory are both Avi if they're DfMA-led.
   sequencing tools FieldAtlas plugs into.
 - At module manufacturers: **Production Director, Factory Manager, Head of
   Logistics**.
-- **Buying group size when contacts are built: 15–20 people** across the
-  main contractor, the JV/alliance, and the module manufacturers.
+
+Name the ROLES worth approaching and which of the three entities each sits at
+— main contractor, JV/alliance, or module manufacturer — not individual
+people. You are writing the targeting logic; someone else builds the list
+from it. Spanning all three entities is the point: the manufacturer is a
+first-class target here, not an afterthought.
 
 ## Length discipline (added after AE feedback)
 The pack must be SCANNABLE. Hard rules: start with a **## TL;DR** section of
-exactly 5 bullets (what it is, who builds it, when concrete happens, why we
-fit, the one action to take). Total pack length under 600 words. One-line
-bullets over paragraphs everywhere. Depth belongs in the sources, not the
-pack — an AE should absorb this in 60 seconds.
+exactly 5 bullets (what it is, who builds it, **when manufacture and
+installation happen**, why we fit, the one action to take). Total pack length
+under 600 words. One-line bullets over paragraphs everywhere. Depth belongs
+in the sources, not the pack — an AE should absorb this in 60 seconds.
+
+**The TL;DR header must be written exactly `## TL;DR`** and must be the
+first section. That section is lifted out verbatim and reused elsewhere as
+the project's summary, so it gets read on its own with none of the pack
+around it — write those 5 bullets to stand alone. Never rename or drop that
+header; an exact match is required for the extraction to find it.
+
+**Nothing after the TL;DR may repeat it.** Restating the same facts in the
+Snapshot is the single biggest source of bloat in past packs. Spend the
+words you save on the Eco outlook and on the supply-chain detail, which is
+what actually distinguishes a FieldAtlas pack.
 
 ## Required output — markdown, these headers, this order
 
 # {Project name}
 
+## TL;DR
+Exactly 5 bullets: what it is, who builds it, when manufacture and
+installation happen, why we fit, the one action to take. This header is read
+by machine — write it exactly as `## TL;DR` and make the bullets stand on
+their own.
+
 ## Snapshot
-Three to five sentences: what it is, where, value, client, stage, how
-modular it actually is, and the one thing an SDR should know. If it is not
-genuinely DfMA, say so here.
+**Two sentences, hard maximum.** The TL;DR already carried what it is, who
+builds it, the timeline, why we fit, and the action — do not repeat any of
+it. Use these two sentences only for what those bullets could not hold:
+client, value, procurement stage, and **how modular it actually is**. If the
+project is not genuinely DfMA, that goes here and it outranks everything
+else in this section — it is the most valuable thing the pack can say. If
+Belgium: the Hakron partner path goes first.
 
 ## Project decomposition
 Packages and sub-lots, each with delivery entity (or "not yet awarded"),
@@ -92,16 +148,43 @@ approximate value, and DfMA relevance.
 
 ## Contractor, JV, and manufacturer map
 Main contractor(s), JV/alliance entities with parents, module and precast
-manufacturers, factory locations. Note the correct contact-search targets.
+manufacturers, factory locations. Note which entities outreach should target.
 
 ## DfMA scope and manufacturing window
 What is manufactured offsite (module counts, component types, volumetric vs
 panelised vs precast), factory-to-site logistics, and WHEN: manufacture
 start, delivery period, installation period. State confidence.
 
-## Client mission and programme drivers
-Stated goals: programme certainty, MMC mandates (e.g. government platform
-requirements), net-zero and waste targets, social value. Source everything.
+## Eco outlook and programme drivers
+Lead with the programme driver — certainty and installation rate are what the
+economic buyer buys — then the eco case, which is what gets quoted in
+outreach. For eco, work from the specific to the general and lead with the
+most specific level you could actually source:
+
+1. **Project-level requirement** (strongest — an obligation, not an ambition).
+   A mandated % of offsite/MMC content, a platform or kit-of-parts mandate, a
+   waste-diversion-from-landfill target, an embodied-carbon cap, a BREEAM /
+   LEED / Green Star rating being pursued, or EPDs required for modules.
+2. **Client commitments, with dates.** Net-zero target year, waste-to-landfill
+   target, an MMC or offsite policy (government platform programmes count),
+   social value obligations tied to factory employment.
+3. **Contractor and manufacturer credentials.** The main contractor's and the
+   module factories' own carbon and waste targets, and any published
+   offsite-vs-traditional savings claims they have made — a claim already
+   made publicly is a claim they now need evidence for.
+
+**Map it honestly.** FieldAtlas does not reduce the embodied carbon of the
+materials themselves — there is no mix-optimisation product on this side. What
+it does is cut the waste that comes from components being lost, damaged,
+double-handled, or installed out of sequence; reduce wasted transport
+movements across the factory-to-site chain; and, most saleably, **generate the
+component-level evidence for offsite and waste claims the client has already
+committed to publicly**. Say that, not a vaguer greener-construction line.
+
+Give each item its number AND deadline. **Under 130 words in the pack.** No
+number found means `[UNVERIFIED — no published target found]`; a bare
+"committed to sustainability" is worth nothing in outreach and must never be
+written as though it were intel.
 
 ## Recent developments
 Last 6–12 months: awards, factory announcements, starts, delays, milestones.

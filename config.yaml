@@ -342,21 +342,42 @@ enrichment:
   # Model used for the background research pack (step 2).
   anthropic_model: "claude-sonnet-4-6"
   max_tokens: 4000
-  # Framework by AE: ConcreteDNA for everyone except Avi, who gets FieldAtlas.
-  framework_by_ae:
-    lisa: concretedna
-    aled: concretedna
-    avi: fieldatlas
-    alex: concretedna
-    jamie: concretedna
-    jeremy: concretedna
-    justin: concretedna
-    lawson: concretedna
-    alicia: concretedna
-    ben: concretedna
-    britain: concretedna
-    brady: concretedna
-    dan: concretedna
+  # Framework is chosen from the PROJECT, not the AE (Aug 2026, Reed's call —
+  # see CLAUDE.md rule 20). `framework_by_ae` was removed: it mapped Avi ->
+  # fieldatlas, but routing.py never assigns Avi from geography, so an
+  # ingested UK modular prison went GB -> aled -> concretedna and got a
+  # concrete-sensing pack. Everything not matching the gate below gets
+  # default_framework.
+  default_framework: concretedna
+  fieldatlas_gate:
+    enabled: true
+    # ALL THREE must hold. Deliberately an AND, not an OR: with OR, every UK
+    # PCSA project (a highway widening, say) would get a modular pack.
+    # GB only — IE is NOT the UK and stays on concretedna.
+    countries: [GB]
+    # Must match src/notion_client.py PROJECT_STAGES exactly.
+    stages: ["PCSA / preconstruction"]
+    # DfMA has no structured field — WORK_NATURES is only New build /
+    # Extension / Replacement / Widening / Refurbishment / Phase / Unknown —
+    # so the signal is keyword-only, word-boundary matched against
+    # title + Summary. "precast" is deliberately absent: it appears in
+    # ordinary in-situ concrete tenders constantly and would false-positive
+    # the gate onto ConcreteDNA projects.
+    dfma_keywords:
+      - dfma
+      - mmc
+      - modular
+      - modularisation
+      - modularization
+      - volumetric
+      - offsite
+      - off-site
+      - panelised
+      - panelized
+      - kit of parts
+      - platform construction
+      - design for manufacture
+      - modern methods of construction
 
 notion:
   # Research packs live in a "007 Projects" database that 007 creates

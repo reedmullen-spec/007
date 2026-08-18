@@ -378,6 +378,60 @@ ask Reed before changing architecture, not just code.
     periodically (not just after ingest) so a stale Disqualified Status
     doesn't silently outlive whatever originally caused it.
 
+20. **The research framework is chosen from the PROJECT, not the AE, and the
+    FieldAtlas gate is a deliberate AND.** Until Aug 2026 this was
+    `enrichment.framework_by_ae` (Avi → fieldatlas, everyone else →
+    concretedna). That never worked as intended: **`routing.py` never assigns
+    Avi from geography** — he is in `ae_slack_ids`, `hubspot.owners`,
+    `ae_sdr_map` and `triage.lists`, but in none of `country_ae_map`,
+    `eu_default`, `us_state_ae`, or `country_ae_map_extra` — so the only
+    routes to `AE=avi` were HubSpot company ownership (tier 1) or a human
+    hand-tagging the row. An ingested UK modular prison resolved GB → aled →
+    concretedna and got a concrete-sensing pack for a modular project.
+    Replaced by `src/framework.py`'s `resolve_framework()`, which returns
+    `fieldatlas` only when **all three** hold: `Country == GB`,
+    `Project stage == "PCSA / preconstruction"`, and a word-boundary DfMA
+    keyword hit on title + `Summary`. `framework_by_ae` is deleted, not
+    deprecated — config.yaml is versioned with the code, so unlike a Notion
+    column (rule 16) there is no stale-config window to manage.
+    Four things about this that look arbitrary:
+    - **AND, not OR** (Reed's call). With OR, every UK PCSA project — a
+      highway widening at PCSA, say — would get a modular research pack and
+      modular personas. The cost of the AND is that the gate fires on very
+      few rows; that is accepted, and `explain()` exists so a surprising
+      concretedna choice is debuggable without reading the module.
+    - **GB only, and IE is excluded.** Ireland is not the UK. It stays on
+      concretedna even though `country_ae_map` sends both GB and IE to Aled.
+    - **Avi's non-UK DfMA work now gets concretedna**, deliberately. This
+      reverses the old FieldAtlas skill line about "a UK prison and a
+      European gigafactory are both Avi" — that line was removed from
+      `skills/fieldatlas/SKILL.md` because the gate makes it false.
+    - **DfMA is keyword-only because there is no field for it.**
+      `WORK_NATURES` is New build / Extension / Replacement / Widening /
+      Refurbishment / Phase of larger scheme / Unknown — nothing captures
+      modular or offsite delivery. `qualify()` is not asked for it either. So
+      the signal is a keyword list in `enrichment.fieldatlas_gate`,
+      word-boundary matched per rule 9 (`commmodular` must not match
+      `modular` — the acronyms MMC and DfMA make this mandatory, not
+      cosmetic). **`precast` is deliberately NOT a keyword**: it appears in
+      ordinary in-situ concrete tenders constantly and would drag genuine
+      ConcreteDNA projects onto the wrong framework. Because it is a keyword
+      match and not a verified fact, the FieldAtlas skill is explicitly told
+      the gate may have misfired and to say so in the Snapshot.
+    **The framework picks two things, and they must agree:** the research
+    system prompt (`enrich.py`) AND the Amplemarket persona titles
+    (`contacts.py`, `amplemarket.titles`). A modular pack matched against
+    concrete personas is the failure mode. `resolve_framework()` is
+    deterministic from (country, stage, text) precisely so both paths reach
+    the same answer without storing it — except on the Slack card path, where
+    `enrich_deal()` stamps the resolved framework onto the checkpoint-2 card
+    meta as `fw` and `approvals.py` reuses it, because card meta carries no
+    `Project stage` and would otherwise re-derive a different answer.
+    Paths with no Notion row (`enrich.py --title`, `contacts.py --company`)
+    cannot see a stage, so the gate can never match PCSA there and always
+    returns concretedna — both grew a `--framework` flag to force it and a
+    `--stage` flag to supply the missing leg.
+
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage
   1326060402. Owners: Reed 90628877, Lisa 465940403, Aled 146637928,

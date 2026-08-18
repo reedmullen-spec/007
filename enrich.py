@@ -26,6 +26,7 @@ import sys
 
 from src.config import env, load_config
 from src.anthropic_client import run_research
+from src.framework import explain, resolve_framework
 from src.hubspot_client import HubSpotClient
 from src.notion_client import NotionClient
 from src.routing import resolve_ae
@@ -91,11 +92,33 @@ def _ae_from_owner(owner_id: str | None, cfg: dict) -> str | None:
 def enrich_deal(cfg: dict, hubspot: HubSpotClient, *, deal_id: str,
                 deal_name: str, notice_id: str, ae: str,
                 country: str = "", notice_url: str = "",
+                stage: str = "", signal_text: str = "",
+                framework: str | None = None,
                 slack: SlackClient | None = None) -> str:
     """Run research -> Notion -> HubSpot note -> checkpoint-2 card.
-    Returns the Notion page URL. Reused by approvals.py after checkpoint 1."""
-    framework = cfg["enrichment"]["framework_by_ae"].get(ae, "concretedna")
-    print(f"Researching '{deal_name}' with the {framework} framework…")
+    Returns the Notion page URL. Reused by approvals.py after checkpoint 1.
+
+    `stage` / `signal_text` feed the framework gate (rule 20) — callers that
+    have the Notion row should pass `Project stage` and `Summary`. Callers
+    that don't (the legacy Slack-card path) simply land on the default
+    framework, which is the correct answer for all but UK PCSA DfMA work.
+    `ae` no longer selects the framework, but is still used for deal
+    ownership by the callers above."""
+    # Callers with the Notion row pass title + Summary; use that ALONE rather
+    # than prepending deal_name. deal_name is "Contractor — Project — Location",
+    # so including it would let a contractor named e.g. "Modular Building Group"
+    # trip the DfMA keyword here while actions.py's contacts path — which sees
+    # only title + Summary — resolved concretedna. Both paths must feed the
+    # resolver the same text or the pack and the personas disagree (rule 20).
+    signal = signal_text or deal_name
+    if framework:
+        print(f"Researching '{deal_name}' with the {framework} framework "
+              f"(forced, gate not consulted)…")
+    else:
+        framework = resolve_framework(cfg, country=country, stage=stage,
+                                      text=signal)
+        print(f"Researching '{deal_name}' with the {framework} framework… "
+              f"({explain(cfg, country=country, stage=stage, text=signal)})")
     pack = run_research(env("ANTHROPIC_API_KEY"), cfg, title=deal_name,
                         country=country, framework=framework,
                         notice_url=notice_url)
@@ -136,9 +159,12 @@ def enrich_deal(cfg: dict, hubspot: HubSpotClient, *, deal_id: str,
         from src import state
         channel = cfg["slack"]["tender_channel_id"]
         skip = country.upper() in [c.upper() for c in cfg.get("hakron_skip_contacts_countries", [])]
+        # "fw" carries the framework this pack was actually researched with, so
+        # checkpoint 2 builds personas from the SAME framework instead of
+        # re-deriving it from meta that has no Project stage in it (rule 20).
         meta = {"k": notice_id, "nid": notice_id, "t": deal_name[:120],
                 "ae": ae, "src": "CP2", "cp": 2, "deal": deal_id,
-                "country": country}
+                "country": country, "fw": framework}
         lines = [f"Research pack ready: {page_url}",
                  f"Deal: https://app.hubspot.com/contacts/{cfg['hubspot']['portal_id']}/deal/{deal_id}"]
         if skip:
@@ -162,6 +188,15 @@ def main() -> int:
     parser.add_argument("--title")
     parser.add_argument("--country", default="")
     parser.add_argument("--ae", choices=[a for a in NotionClient.AES if a != "unassigned"])
+    parser.add_argument("--stage", choices=list(NotionClient.PROJECT_STAGES),
+                        default="",
+                        help="Project stage, for the FieldAtlas gate (rule 20). "
+                             "Without it the gate cannot match PCSA and you "
+                             "get concretedna.")
+    parser.add_argument("--framework", choices=["concretedna", "fieldatlas"],
+                        help="Force a framework, bypassing the gate entirely. "
+                             "The escape hatch for a DfMA project the keyword "
+                             "signal misses.")
     parser.add_argument("--no-slack", action="store_true",
                         help="Skip posting the checkpoint-2 card")
     args = parser.parse_args()
@@ -176,7 +211,8 @@ def main() -> int:
     if args.ae:
         ae = args.ae
     enrich_deal(cfg, hubspot, deal_id=deal_id, deal_name=deal_name,
-                notice_id=notice_id, ae=ae, country=args.country, slack=slack)
+                notice_id=notice_id, ae=ae, country=args.country,
+                stage=args.stage, framework=args.framework, slack=slack)
     return 0
 
 
