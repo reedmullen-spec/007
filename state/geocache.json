@@ -267,6 +267,10 @@
     50.7150242,
     7.1593141
   ],
+  "bopfingen, ostalbkreis, baden-württemberg, germany|de": [
+    48.8577633,
+    10.3523096
+  ],
   "bordeaux, france|fr": [
     44.841225,
     -0.5800364
@@ -490,10 +494,15 @@
     43.8813976,
     -78.7647293
   ],
+  "datteln-hamm-kanal, a1 motorway, westfalen, germany|de": null,
   "deffernikbrücke, strecke 5634, bavaria, germany|de": null,
   "den helder, netherlands|nl": [
     52.957976,
     4.760279
+  ],
+  "dessau-wörlitz, saxony-anhalt, germany|de": [
+    51.8238327,
+    12.3417009
   ],
   "destelbergen, east flanders, belgium|be": [
     51.0378815,
@@ -676,6 +685,10 @@
     40.7654301,
     -73.8174291
   ],
+  "flörsheim, hesse, germany|de": [
+    50.0296,
+    8.4265
+  ],
   "forchheim, bavaria, germany|de": [
     49.7122951,
     11.0664285
@@ -758,6 +771,7 @@
     48.2513878,
     11.6509662
   ],
+  "gare de rivage, angleur, liège, belgium|be": null,
   "gare de rivage, liège, belgium|be": null,
   "gateshead / sheffield, gb|gb": null,
   "gb|gb": [
@@ -785,6 +799,10 @@
   "germany|de": [
     51.1638175,
     10.4478313
+  ],
+  "gerstungen, thuringia, germany|de": [
+    50.9364322,
+    10.2024159
   ],
   "gießen, hesse, germany|de": [
     50.5862066,
@@ -844,6 +862,10 @@
   "großhelfendorf, bavaria, germany|de": [
     47.9440832,
     11.7925952
+  ],
+  "grünauer kreuz, berlin, germany|de": [
+    52.4205963,
+    13.5592186
   ],
   "gschwend, baden-württemberg, germany|de": [
     48.9341783,
@@ -1156,6 +1178,10 @@
     43.4918307,
     -116.420122
   ],
+  "käfertal, mannheim, germany|de": [
+    49.5101724,
+    8.515815
+  ],
   "köln-dellbrück, cologne, germany|de": [
     50.9814765,
     7.0702372
@@ -1463,6 +1489,10 @@
   "montpellier, france|fr": [
     43.6112422,
     3.8767337
+  ],
+  "morgan hill, santa clara county, california|us": [
+    37.130408,
+    -121.6544974
   ],
   "mt. pleasant, westchester county, new york|": [
     41.0962975,
