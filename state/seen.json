@@ -417,7 +417,13 @@
       "1784824886.416119"
     ]
   },
+  "NEWS:ab72368941cae36e": {
+    "ingested": true
+  },
   "NEWS:b1bd1e16d87a4bb9": {
+    "ingested": true
+  },
+  "NEWS:b5de870a182055e1": {
     "ingested": true
   },
   "NEWS:b6bfb14083ea4392": {
@@ -473,6 +479,9 @@
     "ts": [
       "1784824885.269089"
     ]
+  },
+  "NEWS:fa0a70794a48b888": {
+    "ingested": true
   },
   "SAM:00887d77d7764d048bbdfc5e9574caea": {
     "ts": [
