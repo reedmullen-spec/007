@@ -351,18 +351,35 @@ enrichment:
   default_framework: concretedna
   fieldatlas_gate:
     enabled: true
-    # ALL THREE must hold. Deliberately an AND, not an OR: with OR, every UK
-    # PCSA project (a highway widening, say) would get a modular pack.
-    # GB only — IE is NOT the UK and stays on concretedna.
-    countries: [GB]
+    # ALL THREE legs must hold. Deliberately an AND, not an OR: with OR, every
+    # UK PCSA project (a highway widening, say) would get a modular pack.
+    #
+    # REGION, not Country. Country is NOT normalised in the live database —
+    # verified Aug 2026 against 893 rows: it holds both "GB" (71) and "United
+    # Kingdom" (4), and likewise US/United States, CA/Canada, AU/Australia,
+    # DE/Germany. Region is a canonical select, so it is the reliable test.
+    # The first version of this gate matched Country == "GB" exactly and so
+    # missed the single qualifying row in the whole database, whose Country is
+    # "United Kingdom". IE is still excluded — Ireland is not the UK.
+    regions: [uk]
+    # Fallback for CLI paths that have a country string but no row.
+    country_aliases:
+      uk: [GB, UK, GBR, "United Kingdom", "Great Britain"]
     # Must match src/notion_client.py PROJECT_STAGES exactly.
     stages: ["PCSA / preconstruction"]
-    # DfMA has no structured field — WORK_NATURES is only New build /
-    # Extension / Replacement / Widening / Refurbishment / Phase / Unknown —
-    # so the signal is keyword-only, word-boundary matched against
-    # title + Summary. "precast" is deliberately absent: it appears in
-    # ordinary in-situ concrete tenders constantly and would false-positive
-    # the gate onto ConcreteDNA projects.
+    # DfMA IS a structured field — two of them. Must match USE_CASES and
+    # FIT_PROFILES in src/notion_client.py exactly. `Use case` is set by
+    # qualify() at ingest; `Fit profile` by scoring.py.
+    dfma_use_cases: ["DfMA / modular"]
+    dfma_fit_profiles: ["Industrialised construction / DfMA"]
+    # FALLBACK ONLY, for rows whose Use case is Unknown or blank. Not the
+    # primary signal: the one genuinely qualifying row in the database
+    # (Bouygues UK / Cambridge Children's Hospital) carries "DfMA / modular"
+    # in Use case while its title and Summary contain no DfMA keyword at all,
+    # so a keyword-first gate rejected exactly the row it was built for.
+    # Word-boundary matched (rule 9). "precast" is deliberately absent: it
+    # appears in ordinary in-situ concrete tenders constantly and would
+    # false-positive the gate onto ConcreteDNA projects.
     dfma_keywords:
       - dfma
       - mmc

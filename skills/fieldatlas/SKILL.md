@@ -30,9 +30,9 @@ Large modular / MMC / DfMA-heavy builds, typically **£50M+**:
 
 If the project turns out NOT to be meaningfully modular/DfMA, say so plainly
 in the Snapshot — that is a valuable finding, not a failure. The gate that
-activated this framework is a keyword match on the title and summary (see
-Routing context), so it can and does fire on projects that merely mention
-modular construction in passing. Catching that is part of the job.
+activated this framework can fire on a keyword fallback (see Routing context),
+so it can and does reach projects that merely mention modular construction in
+passing. Catching that is part of the job.
 
 ## Method principles (non-negotiable)
 
@@ -70,10 +70,13 @@ already true, and you can rely on them:
    rather than inherited — the single best moment to land FieldAtlas, and
    worth saying out loud in Converge fit. Do not write this pack as though
    the sequence were already fixed.
-3. **Its title or summary contained a DfMA/modular keyword.** This is a
-   keyword hit, not a verified fact. **A passing mention of "modular" in a
-   tender is enough to trigger it.** If the project turns out not to be
-   meaningfully DfMA, say so in the first line of the Snapshot — that is the
+3. **It is flagged as DfMA/modular** — normally because someone or something
+   tagged its `Use case` or `Fit profile` as such, which is a real
+   classification rather than a guess. But the gate also has a keyword
+   fallback for rows whose `Use case` is Unknown, and **a passing mention of
+   "modular" in a tender is enough to trigger that.** So treat the DfMA
+   premise as likely, not certain: if the project turns out not to be
+   meaningfully DfMA, say so in the first line of the Snapshot. That is the
    single most valuable output this pack can produce, because it means the
    gate misfired and the row belongs on ConcreteDNA.
 

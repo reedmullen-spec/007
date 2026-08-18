@@ -78,7 +78,8 @@ def main() -> int:
                     # stage lands on the default, matching what checkpoint 1
                     # would have used anyway (rule 20).
                     framework = meta.get("fw") or resolve_framework(
-                        cfg, country=meta.get("country", ""), text=title)
+                        cfg, country=meta.get("country", ""),
+                        region=meta.get("region", ""), text=title)
                     result = build_buying_group(
                         cfg, company=company, project=project,
                         framework=framework, country=meta.get("country", ""),

@@ -129,6 +129,9 @@ def main() -> int:
                         default="",
                         help="Project stage, for the FieldAtlas gate (rule 20). "
                              "Without it the gate cannot match PCSA.")
+    parser.add_argument("--region", default="",
+                        help="Region (uk/eu/us_east/...), for the FieldAtlas "
+                             "gate. Canonical; --country is not normalised.")
     parser.add_argument("--framework", choices=["concretedna", "fieldatlas"],
                         help="Force the persona set, bypassing the gate. Use "
                              "for a manual modular build the keyword signal "
@@ -164,15 +167,14 @@ def main() -> int:
     # PCSA here and will always return concretedna — use --framework fieldatlas
     # for a manual modular build. The automated path (actions.py) has the row
     # and gates properly.
-    signal = f"{project or ''} {company or ''}"
+    gate = {"country": args.country, "region": args.region,
+            "stage": args.stage, "text": f"{project or ''} {company or ''}"}
     if args.framework:
         framework = args.framework
         print(f"Framework: {framework} (forced, gate not consulted)")
     else:
-        framework = resolve_framework(cfg, country=args.country,
-                                      stage=args.stage, text=signal)
-        print(f"Framework: {framework} — "
-              f"{explain(cfg, country=args.country, stage=args.stage, text=signal)}")
+        framework = resolve_framework(cfg, **gate)
+        print(f"Framework: {framework} — {explain(cfg, **gate)}")
     build_buying_group(cfg, company=company, project=project,
                        framework=framework, country=args.country,
                        force=args.force, hubspot=hubspot, deal_id=args.deal_id)
