@@ -551,6 +551,7 @@
   ],
   "e45, kløfta to alta, norway|no": null,
   "east of friesenbrücke, lower saxony, germany|de": null,
+  "east san fernando valley, los angeles, california, us|us": null,
   "east west rail corridor, gb|gb": null,
   "ebergötzen, lower saxony, germany|de": [
     51.570053,
@@ -697,6 +698,8 @@
     51.7438586,
     14.6455395
   ],
+  "france (aprr motorway network)|fr": null,
+  "france (multiple motorway networks)|fr": null,
   "france|fr": [
     46.603354,
     1.8883335
@@ -871,6 +874,10 @@
     48.9341783,
     9.7432432
   ],
+  "göltzschtal, plauen, saxony, germany|de": [
+    50.5532202,
+    12.1675812
+  ],
   "görlitz, saxony, germany|de": [
     51.1563185,
     14.991018
@@ -929,6 +936,10 @@
   "hanau, hesse, germany|de": [
     50.132881,
     8.9169797
+  ],
+  "hannover region, lower saxony, germany|de": [
+    52.3571986,
+    9.7063547
   ],
   "hannover, germany|de": [
     52.3744779,
@@ -1360,6 +1371,10 @@
     45.7578137,
     4.8320114
   ],
+  "lübeck, germany|de": [
+    53.866444,
+    10.684738
+  ],
   "lübeck–büchen, schleswig-holstein, germany|de": [
     53.8392653,
     10.6862943
@@ -1490,6 +1505,10 @@
     43.6112422,
     3.8767337
   ],
+  "morgan hill, santa clara county, california, us|us": [
+    37.130408,
+    -121.6544974
+  ],
   "morgan hill, santa clara county, california|us": [
     37.130408,
     -121.6544974
@@ -1552,6 +1571,10 @@
     11.4517518
   ],
   "neu-isenburg, frankfurt region, germany|de": null,
+  "neubrandenburg, mecklenburg-vorpommern, germany|de": [
+    53.5574458,
+    13.2602781
+  ],
   "neuilly-sur-marne, île-de-france, france|fr": [
     48.8565557,
     2.5290045
@@ -1578,6 +1601,10 @@
   "newry, mourne & down, northern ireland|gb": [
     54.1775283,
     -6.337506
+  ],
+  "nice, france|fr": [
+    43.7009358,
+    7.2683912
   ],
   "noale, venice, italy|it": [
     45.4423591,
@@ -1888,6 +1915,10 @@
     8.1540606
   ],
   "rostock, germany|de": [
+    54.0886707,
+    12.1400211
+  ],
+  "rostock, mecklenburg-vorpommern, germany|de": [
     54.0886707,
     12.1400211
   ],
@@ -2213,6 +2244,10 @@
     11.9699152
   ],
   "upper east side / east harlem, manhattan, new york city, usa|": null,
+  "utah, us|us": [
+    39.4225192,
+    -111.714358
+  ],
   "utrecht, netherlands|nl": [
     52.0907006,
     5.1215634
