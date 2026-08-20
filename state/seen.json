@@ -444,6 +444,12 @@
   "NEWS:b6bfb14083ea4392": {
     "ingested": true
   },
+  "NEWS:bdf20e151277231c": {
+    "ingested": true
+  },
+  "NEWS:bf2e2eeba097fbf1": {
+    "ingested": true
+  },
   "NEWS:c08e29498a46934d": {
     "ingested": true
   },
@@ -469,6 +475,9 @@
     ]
   },
   "NEWS:dca25f829f007dee": {
+    "ingested": true
+  },
+  "NEWS:dd24a3269cc45dd0": {
     "ingested": true
   },
   "NEWS:dfe16f50d583c2bb": {
@@ -4043,6 +4052,24 @@
     "ingested": true
   },
   "TED:574872-2026": {
+    "ingested": true
+  },
+  "TED:575986-2026": {
+    "ingested": true
+  },
+  "TED:576487-2026": {
+    "ingested": true
+  },
+  "TED:576580-2026": {
+    "ingested": true
+  },
+  "TED:576996-2026": {
+    "ingested": true
+  },
+  "TED:577068-2026": {
+    "ingested": true
+  },
+  "TED:577549-2026": {
     "ingested": true
   }
 }

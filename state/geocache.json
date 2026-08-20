@@ -1025,6 +1025,10 @@
     50.4524327,
     2.5378571
   ],
+  "huddersfield, west yorkshire|gb": [
+    53.6466645,
+    -1.7822482
+  ],
   "hudson river, new york/new jersey|": [
     42.6112398,
     -73.7607546
@@ -1206,6 +1210,7 @@
     8.4628165
   ],
   "l27a km 44.835–45.066, belgium|be": null,
+  "l27a line, belgium (luitenant nayaertplein / oudstrijdersstraat area)|be": null,
   "l27a railway line, belgium (near luitenant nayaertplein and oudstrijdersstraat)|be": null,
   "la ferté-macé, normandy, france|fr": [
     48.5895488,
@@ -1495,6 +1500,10 @@
     43.8911318,
     -0.500972
   ],
+  "mont-blanc tunnel, chamonix, france|fr": [
+    45.8739449,
+    6.8922532
+  ],
   "mont-de-marsan, landes, france|fr": [
     43.8911318,
     -0.500972
@@ -1571,6 +1580,10 @@
     11.4517518
   ],
   "neu-isenburg, frankfurt region, germany|de": null,
+  "neu-medessen / priestewitz, saxony, germany|de": [
+    51.2748376,
+    13.4548761
+  ],
   "neubrandenburg, mecklenburg-vorpommern, germany|de": [
     53.5574458,
     13.2602781
@@ -1584,6 +1597,10 @@
   "neustadt an der weinstraße, rhineland-palatinate, germany|de": [
     49.3536057,
     8.1360247
+  ],
+  "neustrelitz, mecklenburg-vorpommern, germany|de": [
+    53.3617163,
+    13.0630004
   ],
   "new york city (brooklyn, queens, bronx, manhattan), usa|": null,
   "new york city, new york, usa|": [
@@ -2225,6 +2242,7 @@
   "troisdorf to bonn oberkassel, north rhine-westphalia, germany|de": null,
   "troisdorf – bonn oberkassel, north rhine-westphalia, germany|de": null,
   "troisdorf – bonn-oberkassel, north rhine-westphalia, germany|de": null,
+  "troisdorf-unkel, north rhine-westphalia, germany|de": null,
   "troisdorf–unkel, river sieg, north rhine-westphalia / rhineland-palatinate border, germany|de": null,
   "truppenübungsplatz oberlausitz, saxony, germany|de": [
     51.4407839,
@@ -2407,6 +2425,10 @@
   "wiltbergstraße, berlin, germany|de": [
     52.6406786,
     13.4869923
+  ],
+  "windsor-essex, ontario, canada|ca": [
+    42.2877572,
+    -82.980417
   ],
   "wintam, belgium|be": [
     51.1072567,
