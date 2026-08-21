@@ -45,14 +45,24 @@ def notice_id(name: str) -> str:
     return f"{SOURCE_TAG}:{slug}"
 
 
+ESCAPED_STAR = "\x00STAR\x00"
+
+
 def rich(text: str) -> list[dict]:
-    """Inline markdown -> rich_text, honouring **bold** spans."""
+    """Inline markdown -> rich_text, honouring **bold** spans.
+
+    A backslash-escaped asterisk is parked behind a sentinel first: the
+    NABERS ratings in this sweep are written "5-5.5\\*", and leaving that
+    asterisk in place both breaks the bold split and leaves the backslash
+    showing in Notion."""
+    text = text.replace("\\*", ESCAPED_STAR)
     out: list[dict] = []
     for part in re.split(r"(\*\*[^*]+\*\*)", text):
         if not part:
             continue
         bold = part.startswith("**") and part.endswith("**") and len(part) > 4
         content = part[2:-2] if bold else part
+        content = content.replace(ESCAPED_STAR, "*")
         for i in range(0, len(content), MAX_BLOCK_CHARS):
             chunk = content[i:i + MAX_BLOCK_CHARS]
             seg: dict = {"type": "text", "text": {"content": chunk}}
