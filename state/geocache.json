@@ -256,6 +256,10 @@
     43.6166163,
     -116.200886
   ],
+  "bologna, emilia-romagna, italy|": [
+    44.4938203,
+    11.3426327
+  ],
   "bonn, north rhine-westphalia, germany|de": [
     50.7352621,
     7.1024635
@@ -289,6 +293,7 @@
     10.5236066
   ],
   "brescia province, lombardy, italy|it": null,
+  "brianza, lombardy, italy (lentate sul seveso to a51 east ring road)|": null,
   "bristol, uk|": [
     51.4430141,
     -2.5816622
@@ -699,6 +704,7 @@
     51.7438586,
     14.6455395
   ],
+  "fortezza–ponte gardena, alto adige, italy|": null,
   "france (aprr motorway network)|fr": null,
   "france (multiple motorway networks)|fr": null,
   "france|fr": [
@@ -787,6 +793,10 @@
     8.9338624
   ],
   "genova, italy|it": [
+    44.40726,
+    8.9338624
+  ],
+  "genova, liguria, italy|": [
     44.40726,
     8.9338624
   ],
@@ -1128,6 +1138,7 @@
   ],
   "kalmthoutse heide, antwerp province, belgium|be": null,
   "kanaaldok b2, port of antwerp, belgium|be": null,
+  "kandertal, thun region, switzerland|ch": null,
   "karlsruhe–basel corridor, baden-württemberg, germany|de": null,
   "kase 61, tallinn, estonia|es": null,
   "kassel, hesse, germany|de": [
@@ -1311,6 +1322,7 @@
     62.2631219,
     26.200397
   ],
+  "liguria / piemonte, italy (genova to arquata scrivia corridor)|": null,
   "lille, nord, france|fr": [
     50.6365654,
     3.0635282
@@ -1804,6 +1816,7 @@
     49.0508845,
     2.1008067
   ],
+  "port of genoa, genova, italy|": null,
   "potsdam, brandenburg, germany|de": [
     52.4009309,
     13.0591397
@@ -1985,6 +1998,10 @@
     28.0140376,
     -16.6466261
   ],
+  "san siro, milan, italy|": [
+    45.4782003,
+    9.123964
+  ],
   "sankt augustin, north rhine-westphalia, germany|de": [
     50.7752776,
     7.1895507
@@ -2063,6 +2080,7 @@
     51.519201,
     14.0046541
   ],
+  "settimo milanese & cusago, lombardy, italy|": null,
   "silly-le-long / le plessis-belleville, oise, france|fr": null,
   "somain, nord, france|fr": [
     50.3589237,
@@ -2213,6 +2231,10 @@
   ],
   "tartu, estonia|es": null,
   "thames water service area, england|gb": null,
+  "themar, thuringia, germany|de": [
+    50.5033487,
+    10.6150564
+  ],
   "tongeren, belgium|be": [
     50.7806267,
     5.4639172
@@ -2239,7 +2261,15 @@
     43.6103051,
     -116.590689
   ],
+  "trento, italy|": [
+    46.1029536,
+    11.1297425
+  ],
   "treuchtlingen–nürnberg corridor, bavaria, germany|de": null,
+  "trino, vercelli, piedmont, italy|": [
+    45.1939397,
+    8.2969866
+  ],
   "troisdorf to bonn oberkassel, north rhine-westphalia, germany|de": null,
   "troisdorf – bonn oberkassel, north rhine-westphalia, germany|de": null,
   "troisdorf – bonn-oberkassel, north rhine-westphalia, germany|de": null,
@@ -2248,6 +2278,10 @@
   "truppenübungsplatz oberlausitz, saxony, germany|de": [
     51.4407839,
     14.667536
+  ],
+  "turin, italy|": [
+    45.0677551,
+    7.6824892
   ],
   "täsch–zermatt, oberwallis, switzerland|ch": null,
   "ulm, baden-württemberg, germany|de": [
@@ -2301,6 +2335,14 @@
     41.0912185,
     16.8614377
   ],
+  "vicenza, italy|": [
+    45.6348591,
+    11.4063543
+  ],
+  "vicenza–padova, veneto, italy|": [
+    45.3986251,
+    11.7799106
+  ],
   "viinikankatu, tampere, finland|fi": [
     61.4969421,
     23.7862293
@@ -2309,6 +2351,10 @@
   "villingen-schwenningen, baden-württemberg, germany|de": [
     48.063152,
     8.4929618
+  ],
+  "vilnius, lithuania|lt": [
+    54.6870458,
+    25.2829111
   ],
   "vinaceite, aragon, spain|es": [
     41.2660396,
@@ -2352,6 +2398,10 @@
   "wendlingen / esslingen, baden-württemberg, germany|de": [
     48.6727602,
     9.3838404
+  ],
+  "werder (havel), brandenburg, germany|de": [
+    52.3715809,
+    12.9329125
   ],
   "west and north london|gb": [
     52.8650243,
@@ -2465,6 +2515,7 @@
     3.207561
   ],
   "zeithain to leckwitz, saxony, germany|de": null,
+  "zibido san giacomo & lacchiarella, milan, italy|": null,
   "zollikerberg, zollikon, switzerland|ch": [
     47.3456637,
     8.5993998
