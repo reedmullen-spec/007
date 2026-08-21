@@ -11,6 +11,8 @@ Responsibilities:
 Private-app scopes needed:
   crm.objects.deals.read, crm.objects.deals.write,
   crm.schemas.deals.write (property bootstrap),
+  crm.objects.notes.read, crm.objects.notes.write (pack/summary notes,
+  and the association read that keeps them idempotent),
   crm.objects.companies.read (owner lookup),
   crm.objects.contacts.read, crm.objects.contacts.write,
   crm.schemas.contacts.write (linkedin_url property bootstrap)
@@ -187,6 +189,43 @@ class HubSpotClient:
             except Exception:
                 pass
         return note_id
+
+    def deal_note_bodies(self, deal_id: str, limit: int = 100) -> list[str]:
+        """The bodies of the notes already attached to a deal.
+
+        Two documented calls rather than one search on `associations.deal`,
+        which is not a supported filter for note objects. Raises on API
+        failure so a caller using this purely as a dedup hint can decide for
+        itself whether a missing answer means "write" or "skip" — a token
+        without crm.objects.notes.read reaches here as a 403, not as [].
+        """
+        r = self.session.get(
+            f"{BASE}/crm/v4/objects/deals/{deal_id}/associations/notes",
+            params={"limit": limit},
+            timeout=30,
+        )
+        if r.status_code != 200:
+            raise RuntimeError(f"Note association fetch failed "
+                               f"({r.status_code}): {r.text[:300]}")
+        ids = [a.get("toObjectId") for a in r.json().get("results", [])
+               if a.get("toObjectId")]
+        if not ids:
+            return []
+        r = self.session.post(
+            f"{BASE}/crm/v3/objects/notes/batch/read",
+            json={"properties": ["hs_note_body"],
+                  "inputs": [{"id": str(i)} for i in ids]},
+            timeout=30,
+        )
+        if r.status_code not in (200, 207):
+            raise RuntimeError(f"Note batch read failed "
+                               f"({r.status_code}): {r.text[:300]}")
+        return [(n.get("properties") or {}).get("hs_note_body") or ""
+                for n in r.json().get("results", [])]
+
+    def deal_has_note_marker(self, deal_id: str, marker: str) -> bool:
+        """Whether one of the deal's notes already carries `marker`."""
+        return any(marker in body for body in self.deal_note_bodies(deal_id))
 
     # ------------------------------------------------------------ contacts
     def find_contact_by_email(self, email: str) -> dict | None:
