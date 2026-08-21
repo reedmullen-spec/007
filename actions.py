@@ -2,7 +2,7 @@
 
 ingest.py rows only ever surface as a plain link in the weekly triage list;
 there was no way to ask for enrichment/a deal/contacts on one without going
-through the legacy digest.py/news.py card flow. This gives every row three
+through the legacy digest.py/news.py card flow. This gives every row four
 independent checkboxes instead:
 
     Enrich          -> deep research pack (same engine as enrich.py).
@@ -16,6 +16,14 @@ independent checkboxes instead:
                        deal as a pinned note (the TL;DR when there is one,
                        otherwise the ingest notice summary) so the text is
                        readable in the timeline, not just in a property.
+    Create lead     -> HubSpot lead on the general contractor's company
+                       record, same naming convention as the deal. Needs
+                       General contractor/JV filled in — HubSpot refuses a
+                       lead with no company or contact to hang off, so
+                       there is nothing sensible to create without it. The
+                       company is found by name or created. Independent of
+                       Create deal: neither needs the other, and a project
+                       can have both.
     Build contacts  -> Amplemarket buying group (needs General contractor/JV
                        filled in, AND a HubSpot deal already existing —
                        tick Enrich or Create deal first). Belgium/Hakron
@@ -27,17 +35,24 @@ independent checkboxes instead:
                        of its own; clear Contacts list first to force a
                        genuine rebuild).
 
+Create lead is the one action needing scopes beyond the shared set
+(crm.objects.leads.*, crm.schemas.leads.write, crm.objects.companies.write).
+Its lead-property bootstrap runs inside the action rather than in main()'s
+preamble alongside the deal ones, deliberately: a portal missing the leads
+scopes must fail Create lead only, not take Enrich/Create deal/Build
+contacts down with it. check_hubspot_scopes.py probes all of them.
+
 Order-agnostic in practice: tick any combination, any time. A box that
 succeeds is unchecked so it doesn't re-fire; a box that fails is left
 checked so the next run retries it. Ticking Enrich and Create deal in the
 same run is safe — Enrich runs first, creates the deal if needed, and
 Create deal then just finds it already exists (HubSpot dedup, rule #2).
 Build contacts needing a deal is likewise never a problem within a single
-run: ACTIONS' fixed order (Enrich, Create deal, Build contacts) always
-processes it last, so a deal created by either of the other two boxes on
-the SAME row in the SAME run already exists by the time Build contacts
-fires. It only fails — leaving the box checked for the next run — when
-ticked alone with no deal yet at all.
+run: ACTIONS' fixed order (Enrich, Create deal, Create lead, Build
+contacts) always processes it last, so a deal created by either of the
+deal-making boxes on the SAME row in the SAME run already exists by the
+time Build contacts fires. It only fails — leaving the box checked for the
+next run — when ticked alone with no deal yet at all.
 
 Usage:
     python actions.py               # live
@@ -52,7 +67,7 @@ from html import escape
 from contacts import build_buying_group
 from enrich import enrich_deal
 from src.config import env, load_config
-from src.deal_naming import build_deal_name
+from src.deal_naming import build_deal_name, primary_contractor
 from src.framework import resolve_framework
 from src.hubspot_client import HubSpotClient
 from src.note_body import SUMMARY_NOTE_MARKER, render_summary_body
@@ -223,6 +238,43 @@ def _run_create_deal(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, ro
                        page_url=row.get("url", ""), fresh_deal=fresh_deal)
 
 
+def _run_create_lead(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: dict) -> None:
+    title = notion.row_title(row)
+    notice_id = _prop_rich(row, notion.cfg["notice_id_property"])
+    ae = _prop_select(row, "AE") or "unassigned"
+    gc = _prop_rich(row, "General contractor/JV")
+    location = _prop_rich(row, "Location")
+    if not gc:
+        raise RuntimeError("General contractor/JV is blank — a HubSpot lead has "
+                           "to hang off a company, so there is nothing to create "
+                           "yet. Fill it in and the box retries next run.")
+
+    # Before the dedup search, not after: the search filters on the notice-id
+    # property, and searching a property the leads object doesn't have yet is
+    # a 400, not an empty result.
+    hubspot.ensure_lead_notice_property()
+
+    existing = hubspot.find_lead_by_notice_id(notice_id)
+    if existing:
+        lead_id = existing["id"]
+        print(f"Lead already exists ({lead_id}) for '{title[:60]}' — no new lead created.")
+    else:
+        # The raw GC/JV string for the NAME (so the lead and the deal for one
+        # project read identically, and split_deal_name still parses it), the
+        # primary contractor alone for the COMPANY record — '(JV: ...)' has no
+        # business in a company name.
+        lead_name = build_deal_name(title, contractor=gc, location=location)
+        company = hubspot.find_or_create_company(primary_contractor(gc))
+        lead = hubspot.create_lead(name=lead_name, notice_id=notice_id, ae=ae,
+                                  company_id=company["id"])
+        lead_id = lead["id"]
+        print(f"Created lead {lead_id} on company {company['id']}: {lead['portal_url']}")
+
+    notion.update_properties(row["id"], {
+        "HubSpot lead": {"url": f"https://app.hubspot.com/contacts/"
+                                f"{cfg['hubspot']['portal_id']}/record/0-136/{lead_id}"}})
+
+
 def _run_contacts(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: dict) -> None:
     title = notion.row_title(row)
     # build_buying_group() has no dedup of its own — it always searches
@@ -271,6 +323,7 @@ def _run_contacts(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: 
 ACTIONS = [
     ("Enrich", _run_enrich),
     ("Create deal", _run_create_deal),
+    ("Create lead", _run_create_lead),
     ("Build contacts", _run_contacts),
 ]
 

@@ -92,6 +92,26 @@ hubspot:
   # direction (whichever of enrich/create-deal runs first).
   summary_property: "tender_summary"
 
+  # --- Create lead action (actions.py) ------------------------------------
+  # Leads are a separate HubSpot object (0-136) with their own scopes, none
+  # of which the private app had as of 2026-08-21 — see the leads probes in
+  # check_hubspot_scopes.py. Everything below is unverifiable until an admin
+  # grants crm.objects.leads.read/.write + crm.schemas.leads.write, so the
+  # defaults are deliberately the "let HubSpot decide" ones.
+  #
+  # Property group the notice-id property is created in on the lead object.
+  # A guess: the leads schema could not be read back to confirm the real
+  # group name. If ensure_lead_notice_property() 400s naming groupName,
+  # this is the knob (that failure is NOT a scope problem).
+  lead_property_group: "leadinformation"
+  # Lead pipeline + stage IDs, and hs_lead_type. Left blank on purpose:
+  # blank means the property is omitted from the create call and HubSpot
+  # uses its own default, which beats POSTing a guessed ID and failing the
+  # action. Pin them once the leads pipeline can actually be read.
+  lead_pipeline_id: ""
+  lead_stage_id: ""
+  lead_type: ""
+
 # ------------------------------------------------------------ AE routing ----
 routing:
   # Country -> AE. Anything in eu_countries not listed falls to eu_default.

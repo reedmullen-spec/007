@@ -19,6 +19,15 @@ equivalent, so a probe passing means that code path works:
     contacts schema ensure_linkedin_property() -> Build contacts, every run
     deals schema    ensure_notice_property() / ensure_summary_property()
                                              -> every actions.py run's preamble
+    leads objects   find_lead_by_notice_id() -> Create lead
+    leads schema    ensure_lead_notice_property() -> Create lead
+
+Two things the leads probes cannot tell you, both write-side and therefore
+deliberately untested here: whether crm.objects.leads.write and
+crm.objects.companies.write are granted (find_or_create_company creates the
+company the lead hangs off), and whether `lead_property_group` in
+config.yaml names a real property group on the leads object. A read probe
+passing means Create lead gets as far as its first write.
 
     python check_hubspot_scopes.py
 """
@@ -48,6 +57,18 @@ BLAST_RADIUS = {
         "crm.schemas.deals.read",
         "actions.py cannot get past ensure_notice_property() in its preamble, "
         "so no action of any kind runs"),
+    "leads objects read": (
+        "crm.objects.leads.read",
+        "Create lead cannot dedup, so it either 403s outright or (worse, if "
+        "only the search were blocked) would make a second lead on a "
+        "re-ticked row — the other three actions are unaffected, which is "
+        "why the lead property bootstrap is not in actions.py's preamble"),
+    "leads schema read": (
+        "crm.schemas.leads.read",
+        "ensure_lead_notice_property() raises before it can create the "
+        "notice-id property, so Create lead fails on every row — and since "
+        "find_lead_by_notice_id() filters on that property, it would 400 "
+        "even if the objects scope were present"),
 }
 
 
@@ -93,6 +114,32 @@ def probe_notes(hs: HubSpotClient) -> bool | None:
     return ok
 
 
+def probe_leads(hs: HubSpotClient) -> bool | None:
+    """Whether the leads object is readable at all.
+
+    Distinguishes the two reasons Create lead can be dead on arrival: a 403
+    is the missing scope, but leads is a Sales Hub Professional+ feature, so
+    a portal without it answers differently (404/400) and no amount of scope
+    granting will help. Worth separating — one is an admin ticket, the other
+    is "this action can never work here".
+    """
+    r = hs.session.get(f"{BASE}/crm/v3/objects/leads", params={"limit": 1}, timeout=30)
+    if r.status_code == 200:
+        n = len(r.json().get("results") or [])
+        _verdict("leads objects read", True,
+                 f"GET objects/leads -> 200 ({n} lead(s) visible)")
+        return True
+    if r.status_code == 403:
+        _verdict("leads objects read", False,
+                 f"GET objects/leads -> 403: {r.text[:120]}")
+        return False
+    _verdict("leads objects read", False,
+             f"GET objects/leads -> {r.status_code}: {r.text[:120]} — a non-403 "
+             "here can mean the leads object isn't enabled on this portal "
+             "(Sales Hub Professional+), which no scope change fixes")
+    return False
+
+
 def probe_property(hs: HubSpotClient, label: str, object_type: str,
                    name: str) -> bool | None:
     """The exact GET _ensure_property() opens with. 404 means the schema is
@@ -134,6 +181,9 @@ def main() -> int:
             hs, "contacts schema read", "contacts", "linkedin_url"),
         "deals schema read": probe_property(
             hs, "deals schema read", "deals", prop["notice_id_property"]),
+        "leads objects read": probe_leads(hs),
+        "leads schema read": probe_property(
+            hs, "leads schema read", "leads", prop["notice_id_property"]),
     }
     # same scope as the notice-id property, so not a separate verdict — but a
     # missing summary property is worth seeing, since both bootstrap together.

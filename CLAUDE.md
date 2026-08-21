@@ -169,9 +169,10 @@ ask Reed before changing architecture, not just code.
   (the digest.py/news.py legacy card flow only — see rule #13).
 - `actions.py` — polls every 20 minutes (plus `workflow_dispatch` for an
   immediate on-demand run). Self-serve alternative for
-  ingest.py-sourced rows, which never get a Slack card: three checkboxes on
-  the master row — `Enrich`, `Create deal`, `Build contacts` — independent
-  of each other and of Status, tickable at any time in any combination.
+  ingest.py-sourced rows, which never get a Slack card: four checkboxes on
+  the master row — `Enrich`, `Create deal`, `Create lead`, `Build contacts`
+  — independent of each other and of Status, tickable at any time in any
+  combination.
   `Enrich` creates the HubSpot deal first if none exists yet (the pack needs
   one to pin its note to, same as `enrich.py --title`); `Create deal` reuses
   `find_deal_by_notice_id` for the same dedup guarantee as every other path
@@ -191,13 +192,54 @@ ask Reed before changing architecture, not just code.
   richer pack note. Needs `crm.objects.notes.read` on the private app for the
   check; without it the note is written only on the run that created the deal
   (never duplicated, but a failed retry loses it).
+  `Create lead` is the deal path's sibling on HubSpot's *lead* object
+  (`0-136`), added Aug 2026: a lead named by the same `build_deal_name()`
+  convention, owned by the same resolved AE (`HubSpotClient._owner_id`,
+  shared with `create_deal` so the two can't drift), deduped on the same
+  notice id — rule #2 extended to leads via a separate `tender_notice_id`
+  property on the lead object, since HubSpot property definitions don't span
+  object types. Writes the record link back to `HubSpot lead` on the row.
+  Three things about it that look like oversights and aren't:
+    - It needs `General contractor/JV`, like `Build contacts` and unlike
+      `Create deal`. Not a policy choice: HubSpot rejects a lead with no
+      primary company or contact association, so there is no degraded
+      "lead with nothing attached" to fall back to. Blank GC raises, the
+      box stays checked, it retries once someone fills the field in.
+    - The company is resolved by NAME (`find_or_create_company`) because a
+      Notion row has no domain, so HubSpot's own domain dedup is unusable.
+      Two searches — exact `EQ` on `name`, then the fuzzy `query` search
+      accepting only a case-insensitive exact name hit — before creating
+      anything, because the same contractor is GC on dozens of rows and a
+      missed match would mint a company per row. The lead NAME keeps the
+      raw `General contractor/JV` string (parity with the deal name, and
+      `split_deal_name` still parses it); only the COMPANY name is narrowed
+      to `primary_contractor()`, which strips the `(JV: ...)` parenthetical.
+    - `ensure_lead_notice_property()` is called INSIDE the action, not in
+      `main()`'s preamble next to the two deal-property bootstraps. That is
+      the whole reason a portal without the leads scopes still runs the
+      other three boxes normally. It also has to run before
+      `find_lead_by_notice_id()`, not after — searching a property the lead
+      object doesn't have yet is a 400, not an empty result set.
+  Create lead is the only action needing scopes outside the shared set:
+  `crm.objects.leads.read`/`.write`, `crm.schemas.leads.write`, and
+  `crm.objects.companies.write` (everything else only reads companies).
+  None were granted as of 2026-08-21 and `crm.objects.leads.read` was
+  refused even to the MCP connection, so the leads pipeline/stage IDs could
+  not be read back: `lead_pipeline_id`/`lead_stage_id`/`lead_type` in
+  config.yaml are blank on purpose, which omits them from the create call
+  and lets HubSpot pick its default rather than failing on a guessed ID.
+  `lead_property_group` is a guess for the same reason — a 400 naming
+  groupName is that guess, not a scope. `check_hubspot_scopes.py` probes
+  both leads reads and separates "missing scope" (403) from "leads not
+  enabled on this portal at all" (Sales Hub Professional+, which no scope
+  grant fixes).
   `Build contacts` needs `General contractor/JV` filled in AND a HubSpot deal
   already existing (checked via `find_deal_by_notice_id` — tick
   `Enrich`/`Create deal` first, or it must predate this row), and honours
   the Belgium/Hakron skip (rule #3) as a silent no-op, not a retry-forever
   failure. Never actually a same-run ordering problem: `ACTIONS`' fixed
-  order (Enrich, Create deal, Build contacts) always processes `Build
-  contacts` last, so a deal created by either of the other two boxes on
+  order (Enrich, Create deal, Create lead, Build contacts) always processes
+  `Build contacts` last, so a deal created by either of the other two boxes on
   the same row in the same run already exists by the time it fires. A box
   that succeeds is unchecked (so it doesn't re-fire); a box that fails is
   left checked (so the next run retries it) — same guard philosophy as the
@@ -214,6 +256,9 @@ ask Reed before changing architecture, not just code.
 2. **HubSpot is dedup truth for deals** via custom deal property
    `tender_notice_id`. State files are a secondary cache. Name-based
    overlap is NOT caught — the human ✅ is the guard (known, accepted).
+   The `Create lead` action applies the same rule to the lead object with
+   its own same-named property (`find_lead_by_notice_id`) — deals and leads
+   dedup independently, so one project can legitimately carry both.
 3. **Belgium = Hakron partner path.** Full research pack, NO contact build
    (Lisa carries packs to Hakron). `hakron_skip_contacts_countries: [BE]`.
 4. **`news_channels` values can be a string OR a list** (national US firms
