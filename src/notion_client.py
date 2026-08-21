@@ -6,6 +6,8 @@ connected to the integration (page -> ... -> Connections).
 """
 from __future__ import annotations
 
+import re
+
 import requests
 
 BASE = "https://api.notion.com/v1"
@@ -525,8 +527,8 @@ class NotionClient:
         return self.find_row(notice_id) or self.create_row(title, notice_id)
 
     def append_pack(self, page_id: str, markdown: str) -> None:
-        """Write the pack as blocks (headings + paragraphs, chunked)."""
-        blocks = list(_markdown_to_blocks(markdown))
+        """Write the pack as blocks (headings, lists, tables, paragraphs)."""
+        blocks = markdown_to_blocks(markdown)
         # Notion accepts max 100 children per append call.
         for i in range(0, len(blocks), 100):
             self._check(self.session.patch(
@@ -534,31 +536,137 @@ class NotionClient:
                 json={"children": blocks[i:i + 100]}, timeout=60))
 
 
+# Notion caps a rich_text array at 100 elements per block.
+MAX_RICH_SEGMENTS = 100
+
+# A backslash-escaped asterisk is parked behind this before the inline split:
+# the research skills write NABERS ratings as "5-5.5\\*", and leaving that
+# asterisk in place both breaks the bold span and leaves the backslash showing.
+_ESCAPED_STAR = "\x00star\x00"
+
+# One pass over the inline markdown the packs actually contain: **bold**,
+# `code`, and [label](url). Ordered so bold is consumed before anything else
+# can claim its asterisks.
+_INLINE = re.compile(r"(\*\*[^*]+?\*\*|`[^`]+?`|\[[^\]]+?\]\([^)]+?\))")
+
+
 def _rich(text: str) -> list[dict]:
-    return [{"type": "text", "text": {"content": text[:MAX_BLOCK_CHARS]}}]
+    """Inline markdown -> a Notion rich_text array.
 
-
-def _markdown_to_blocks(md: str):
-    """Minimal markdown -> Notion blocks: #/##/### headings, bullets, paras."""
-    for raw_line in md.split("\n"):
-        line = raw_line.rstrip()
-        if not line.strip():
+    Previously this dropped every inline mark, so a pack's "**October 2026
+    start**" reached Notion with the asterisks showing and its Sources links
+    arrived as bare text. Annotations are cheap here and the packs are meant
+    to be read by AEs, so they are honoured.
+    """
+    text = text.replace("\\*", _ESCAPED_STAR)
+    out: list[dict] = []
+    for part in _INLINE.split(text):
+        if not part:
             continue
-        stripped = line.lstrip()
+        annotations: dict = {}
+        link: str | None = None
+        if part.startswith("**") and part.endswith("**") and len(part) > 4:
+            content, annotations = part[2:-2], {"bold": True}
+        elif part.startswith("`") and part.endswith("`") and len(part) > 2:
+            content, annotations = part[1:-1], {"code": True}
+        elif part.startswith("[") and part.endswith(")") and "](" in part:
+            label, _, href = part[1:-1].partition("](")
+            content, link = label, href
+        else:
+            content = part
+        content = content.replace(_ESCAPED_STAR, "*")
+        if not content:
+            continue
+        for i in range(0, len(content), MAX_BLOCK_CHARS):
+            seg: dict = {"type": "text",
+                         "text": {"content": content[i:i + MAX_BLOCK_CHARS]}}
+            if link:
+                seg["text"]["link"] = {"url": link}
+            if annotations:
+                seg["annotations"] = dict(annotations)
+            out.append(seg)
+    return out[:MAX_RICH_SEGMENTS] or [{"type": "text", "text": {"content": ""}}]
+
+
+def _table_block(lines: list[str]) -> dict | None:
+    """A run of pipe-delimited lines -> one Notion table block.
+
+    The concretedna skill asks for the project decomposition as "Table or
+    bullets", so packs do contain tables; before this they were flattened
+    into paragraphs still carrying their pipes.
+    """
+    rows: list[list[str]] = []
+    for line in lines:
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if cells and all(re.fullmatch(r":?-{2,}:?", c) for c in cells if c):
+            continue                       # the |---|---| separator row
+        rows.append(cells)
+    if not rows:
+        return None
+    width = min(max(len(r) for r in rows), 100)   # Notion caps table width
+    return {
+        "type": "table",
+        "table": {
+            "table_width": width,
+            "has_column_header": True,
+            "has_row_header": False,
+            "children": [
+                {"type": "table_row",
+                 "table_row": {"cells": [_rich(c) for c in
+                                         (r + [""] * width)[:width]]}}
+                for r in rows
+            ],
+        },
+    }
+
+
+def markdown_to_blocks(md: str) -> list[dict]:
+    """Markdown -> Notion blocks: headings, bullets, numbered lists, tables,
+    dividers, quotes and paragraphs, with inline marks preserved."""
+    blocks: list[dict] = []
+    table: list[str] = []
+
+    def flush_table():
+        if table:
+            block = _table_block(table)
+            if block:
+                blocks.append(block)
+            table.clear()
+
+    for raw_line in md.split("\n"):
+        stripped = raw_line.strip()
+        if stripped.startswith("|"):
+            table.append(stripped)
+            continue
+        flush_table()
+        if not stripped:
+            continue
         if stripped.startswith("### "):
-            yield {"type": "heading_3",
-                   "heading_3": {"rich_text": _rich(stripped[4:])}}
+            blocks.append({"type": "heading_3",
+                           "heading_3": {"rich_text": _rich(stripped[4:])}})
         elif stripped.startswith("## "):
-            yield {"type": "heading_2",
-                   "heading_2": {"rich_text": _rich(stripped[3:])}}
+            blocks.append({"type": "heading_2",
+                           "heading_2": {"rich_text": _rich(stripped[3:])}})
         elif stripped.startswith("# "):
-            yield {"type": "heading_1",
-                   "heading_1": {"rich_text": _rich(stripped[2:])}}
+            blocks.append({"type": "heading_1",
+                           "heading_1": {"rich_text": _rich(stripped[2:])}})
+        elif re.fullmatch(r"(-{3,}|\*{3,}|_{3,})", stripped):
+            blocks.append({"type": "divider", "divider": {}})
+        elif stripped.startswith("> "):
+            blocks.append({"type": "quote",
+                           "quote": {"rich_text": _rich(stripped[2:])}})
         elif stripped.startswith(("- ", "* ")):
-            yield {"type": "bulleted_list_item",
-                   "bulleted_list_item": {"rich_text": _rich(stripped[2:])}}
+            blocks.append({"type": "bulleted_list_item",
+                           "bulleted_list_item": {"rich_text": _rich(stripped[2:])}})
+        elif re.match(r"^\d+[.)]\s", stripped):
+            blocks.append({"type": "numbered_list_item",
+                           "numbered_list_item": {"rich_text": _rich(
+                               re.sub(r"^\d+[.)]\s+", "", stripped))}})
         else:
             # chunk long paragraphs to respect the per-block limit
             for i in range(0, len(stripped), MAX_BLOCK_CHARS):
-                yield {"type": "paragraph",
-                       "paragraph": {"rich_text": _rich(stripped[i:i + MAX_BLOCK_CHARS])}}
+                blocks.append({"type": "paragraph",
+                               "paragraph": {"rich_text": _rich(
+                                   stripped[i:i + MAX_BLOCK_CHARS])}})
+    flush_table()
+    return blocks

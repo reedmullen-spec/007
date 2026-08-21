@@ -14,13 +14,11 @@ script so enrich.py's pack path is untouched:
     NotionClient._rt(), which truncates at MAX_BLOCK_CHARS. Seven of the
     109 notes run past that (longest 2297 chars) and would lose their tail
     silently. Notion's limit is per segment, not per property.
-  - _markdown_to_blocks() handles headings, bullets and paragraphs but not
-    inline bold or tables, so it would render "**October 2026**" with the
-    asterisks showing on 104 of the records and flatten 7 markdown tables
-    into pipe-delimited paragraphs. The converter here emits real bold
-    annotations and real table blocks. (enrich.py's packs have the same
-    limitation; not changed here because that is shared, load-bearing code
-    and this is a one-off.)
+  - the body goes through notion_client.markdown_to_blocks(), which now
+    renders inline bold, code and links plus real tables. This script
+    originally carried its own converter because the shared one dropped all
+    of that; that gap has since been fixed in place for enrich.py's packs
+    too, so the duplicate is gone.
 
 Idempotent: a row that already has page content is left alone, so a
 re-run after a partial failure never appends a second copy of the body.
@@ -34,7 +32,7 @@ import sys
 import time
 
 from src.config import env, load_config
-from src.notion_client import BASE, MAX_BLOCK_CHARS, NotionClient
+from src.notion_client import BASE, MAX_BLOCK_CHARS, NotionClient, markdown_to_blocks
 
 SOURCE_TAG = "UKSWEEP"
 
@@ -43,98 +41,6 @@ def notice_id(name: str) -> str:
     """Same slug rule import_scored_csv.py used to create these rows."""
     slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")[:60]
     return f"{SOURCE_TAG}:{slug}"
-
-
-ESCAPED_STAR = "\x00STAR\x00"
-
-
-def rich(text: str) -> list[dict]:
-    """Inline markdown -> rich_text, honouring **bold** spans.
-
-    A backslash-escaped asterisk is parked behind a sentinel first: the
-    NABERS ratings in this sweep are written "5-5.5\\*", and leaving that
-    asterisk in place both breaks the bold split and leaves the backslash
-    showing in Notion."""
-    text = text.replace("\\*", ESCAPED_STAR)
-    out: list[dict] = []
-    for part in re.split(r"(\*\*[^*]+\*\*)", text):
-        if not part:
-            continue
-        bold = part.startswith("**") and part.endswith("**") and len(part) > 4
-        content = part[2:-2] if bold else part
-        content = content.replace(ESCAPED_STAR, "*")
-        for i in range(0, len(content), MAX_BLOCK_CHARS):
-            chunk = content[i:i + MAX_BLOCK_CHARS]
-            seg: dict = {"type": "text", "text": {"content": chunk}}
-            if bold:
-                seg["annotations"] = {"bold": True}
-            out.append(seg)
-    return out or [{"type": "text", "text": {"content": ""}}]
-
-
-def _table_block(lines: list[str]) -> dict | None:
-    """A run of | delimited lines -> one Notion table block."""
-    rows = []
-    for line in lines:
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if all(re.fullmatch(r":?-{2,}:?", c) for c in cells if c):
-            continue                      # the |---|---| separator row
-        rows.append(cells)
-    if not rows:
-        return None
-    width = max(len(r) for r in rows)
-    return {
-        "type": "table",
-        "table": {
-            "table_width": width,
-            "has_column_header": True,
-            "has_row_header": False,
-            "children": [
-                {"type": "table_row",
-                 "table_row": {"cells": [rich(c) for c in r + [""] * (width - len(r))]}}
-                for r in rows
-            ],
-        },
-    }
-
-
-def to_blocks(md: str) -> list[dict]:
-    blocks: list[dict] = []
-    pending_table: list[str] = []
-
-    def flush_table():
-        if pending_table:
-            block = _table_block(pending_table)
-            if block:
-                blocks.append(block)
-            pending_table.clear()
-
-    for raw in md.split("\n"):
-        line = raw.rstrip()
-        stripped = line.strip()
-        if stripped.startswith("|"):
-            pending_table.append(stripped)
-            continue
-        flush_table()
-        if not stripped:
-            continue
-        if stripped.startswith("### "):
-            blocks.append({"type": "heading_3", "heading_3": {"rich_text": rich(stripped[4:])}})
-        elif stripped.startswith("## "):
-            blocks.append({"type": "heading_2", "heading_2": {"rich_text": rich(stripped[3:])}})
-        elif stripped.startswith("# "):
-            blocks.append({"type": "heading_1", "heading_1": {"rich_text": rich(stripped[2:])}})
-        elif stripped.startswith(("- ", "* ")):
-            blocks.append({"type": "bulleted_list_item",
-                           "bulleted_list_item": {"rich_text": rich(stripped[2:])}})
-        elif re.match(r"^\d+\.\s", stripped):
-            blocks.append({"type": "numbered_list_item",
-                           "numbered_list_item": {"rich_text": rich(
-                               re.sub(r"^\d+\.\s", "", stripped))}})
-        else:
-            blocks.append({"type": "paragraph", "paragraph": {"rich_text": rich(stripped)}})
-    flush_table()
-    return blocks
 
 
 def notes_prop(text: str) -> dict:
@@ -176,7 +82,7 @@ def main() -> int:
         page_id = row["id"]
         note = (props.get("Notes") or "").strip()
         body = (rec.get("body") or "").strip()
-        blocks = to_blocks(body)
+        blocks = markdown_to_blocks(body)
         print(f"  [{i}/{len(records)}] {name[:66]} "
               f"(notes {len(note)}c, {len(blocks)} blocks)")
         if args.dry_run:
