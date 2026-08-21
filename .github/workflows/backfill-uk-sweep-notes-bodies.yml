@@ -1,0 +1,41 @@
+name: Backfill UK sweep notes and bodies
+
+# One-off: writes the Notes property and each record's markdown write-up as
+# page content onto the rows import_scored_csv.py created from the UK
+# all-regions sweep (notice IDs UKSWEEP:*). Those two fields are the ones
+# the CSV loader has no path for — see backfill_uk_sweep_notes_bodies.py.
+# Idempotent: a row that already has page content is left alone.
+on:
+  workflow_dispatch:
+    inputs:
+      json_path:
+        description: "Path to the sweep JSON, relative to repo root"
+        type: string
+        default: "data/uk-all-regions-records.json"
+      dry_run:
+        description: "Dry run (resolve every row, write nothing)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run backfill
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          ARGS="${{ github.event.inputs.json_path }}"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          python backfill_uk_sweep_notes_bodies.py $ARGS
