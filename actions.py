@@ -12,7 +12,10 @@ independent checkboxes instead:
                        GC/Location segments dropped when not yet known.
     Create deal     -> HubSpot deal at Identified, same naming convention.
                        Backfills the enrichment TL;DR onto it if Enrich
-                       already ran.
+                       already ran, and posts the row's summary onto the
+                       deal as a pinned note (the TL;DR when there is one,
+                       otherwise the ingest notice summary) so the text is
+                       readable in the timeline, not just in a property.
     Build contacts  -> Amplemarket buying group (needs General contractor/JV
                        filled in, AND a HubSpot deal already existing —
                        tick Enrich or Create deal first). Belgium/Hakron
@@ -44,6 +47,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from html import escape
 
 from contacts import build_buying_group
 from enrich import enrich_deal
@@ -51,6 +55,7 @@ from src.config import env, load_config
 from src.deal_naming import build_deal_name
 from src.framework import resolve_framework
 from src.hubspot_client import HubSpotClient
+from src.note_body import SUMMARY_NOTE_MARKER, render_summary_body
 from src.notion_client import NotionClient
 
 TLDR_PROPERTY = "Enrichment summary"
@@ -63,6 +68,19 @@ def _prop_checkbox(row: dict, name: str) -> bool:
 def _prop_rich(row: dict, name: str) -> str:
     rich = ((row.get("properties") or {}).get(name) or {}).get("rich_text", [])
     return rich[0].get("plain_text", "") if rich else ""
+
+
+def _prop_rich_all(row: dict, name: str) -> str:
+    """Every rich_text segment of a property, joined.
+
+    Notion splits a long value across segments (2000 chars each), so
+    _prop_rich()'s first-segment read silently loses the tail — harmless for
+    General contractor/JV or Location, wrong for a summary, which is exactly
+    the trap backfill_uk_sweep_notes_bodies.py had to work around on the UK
+    sweep (7 of 109 notes ran past one segment).
+    """
+    rich = ((row.get("properties") or {}).get(name) or {}).get("rich_text", [])
+    return "".join(t.get("plain_text", "") for t in rich)
 
 
 def _prop_select(row: dict, name: str) -> str:
@@ -91,6 +109,59 @@ def _gate_signals(notion: NotionClient, row: dict) -> dict:
         "fit_profile": _prop_select(row, "Fit profile"),
         "text": f"{title} {_prop_rich(row, 'Summary')}",
     }
+
+
+def _push_summary_note(hubspot: HubSpotClient, row: dict, *, deal_id: str,
+                       deal_name: str, page_url: str, fresh_deal: bool) -> None:
+    """Put the Notion summary on the deal as a note, exactly once.
+
+    Prefers `Enrichment summary` (the research pack TL;DR) and falls back to
+    the ingest `Summary`, so a row whose deal is created before Enrich has
+    ever run still lands in HubSpot with readable notice text.
+
+    Idempotency keys on SUMMARY_NOTE_MARKER in the deal's existing notes, not
+    on `fresh_deal`: a run that creates the deal and then dies on the note
+    leaves the box checked, and the retry sees an existing deal — keying off
+    creation alone would drop the note forever. `fresh_deal` only decides the
+    fallback when the notes read itself fails (a token missing
+    crm.objects.notes.read 403s here): write on the run that made the deal,
+    stay quiet on later ones rather than risking duplicates.
+
+    That same marker is stamped by enrich.py's pack note, which is what keeps
+    both boxes ticked on one row from producing two copies of the summary.
+    `Enrich` runs first (ACTIONS order) and its note carries the freshly
+    extracted TL;DR, so this path correctly stands down — the `row` dict here
+    is the pre-run snapshot and would otherwise fall all the way back to the
+    stale ingest `Summary`.
+    """
+    summary, source = _prop_rich_all(row, TLDR_PROPERTY), "research pack TL;DR"
+    if not summary.strip():
+        summary, source = _prop_rich_all(row, "Summary"), "notice summary"
+    if not summary.strip():
+        print(f"No summary on the Notion row for '{deal_name[:60]}' — "
+              f"deal left without a summary note.")
+        return
+
+    try:
+        already = hubspot.deal_has_note_marker(deal_id, SUMMARY_NOTE_MARKER)
+    except Exception as exc:
+        if not fresh_deal:
+            print(f"WARNING: could not read existing notes on deal {deal_id} "
+                  f"({exc}) — skipping the summary note rather than risking a "
+                  f"duplicate.", file=sys.stderr)
+            return
+        already = False
+    if already:
+        print(f"Deal {deal_id} already carries a {SUMMARY_NOTE_MARKER} note — "
+              f"not adding a second.")
+        return
+
+    body = render_summary_body(summary, source)
+    if page_url:
+        body += (f"<p>Notion row: <a href=\"{escape(page_url, quote=True)}\">"
+                 f"{escape(deal_name)}</a></p>")
+    hubspot.add_note(deal_id, body, pin=True)
+    print(f"Added the {source} to deal {deal_id} as a pinned note.")
 
 
 def _run_enrich(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: dict) -> None:
@@ -131,17 +202,25 @@ def _run_create_deal(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, ro
     existing = hubspot.find_deal_by_notice_id(notice_id)
     if existing:
         deal_id = existing["id"]
+        fresh_deal = False
         print(f"Deal already exists ({deal_id}) for '{title[:60]}' — no new deal created.")
     else:
-        tldr = _prop_rich(row, TLDR_PROPERTY)   # backfilled if Enrich already ran
+        tldr = _prop_rich_all(row, TLDR_PROPERTY)  # backfilled if Enrich already ran
         deal = hubspot.create_deal(name=deal_name, notice_id=notice_id, ae=ae,
                                    summary=tldr or None)
         deal_id = deal["id"]
+        fresh_deal = True
         print(f"Created deal {deal_id}: {deal['portal_url']}")
 
+    # Deal link first, note second: a note failure leaves the box checked and
+    # the next run re-runs both, but the link is the more expensive thing to
+    # lose in the meantime (it's how a human gets from the row to the deal).
     notion.update_properties(row["id"], {
         "HubSpot deal": {"url": f"https://app.hubspot.com/contacts/"
                                 f"{cfg['hubspot']['portal_id']}/deal/{deal_id}"}})
+
+    _push_summary_note(hubspot, row, deal_id=deal_id, deal_name=deal_name,
+                       page_url=row.get("url", ""), fresh_deal=fresh_deal)
 
 
 def _run_contacts(cfg: dict, notion: NotionClient, hubspot: HubSpotClient, row: dict) -> None:

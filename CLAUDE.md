@@ -145,8 +145,14 @@ ask Reed before changing architecture, not just code.
   `--notice-id`. Anthropic API + web search, system prompt = the SKILL.md
   for the framework (concretedna for every AE except Avi, who gets
   fieldatlas — `enrichment.framework_by_ae`). Writes
-  pack to Notion, pins link on HubSpot deal, posts checkpoint-2 Slack card.
-  Packs must start with a 5-bullet TL;DR, max 600 words (AE feedback).
+  pack to Notion, pins a HubSpot note on the deal, posts checkpoint-2 Slack
+  card. Packs must start with a 5-bullet TL;DR, max 600 words (AE feedback).
+  That note carries the TL;DR itself, rendered to HTML by
+  `src/note_body.py` (bullets as a real `<ul>`, inline bold/code/links
+  honoured, same grammar as the Notion pack renderer), under the same
+  `007 research pack: <link>` lead line as before — a link alone is one
+  click too many in a deal timeline, and `tender_summary` doesn't show
+  there at all. It stamps `SUMMARY_NOTE_MARKER`; see the `actions.py` note.
 - `contacts.py` — step 3, Amplemarket buying group (15–20, persona titles by
   framework). Belgium refuses by design (see Hakron). Enginy may replace
   Amplemarket later — the search + lead-list creation is the swap point,
@@ -170,6 +176,21 @@ ask Reed before changing architecture, not just code.
   one to pin its note to, same as `enrich.py --title`); `Create deal` reuses
   `find_deal_by_notice_id` for the same dedup guarantee as every other path
   (rule #2) and is a no-op if `Enrich` already created one in the same run.
+  `Create deal` also posts the row's summary onto the deal as a pinned note
+  (`Enrichment summary` when the pack has run, else the ingest `Summary`) —
+  the `tender_summary` property alone is invisible in the timeline, which is
+  where reps actually read. Idempotent on `SUMMARY_NOTE_MARKER`
+  (`007 project summary`) found in the deal's existing notes rather than on
+  "did this run create the deal", so a run that creates the deal and then
+  fails on the note still writes it on retry. `enrich_deal()` stamps the same
+  marker, which is what makes both boxes on one row produce ONE summary note
+  and not two: `Enrich` goes first and its note carries the freshly extracted
+  TL;DR, so `Create deal` stands down rather than falling back to the stale
+  ingest `Summary` on its pre-run snapshot of the row. Ticked days apart the
+  other way round you do get both, correctly — the notice note, then the
+  richer pack note. Needs `crm.objects.notes.read` on the private app for the
+  check; without it the note is written only on the run that created the deal
+  (never duplicated, but a failed retry loses it).
   `Build contacts` needs `General contractor/JV` filled in AND a HubSpot deal
   already existing (checked via `find_deal_by_notice_id` — tick
   `Enrich`/`Create deal` first, or it must predate this row), and honours
@@ -262,7 +283,9 @@ ask Reed before changing architecture, not just code.
     `enrich_deal()` always backfills it from the pack's TL;DR, and
     `create_deal()` reads the Notion `Enrichment summary` property to seed
     it if research already ran — so it ends up correct regardless of which
-    of Enrich/Create-deal a person ticks first.
+    of Enrich/Create-deal a person ticks first. The same TL;DR also goes on
+    as a note from whichever path gets there first (`src/note_body.py`),
+    deduped on `SUMMARY_NOTE_MARKER`.
 
 14. **`General contractor/JV` is one field, not two.** Consolidated
     (Aug 2026) from separate `General contractor` + `JV / parents`
@@ -469,6 +492,10 @@ ask Reed before changing architecture, not just code.
   U0BA6PQB8CA, Ben U08H37C1Z9S, Britain U08H37AMZ36, Brady U0BMDES0YRW.
 - GitHub secrets (names are load-bearing): SLACK_BOT_TOKEN, HUBSPOT_TOKEN,
   ANTHROPIC_API_KEY, NOTION_TOKEN, AMPLEMARKET_TOKEN, SAM_API_KEY (optional).
+- HubSpot private-app scopes are listed in `src/hubspot_client.py`'s
+  docstring. `crm.objects.notes.read` is the newest one (summary-note dedup
+  on `Create deal`) — write-only note access degrades that path silently
+  rather than erroring, so check the app if notes stop appearing.
 - Notion parent page: 3a6a315b1b0080bdb2b2fae4c805d40e.
 
 ## Routing (confirmed by Guillaume, Aug 2026)

@@ -14,8 +14,9 @@ this step does NOT need step 1 to have run. Three ways in:
       Finds the deal carrying that notice ID and researches it.
 
 Output: Notion row (found-or-created on notice ID) with the pack in the
-body, a pinned HubSpot note linking to it, and a checkpoint-2 Slack card
-asking whether to build contacts (✅ = run step 3, done by approvals.py).
+body, a pinned HubSpot note carrying the pack's TL;DR (rendered, not just a
+link — see src/note_body.py), and a checkpoint-2 Slack card asking whether
+to build contacts (✅ = run step 3, done by approvals.py).
 """
 from __future__ import annotations
 
@@ -23,11 +24,13 @@ import argparse
 import json
 import re
 import sys
+from html import escape
 
 from src.config import env, load_config
 from src.anthropic_client import run_research
 from src.framework import explain, resolve_framework
 from src.hubspot_client import HubSpotClient
+from src.note_body import render_summary_body
 from src.notion_client import NotionClient
 from src.routing import resolve_ae
 from src.slack_client import SlackClient
@@ -137,14 +140,23 @@ def enrich_deal(cfg: dict, hubspot: HubSpotClient, *, deal_id: str,
         pass  # row may predate the extended schema; never block the pack
     print(f"Notion row: {page_url}")
 
-    hubspot.add_note(
-        deal_id,
-        f"<p><strong>007 research pack</strong>: "
-        f"<a href=\"{page_url}\">{deal_name}</a> (framework: {framework})</p>",
-        pin=True,
-    )
-
+    # The TL;DR has to be extracted before the note, not after: the note now
+    # carries the summary text itself, not just a link off to Notion, because
+    # a link is one click too many for the AE reading a deal timeline (and
+    # tender_summary, the property, doesn't show there at all). Escaped
+    # because a deal name legitimately contains "&" — Bouygues & co, JV
+    # names — which used to reach HubSpot as raw HTML.
     tldr = _extract_tldr(pack)
+    note = (f"<p><strong>007 research pack</strong>: "
+            f"<a href=\"{escape(page_url, quote=True)}\">{escape(deal_name)}</a> "
+            f"(framework: {escape(framework)})</p>")
+    if tldr.strip():
+        # render_summary_body() stamps SUMMARY_NOTE_MARKER, which is what makes
+        # actions.py's `Create deal` note stand down instead of posting a second
+        # copy of the same summary when both boxes are ticked on one row.
+        note += render_summary_body(tldr, "research pack TL;DR")
+    hubspot.add_note(deal_id, note, pin=True)
+
     try:
         notion.update_properties(row["id"], {"Enrichment summary": notion._rt(tldr)})
     except Exception:
