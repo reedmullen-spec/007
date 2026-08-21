@@ -2,10 +2,18 @@
 it already created from the UK all-regions sweep: the Notes property, and
 each record's markdown write-up as page content.
 
-Run after the CSV import (source tag UKSWEEP), against the same JSON:
+Run after the CSV import, against the same JSON, with the same source tag
+the import used (the notice IDs it generated are what this looks up):
 
     python backfill_uk_sweep_notes_bodies.py data/uk-all-regions-records.json --dry-run
     python backfill_uk_sweep_notes_bodies.py data/uk-all-regions-records.json
+
+Not UK-only despite the name — any location sweep exported in the same
+{"records": [{"properties": ..., "body": ...}]} shape works, given its
+tag: the German all-states sweep runs as
+
+    python backfill_uk_sweep_notes_bodies.py \
+        data/germany-all-states-records.json --source-tag DESWEEP
 
 Two deliberate departures from the shared helpers, both local to this
 script so enrich.py's pack path is untouched:
@@ -34,13 +42,13 @@ import time
 from src.config import env, load_config
 from src.notion_client import BASE, MAX_BLOCK_CHARS, NotionClient, markdown_to_blocks
 
-SOURCE_TAG = "UKSWEEP"
+DEFAULT_SOURCE_TAG = "UKSWEEP"
 
 
-def notice_id(name: str) -> str:
+def notice_id(name: str, source_tag: str) -> str:
     """Same slug rule import_scored_csv.py used to create these rows."""
     slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")[:60]
-    return f"{SOURCE_TAG}:{slug}"
+    return f"{source_tag}:{slug}"
 
 
 def notes_prop(text: str) -> dict:
@@ -59,6 +67,9 @@ def has_content(notion: NotionClient, page_id: str) -> bool:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("json_path")
+    parser.add_argument("--source-tag", default=DEFAULT_SOURCE_TAG,
+                        help="notice_id prefix the CSV import used for these "
+                             "rows — must match or nothing will be found")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -71,7 +82,7 @@ def main() -> int:
     for i, rec in enumerate(records, 1):
         props = rec["properties"]
         name = (props.get("Name") or "").strip()
-        nid = notice_id(name)
+        nid = notice_id(name, args.source_tag)
 
         row = notion.find_row(nid)
         if not row:
