@@ -1,0 +1,36 @@
+name: Check pack rendering
+
+# Sends one pack exercising every block shape markdown_to_blocks() can emit
+# to a scratch Notion page, reads it back, and archives the page. Run after
+# touching the converter — enrich.py's append_pack() call is not wrapped, so
+# a shape the API rejects breaks enrichment on a real deal.
+on:
+  workflow_dispatch:
+    inputs:
+      keep:
+        description: "Keep the scratch page instead of archiving it"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run check
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.keep }}" = "true" ]; then
+            python check_pack_rendering.py --keep
+          else
+            python check_pack_rendering.py
+          fi
