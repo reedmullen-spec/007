@@ -63,7 +63,8 @@ PTYPE = [
     ("Data centre",        [r"data centre", r"data center"]),
     ("Life sciences / R&D",[r"life science", r"laborator", r"\br&d\b", r"space skills"]),
     ("Student accommodation", [r"\bpbsa\b", r"student accommodation", r"student scheme",
-                            r"student tower", r"co-?living"]),
+                            r"student tower", r"co-?living", r"student village",
+                            r"student halls", r"halls of residence", r"-bed student"]),
     ("Hospital / healthcare", [r"\bhospital\b", r"healthcare", r"health centre", r"\bnhs\b"]),
     ("Prison / justice / defence", [r"\bprison\b", r"\bdefence\b", r"\bbarracks\b",
                             r"\bmod\b", r"\bawe\b"]),
@@ -71,10 +72,11 @@ PTYPE = [
     ("Logistics / warehouse", [r"logistics", r"warehouse", r"big box", r"distribution centre"]),
     ("Industrial / manufacturing", [r"manufactur", r"\bfactory\b", r"gigafactory", r"industrial"]),
     ("Education",          [r"\buniversity\b", r"\bschool\b", r"\bcampus\b", r"\bcollege\b"]),
-    ("Retail / hotel / leisure", [r"\bhotel\b", r"\bretail\b", r"\bleisure\b"]),
-    ("Commercial / office",[r"\boffice\b", r"workspace", r"commercial floor"]),
     ("Residential",        [r"build-?to-?rent", r"\bbtr\b", r"residential", r"\bhomes\b",
-                            r"apartments", r"housing", r"\bstoreys?\b"]),
+                            r"apartments", r"housing"]),
+    ("Commercial / office",[r"\boffice\b", r"workspace", r"commercial floor"]),
+    ("Retail / hotel / leisure", [r"\bhotel\b", r"\bretail\b", r"\bleisure\b",
+                            r"shopping centre", r"retail park", r"leisure centre"]),
 ]
 
 
