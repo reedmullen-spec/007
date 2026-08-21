@@ -1,9 +1,10 @@
-name: Backfill UK sweep notes and bodies
+name: Backfill sweep notes and bodies
 
-# One-off: writes the Notes property and each record's markdown write-up as
-# page content onto the rows import_scored_csv.py created from the UK
-# all-regions sweep (notice IDs UKSWEEP:*). Those two fields are the ones
-# the CSV loader has no path for — see backfill_uk_sweep_notes_bodies.py.
+# Writes the Notes property and each record's markdown write-up as page
+# content onto the rows import_scored_csv.py created from a location sweep
+# (notice IDs <source_tag>:*). Those two fields are the ones the CSV loader
+# has no path for — see backfill_uk_sweep_notes_bodies.py. source_tag must
+# match the tag the import ran under, or no rows will be found.
 # Idempotent: a row that already has page content is left alone.
 on:
   workflow_dispatch:
@@ -12,6 +13,10 @@ on:
         description: "Path to the sweep JSON, relative to repo root"
         type: string
         default: "data/uk-all-regions-records.json"
+      source_tag:
+        description: "notice_id prefix the CSV import used (UKSWEEP, DESWEEP, ...)"
+        type: string
+        default: "UKSWEEP"
       dry_run:
         description: "Dry run (resolve every row, write nothing)"
         type: boolean
@@ -34,7 +39,7 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         run: |
-          ARGS="${{ github.event.inputs.json_path }}"
+          ARGS="${{ github.event.inputs.json_path }} --source-tag ${{ github.event.inputs.source_tag }}"
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             ARGS="$ARGS --dry-run"
           fi
