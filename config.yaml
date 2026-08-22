@@ -450,17 +450,28 @@ news:
   # Safety valve: max cards posted per run (excess carries to the next run).
   max_cards_per_run: 25
 
-  # Only post a news item if the headline passes the keyword gate — but
-  # feeds marked keyword_gate: false in feeds.yaml (targeted Google News
-  # queries, already filtered by their query) bypass this.
-  # Matched on WORD BOUNDARIES: "contract" no longer matches "contractors".
-  # Award/start signals only — loose nouns like "concrete" let junk through.
+  # Every news item must pass this gate — trade press AND the Google News
+  # watchlist queries (whose AND clause Google does not honour; see
+  # news.watchlist_feeds). Matched on WORD BOUNDARIES: "contract" does not
+  # match "contractors". Award/start signals only — loose nouns like
+  # "concrete" let junk through.
+  #
+  # The bare verbs (wins/secures/selected/lands) are deliberate: rigid
+  # phrases missed real awards whenever words fell between them — measured
+  # 2026-08-22, "BAM wins £55.9 million Huddersfield museum contract" and
+  # "Costain selected to upgrade Thames Water treatment sites" both failed
+  # the old list. They are looser than the phrases, so they are paired with
+  # the awards-ceremony and legal exclusions below; don't add one without
+  # the other.
   gate_keywords:
     - awarded
     - contract award
-    - wins contract
-    - wins deal
-    - secures contract
+    - contract let
+    - wins
+    - secures
+    - selected
+    - lands
+    - named contractor
     - appointed
     - preferred bidder
     - financial close
@@ -484,5 +495,28 @@ news:
     - interview
     - podcast
     - webinar
+    # Legal wins/awards read exactly like contract awards. Measured
+    # 2026-08-22: "Principal Awarded $3.7M+ In School Slip-And-Fall Trial"
+    # arrived under the PCL Construction watchlist feed and passed the gate.
+    - trial
+    - lawsuit
+    - court
+    - verdict
+    - settlement
+    - slip-and-fall
+    # Industry awards ceremonies — the plural "awards" and the shortlist
+    # vocabulary. Note the gate keys on singular "awarded"/"wins", so these
+    # do not fight each other.
+    - awards
+    - shortlist
+    - shortlisted
+    - finalists
+    # Company financials, which "wins"/"secures" would otherwise admit.
+    - results
+    - turnover
+    - profit
+    - profits
+    - losses
+    - dividend
     - awards ceremony
     - sponsored

@@ -23,7 +23,8 @@ ask Reed before changing architecture, not just code.
   hours, not a live-query API like the others, so no historical/pagination
   mode; needs a browser-like User-Agent or canadabuys.canada.ca 403s the
   default `requests` one) + news RSS (trade press + ~84 generated Google
-  News contractor queries from `watchlist.yaml`). CanadaBuys' tender
+  News contractor queries from `watchlist.yaml`; all of them keyword-gated
+  — see rule 21). CanadaBuys' tender
   notices carry no disclosed estimated value at all (verified live) — value
   only appears once awarded, via `recheck_awards.py`'s Canada reconciliation.
   Filter → dedup → qualify
@@ -479,6 +480,45 @@ ask Reed before changing architecture, not just code.
     `Use case`, so the gate can never match there and always returns
     concretedna — both grew `--framework` to force it, plus `--stage` and
     `--region` to supply the missing legs.
+
+21. **Every news feed is keyword-gated, and three things about the news
+    gate were measured on 2026-08-22, not guessed.** The whole set was
+    re-derived from one live collection run (640 raw entries, 89 feeds);
+    re-measure before reverting any of it.
+    - **The watchlist queries' `AND` clause is advisory.** `watchlist.yaml`
+      builds `"{entity}" AND ("awarded" OR "breaking ground" OR …)` and
+      `watchlist_feeds()` used to set `keyword_gate: False` on the strength
+      of it. Google News does not honour it: 4 of the 9 in-date items it
+      returned carried none of the required phrases, including "Bouygues UK
+      bosses say strategy is 'foundation for growth'". Those feeds are now
+      gated like any other; the query only biases ranking. `when:7d` in the
+      query is also ignored — tested, byte-identical results.
+    - **Age-filter BEFORE `MAX_ITEMS_PER_FEED`, never after.** Google News
+      search feeds are relevance-ranked, not chronological: 1568 entries
+      across the 84 watchlist feeds, only 9 inside `max_age_days`, and two
+      of those sat at positions 13 and 32 (a PCL housing award, a $2.4bn
+      tram contract). Slicing the first 10 raw entries kept years-old items
+      that `_too_old` then dropped anyway while discarding real awards.
+    - **Match on the headline with the publisher stripped** (`_match_title`,
+      via each entry's `source.title`). Google News appends " - Publisher"
+      to every title, and it poisons the gate both ways: "BAM wins £55.9
+      million Huddersfield museum contract … - Fit Out Awards 2026" — a real
+      award — was killed by the `awards` ceremony exclusion matching the
+      outlet name. The STORED title keeps the suffix on purpose, because
+      `NewsItem.dedup_key` derives from it (rule 6) and rewriting it would
+      reset every news dedup key.
+    The gate carries bare verbs (`wins`, `secures`, `selected`, `lands`)
+    because rigid phrases missed any award with words in the middle —
+    "wins contract" does not match "BAM wins £55.9 million Huddersfield
+    museum contract". They are looser than phrases by design, and are paid
+    for by the legal (`trial`, `lawsuit`, `court`, …), awards-ceremony
+    (`awards`, `shortlist`, `finalists`) and financials (`turnover`,
+    `losses`, `profit`, …) exclusions. **Don't add a bare verb without the
+    matching exclusions, or take an exclusion away without re-checking the
+    verbs.** Net effect of the change, on that run's real headlines: 9 kept
+    -> 13 kept, +6 genuine awards recovered, -5 fluff dropped (a
+    slip-and-fall verdict, an awards shortlist, two sets of company
+    financials, one corporate-strategy piece).
 
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage
