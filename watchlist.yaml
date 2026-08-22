@@ -1,5 +1,12 @@
 # ============================================================================
-# 007 watchlist — Tier-1 contractors only.
+# 007 watchlist — Tier 1 + high-concrete-fit Tier 2 general contractors.
+#
+# UK / Europe / US entries come from the Tier 1 & Tier 2 GC list, kept in the
+# repo as data/gc_tiers_uk_eu_us_2026-08-22.csv and merged in by
+# build_watchlist_from_gc_doc.py. That script is additive: it never rewrites
+# an existing entry, because several names here are tuned queries rather than
+# legal company names (see below). Canada and Australia are not in that
+# document and were not touched.
 #
 # news.py auto-generates a Google News RSS query for EVERY entry here,
 # combining the contractor name with the signal terms below (awarded /
@@ -14,6 +21,21 @@
 # us_east tags Jamie, us_west and ca tag Alex, us (national firms) tags both.
 # North America deals still default to Reed as owner in HubSpot.
 # hl/gl/ceid override the Google News locale when the region default is wrong.
+#
+# LOCALES ARE ENGLISH EVERYWHERE, ON PURPOSE. gl/ceid still target the country,
+# but hl stays 'en'. Every feed is keyword-gated on English terms (rule 21), so
+# a local-language headline can't pass — "VINCI remporte un contrat" carries no
+# gate keyword. Measured 2026-08-22 over six major EU contractors: the
+# local-language feeds returned 27 raw entries between them against 242 for the
+# identical English query, and only the English ones produced a gate pass. Do
+# not set hl back to a local language without also adding local-language gate
+# keywords to config.yaml.
+#
+# Some names are deliberately NOT the legal company name — "Multiplex
+# construction", "Careys construction", "RG Group construction", "NCC
+# construction" carry a disambiguating word so the Google query doesn't drown
+# in unrelated hits. The name is also stored as NewsItem.entity and seeds the
+# '[Contractor] — ...' HubSpot deal name, so don't "correct" these.
 # ============================================================================
 
 # NOTE: the AND clause below is ADVISORY. Google News ranks by relevance and
@@ -53,27 +75,27 @@ contractors:
   - { name: "BESIX",           region: eu, hl: en, gl: BE, ceid: "BE:en" }
   - { name: "Jan de Nul",      region: eu, hl: en, gl: BE, ceid: "BE:en" }
   - { name: "DEME Group",      region: eu, hl: en, gl: BE, ceid: "BE:en" }
-  - { name: "VolkerWessels",   region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
-  - { name: "BAM Infra",       region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
-  - { name: "Mobilis TBI",     region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
-  - { name: "Dura Vermeer",    region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
-  - { name: "Van Berlo",       region: eu, hl: nl, gl: NL, ceid: "NL:nl" }
-  - { name: "Strabag",         region: eu, hl: de, gl: AT, ceid: "AT:de" }
-  - { name: "Hochtief",        region: eu, hl: de, gl: DE, ceid: "DE:de" }
-  - { name: "Züblin",          region: eu, hl: de, gl: DE, ceid: "DE:de" }
-  - { name: "Porr",            region: eu, hl: de, gl: AT, ceid: "AT:de" }
-  - { name: "Implenia",        region: eu, hl: de, gl: CH, ceid: "CH:de" }
-  - { name: "VINCI Construction", region: eu, hl: fr, gl: FR, ceid: "FR:fr" }
-  - { name: "Bouygues Construction", region: eu, hl: fr, gl: FR, ceid: "FR:fr" }
-  - { name: "Eiffage",         region: eu, hl: fr, gl: FR, ceid: "FR:fr" }
-  - { name: "Ferrovial",       region: eu, hl: es, gl: ES, ceid: "ES:es" }
-  - { name: "Dragados",        region: eu, hl: es, gl: ES, ceid: "ES:es" }
-  - { name: "Acciona Construcción", region: eu, hl: es, gl: ES, ceid: "ES:es" }
-  - { name: "FCC Construcción", region: eu, hl: es, gl: ES, ceid: "ES:es" }
-  - { name: "Webuild",         region: eu, hl: it, gl: IT, ceid: "IT:it" }
-  - { name: "Ghella",          region: eu, hl: it, gl: IT, ceid: "IT:it" }
-  - { name: "Itinera",         region: eu, hl: it, gl: IT, ceid: "IT:it" }
-  - { name: "Rizzani de Eccher", region: eu, hl: it, gl: IT, ceid: "IT:it" }
+  - { name: "VolkerWessels",   region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "BAM Infra",       region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "Mobilis TBI",     region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "Dura Vermeer",    region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "Van Berlo",       region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "Strabag",         region: eu, hl: en, gl: AT, ceid: "AT:en" }
+  - { name: "Hochtief",        region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "Züblin",          region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "Porr",            region: eu, hl: en, gl: AT, ceid: "AT:en" }
+  - { name: "Implenia",        region: eu, hl: en, gl: CH, ceid: "CH:en" }
+  - { name: "VINCI Construction", region: eu, hl: en, gl: FR, ceid: "FR:en" }
+  - { name: "Bouygues Construction", region: eu, hl: en, gl: FR, ceid: "FR:en" }
+  - { name: "Eiffage",         region: eu, hl: en, gl: FR, ceid: "FR:en" }
+  - { name: "Ferrovial",       region: eu, hl: en, gl: ES, ceid: "ES:en" }
+  - { name: "Dragados",        region: eu, hl: en, gl: ES, ceid: "ES:en" }
+  - { name: "Acciona Construcción", region: eu, hl: en, gl: ES, ceid: "ES:en" }
+  - { name: "FCC Construcción", region: eu, hl: en, gl: ES, ceid: "ES:en" }
+  - { name: "Webuild",         region: eu, hl: en, gl: IT, ceid: "IT:en" }
+  - { name: "Ghella",          region: eu, hl: en, gl: IT, ceid: "IT:en" }
+  - { name: "Itinera",         region: eu, hl: en, gl: IT, ceid: "IT:en" }
+  - { name: "Rizzani de Eccher", region: eu, hl: en, gl: IT, ceid: "IT:en" }
   - { name: "NCC construction", region: eu, hl: en, gl: SE, ceid: "SE:en" }
   - { name: "Per Aarsleff",    region: eu, hl: en, gl: DK, ceid: "DK:en" }
 
@@ -102,6 +124,308 @@ contractors:
   - { name: "McCarthy Building",     region: us_west }
   - { name: "Mortenson construction", region: us_west }
   - { name: "Flatiron Dragados",     region: us_west }
+
+  # ══ Added from data/gc_tiers_uk_eu_us_2026-08-22.csv (Tier 1 + Tier 2 High) ══
+  # ── UK Tier 1 (uk) ───────────────────────────────────────────
+  - { name: "M Group",                       region: uk }
+  - { name: "Tarmac Trading",                region: uk }
+  - { name: "Amey UK",                       region: uk }
+  - { name: "VolkerWessels UK",              region: uk }
+  - { name: "Willmott Dixon",                region: uk }
+  - { name: "Bowmer & Kirkland",             region: uk }
+  - { name: "Winvic Construction",           region: uk }
+  - { name: "Ferrovial Construction UK",     region: uk }
+  - { name: "Dragados UK",                   region: uk }
+  - { name: "HOCHTIEF UK",                   region: uk }
+  - { name: "Lendlease Construction Europe", region: uk }
+  - { name: "John Sisk & Son",               region: uk }
+  - { name: "McLaren Construction Group",    region: uk }
+  - { name: "Tilbury Douglas",               region: uk }
+  - { name: "Equans UK & Ireland",           region: uk }
+  - { name: "Robertson Group",               region: uk }
+  - { name: "United Living Group",           region: uk }
+  - { name: "BAM Nuttall",                   region: uk }
+
+  # ── UK Tier 2 (uk) ───────────────────────────────────────────
+  - { name: "Domis Construction",        region: uk }
+  - { name: "Caddick Construction",      region: uk }
+  - { name: "GMI Construction Group",    region: uk }
+  - { name: "McAleer & Rushe",           region: uk }
+  - { name: "JRL Group",       region: uk }
+  - { name: "Byrne Bros",  region: uk }
+  - { name: "J Coffey Construction",     region: uk }
+  - { name: "O'Keefe Group",             region: uk }
+  - { name: "MV Kelly",                  region: uk }
+  - { name: "Higgins Partnerships",      region: uk }
+  - { name: "Jackson Civil Engineering", region: uk }
+  - { name: "Knights Brown",             region: uk }
+  - { name: "Farrans Construction",      region: uk }
+  - { name: "Watkin Jones",              region: uk }
+  - { name: "Cementation Skanska",       region: uk }
+  - { name: "Van Elle",                  region: uk }
+  - { name: "Keller UK",                 region: uk }
+
+  # ── France (eu) ──────────────────────────────────────────────
+  - { name: "Colas",            region: eu, hl: en, gl: FR, ceid: "FR:en" }
+  - { name: "NGE",              region: eu, hl: en, gl: FR, ceid: "FR:en" }
+  - { name: "Fayat Group",      region: eu, hl: en, gl: FR, ceid: "FR:en" }
+  - { name: "Spie batignolles", region: eu, hl: en, gl: FR, ceid: "FR:en" }
+  - { name: "Demathieu Bard",   region: eu, hl: en, gl: FR, ceid: "FR:en" }
+
+  # ── Spain (eu) ───────────────────────────────────────────────
+  - { name: "Sacyr",             region: eu, hl: en, gl: ES, ceid: "ES:en" }
+  - { name: "OHLA",              region: eu, hl: en, gl: ES, ceid: "ES:en" }
+  - { name: "COMSA Corporacion", region: eu, hl: en, gl: ES, ceid: "ES:en" }
+  - { name: "Copasa",            region: eu, hl: en, gl: ES, ceid: "ES:en" }
+  - { name: "Azvi",              region: eu, hl: en, gl: ES, ceid: "ES:en" }
+
+  # ── Germany (eu) ─────────────────────────────────────────────
+  - { name: "Ed. Zueblin AG",               region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "Max Boegl",                    region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "GOLDBECK",                     region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "ZECH Bau",                     region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "Wolff & Mueller",              region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "LEONHARD WEISS",               region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "BAUER AG",                     region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "Johann Bunte",                 region: eu, hl: en, gl: DE, ceid: "DE:en" }
+  - { name: "Wayss & Freytag Ingenieurbau", region: eu, hl: en, gl: DE, ceid: "DE:en" }
+
+  # ── Austria (eu) ─────────────────────────────────────────────
+  - { name: "HABAU Group", region: eu, hl: en, gl: AT, ceid: "AT:en" }
+  - { name: "Swietelsky",  region: eu, hl: en, gl: AT, ceid: "AT:en" }
+
+  # ── Switzerland (eu) ─────────────────────────────────────────
+  - { name: "Marti Gruppe", region: eu, hl: en, gl: CH, ceid: "CH:en" }
+
+  # ── Italy (eu) ───────────────────────────────────────────────
+  - { name: "Impresa Pizzarotti", region: eu, hl: en, gl: IT, ceid: "IT:en" }
+  - { name: "CMC di Ravenna",     region: eu, hl: en, gl: IT, ceid: "IT:en" }
+  - { name: "Toto Costruzioni",   region: eu, hl: en, gl: IT, ceid: "IT:en" }
+  - { name: "ICM SpA",            region: eu, hl: en, gl: IT, ceid: "IT:en" }
+  - { name: "Salcef Group",       region: eu, hl: en, gl: IT, ceid: "IT:en" }
+
+  # ── Netherlands (eu) ─────────────────────────────────────────
+  - { name: "Royal BAM Group", region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "Heijmans",        region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "Ballast Nedam",   region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "Strukton",        region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "Boskalis",        region: eu, hl: en, gl: NL, ceid: "NL:en" }
+  - { name: "Van Oord",        region: eu, hl: en, gl: NL, ceid: "NL:en" }
+
+  # ── Belgium (eu) ─────────────────────────────────────────────
+  - { name: "CFE",            region: eu, hl: en, gl: BE, ceid: "BE:en" }
+  - { name: "Willemen Groep", region: eu, hl: en, gl: BE, ceid: "BE:en" }
+  - { name: "Artes Group",    region: eu, hl: en, gl: BE, ceid: "BE:en" }
+  - { name: "Cordeel Group",  region: eu, hl: en, gl: BE, ceid: "BE:en" }
+  - { name: "Denys",          region: eu, hl: en, gl: BE, ceid: "BE:en" }
+
+  # ── Sweden (eu) ──────────────────────────────────────────────
+  - { name: "Skanska AB", region: eu, hl: en, gl: SE, ceid: "SE:en" }
+  - { name: "Peab AB",    region: eu, hl: en, gl: SE, ceid: "SE:en" }
+
+  # ── Norway (eu) ──────────────────────────────────────────────
+  - { name: "Veidekke",   region: eu, hl: en, gl: NO, ceid: "NO:en" }
+  - { name: "AF Gruppen", region: eu, hl: en, gl: NO, ceid: "NO:en" }
+  - { name: "Betonmast",  region: eu, hl: en, gl: NO, ceid: "NO:en" }
+
+  # ── Finland (eu) ─────────────────────────────────────────────
+  - { name: "YIT Corporation", region: eu, hl: en, gl: FI, ceid: "FI:en" }
+  - { name: "Destia",          region: eu, hl: en, gl: FI, ceid: "FI:en" }
+  - { name: "GRK Infra",       region: eu, hl: en, gl: FI, ceid: "FI:en" }
+
+  # ── Denmark (eu) ─────────────────────────────────────────────
+  - { name: "MT Hojgaard Holding", region: eu, hl: en, gl: DK, ceid: "DK:en" }
+  - { name: "Munck Gruppen",       region: eu, hl: en, gl: DK, ceid: "DK:en" }
+
+  # ── Estonia (eu) ─────────────────────────────────────────────
+  - { name: "Merko Ehitus", region: eu, hl: en, gl: EE, ceid: "EE:en" }
+  - { name: "Nordecon",     region: eu, hl: en, gl: EE, ceid: "EE:en" }
+
+  # ── Poland (eu) ──────────────────────────────────────────────
+  - { name: "Budimex",            region: eu, hl: en, gl: PL, ceid: "PL:en" }
+  - { name: "STRABAG Polska",     region: eu, hl: en, gl: PL, ceid: "PL:en" }
+  - { name: "PORR Polska",        region: eu, hl: en, gl: PL, ceid: "PL:en" }
+  - { name: "Warbud",             region: eu, hl: en, gl: PL, ceid: "PL:en" }
+  - { name: "Mostostal Warszawa", region: eu, hl: en, gl: PL, ceid: "PL:en" }
+  - { name: "Mirbud",             region: eu, hl: en, gl: PL, ceid: "PL:en" }
+  - { name: "Polimex Mostostal",  region: eu, hl: en, gl: PL, ceid: "PL:en" }
+  - { name: "Trakcja",            region: eu, hl: en, gl: PL, ceid: "PL:en" }
+  - { name: "Intercor",           region: eu, hl: en, gl: PL, ceid: "PL:en" }
+
+  # ── Czechia (eu) ─────────────────────────────────────────────
+  - { name: "Metrostav",   region: eu, hl: en, gl: CZ, ceid: "CZ:en" }
+  - { name: "HOCHTIEF CZ", region: eu, hl: en, gl: CZ, ceid: "CZ:en" }
+  - { name: "Subterra",    region: eu, hl: en, gl: CZ, ceid: "CZ:en" }
+  - { name: "OHLA ZS",     region: eu, hl: en, gl: CZ, ceid: "CZ:en" }
+
+  # ── Slovakia (eu) ────────────────────────────────────────────
+  - { name: "Doprastav", region: eu, hl: en, gl: SK, ceid: "SK:en" }
+
+  # ── Hungary (eu) ─────────────────────────────────────────────
+  - { name: "Market Epito", region: eu, hl: en, gl: HU, ceid: "HU:en" }
+  - { name: "Duna Aszfalt", region: eu, hl: en, gl: HU, ceid: "HU:en" }
+
+  # ── Romania (eu) ─────────────────────────────────────────────
+  - { name: "Erbasu", region: eu, hl: en, gl: RO, ceid: "RO:en" }
+
+  # ── Portugal (eu) ────────────────────────────────────────────
+  - { name: "Mota-Engil",      region: eu, hl: en, gl: PT, ceid: "PT:en" }
+  - { name: "Teixeira Duarte", region: eu, hl: en, gl: PT, ceid: "PT:en" }
+
+  # ── Greece (eu) ──────────────────────────────────────────────
+  - { name: "AKTOR Group", region: eu, hl: en, gl: GR, ceid: "GR:en" }
+  - { name: "GEK TERNA",   region: eu, hl: en, gl: GR, ceid: "GR:en" }
+  - { name: "AVAX",        region: eu, hl: en, gl: GR, ceid: "GR:en" }
+
+  # ── Ireland (eu) ─────────────────────────────────────────────
+  - { name: "BAM Ireland",           region: eu, hl: en, gl: IE, ceid: "IE:en" }
+  - { name: "Walls Construction",    region: eu, hl: en, gl: IE, ceid: "IE:en" }
+  - { name: "Collen Construction",   region: eu, hl: en, gl: IE, ceid: "IE:en" }
+  - { name: "PJ Hegarty & Sons",     region: eu, hl: en, gl: IE, ceid: "IE:en" }
+  - { name: "Bennett Construction",  region: eu, hl: en, gl: IE, ceid: "IE:en" }
+  - { name: "Winthrop Technologies", region: eu, hl: en, gl: IE, ceid: "IE:en" }
+
+  # ── Turkiye (eu) ─────────────────────────────────────────────
+  - { name: "Ronesans Holding", region: eu, hl: en, gl: TR, ceid: "TR:en" }
+  - { name: "Limak Holding",    region: eu, hl: en, gl: TR, ceid: "TR:en" }
+  - { name: "ENKA Insaat",      region: eu, hl: en, gl: TR, ceid: "TR:en" }
+  - { name: "Yapi Merkezi",     region: eu, hl: en, gl: TR, ceid: "TR:en" }
+  - { name: "IC Ictas",         region: eu, hl: en, gl: TR, ceid: "TR:en" }
+
+  # ── US Tier 1 (us_east) ──────────────────────────────────────
+  - { name: "STO Building Group",      region: us_east }
+  - { name: "HITT Contracting",        region: us_east }
+  - { name: "Walbridge",               region: us_east }
+  - { name: "The Yates Cos.",          region: us_east }
+  - { name: "Gray",                    region: us_east }
+  - { name: "Ryan Cos. US",            region: us_east }
+  - { name: "ARCO Construction Cos.",  region: us_east }
+  - { name: "Burns & McDonnell",       region: us_east }
+  - { name: "Consigli Building Group", region: us_east }
+  - { name: "Barton Malow Holdings",   region: us_east }
+  - { name: "Michels",                 region: us_east }
+  - { name: "Alberici-Flintco",        region: us_east }
+  - { name: "Moss",                    region: us_east }
+  - { name: "Clune Construction",      region: us_east }
+  - { name: "Haskell",                 region: us_east }
+
+  # ── US Tier 1 (us_west) ──────────────────────────────────────
+  - { name: "Fluor",                        region: us_west }
+  - { name: "McDermott International",      region: us_west }
+  - { name: "PCL Construction Enterprises", region: us_west }
+  - { name: "AECOM",                        region: us_west }
+  - { name: "Tutor Perini Corp.",           region: us_west }
+  - { name: "Hoffman Construction Co.",     region: us_west }
+  - { name: "Granite Construction Co.",     region: us_west }
+  - { name: "Austin Industries",            region: us_west }
+  - { name: "Sundt Construction",           region: us_west }
+  - { name: "Big-D Construction",           region: us_west }
+  - { name: "Fortis Construction",          region: us_west }
+  - { name: "Crossland Construction Co.",   region: us_west }
+  - { name: "Black & Veatch",               region: us_west }
+
+  # ── US Tier 2 (us_east) ──────────────────────────────────────
+  - { name: "Kokosing Group",                      region: us_east }
+  - { name: "F.A. Wilhelm Construction",           region: us_east }
+  - { name: "Evans General Contractors",           region: us_east }
+  - { name: "Garney",                              region: us_east }
+  - { name: "The Weitz Co.",                       region: us_east }
+  - { name: "Adolfson & Peterson Construction",    region: us_east }
+  - { name: "Robins & Morton",                     region: us_east }
+  - { name: "McGough",                             region: us_east }
+  - { name: "Messer Construction Co.",             region: us_east }
+  - { name: "Ames Construction",                   region: us_east }
+  - { name: "Coastal Construction Group",          region: us_east }
+  - { name: "Pepper Construction",                 region: us_east }
+  - { name: "T5 Construction",                     region: us_east }
+  - { name: "Power Construction Co.",              region: us_east }
+  - { name: "The Conlan Company",                  region: us_east }
+  - { name: "Nabholz",                             region: us_east }
+  - { name: "Miron Construction Co.",              region: us_east }
+  - { name: "BL Harbert International",            region: us_east }
+  - { name: "Brinkmann Constructors",              region: us_east }
+  - { name: "Choate Construction Co.",             region: us_east }
+  - { name: "Wharton-Smith",                       region: us_east }
+  - { name: "Caddell Construction",                region: us_east }
+  - { name: "Phillips Infrastructure Corp.",       region: us_east }
+  - { name: "Allan Myers",                         region: us_east }
+  - { name: "W.E. O'Neil Construction",            region: us_east }
+  - { name: "PJ Dick - Trumbull - Lindy Group",    region: us_east }
+  - { name: "Ferreira Construction Co.",           region: us_east }
+  - { name: "Hoar Construction",                   region: us_east }
+  - { name: "Lane Industries",                     region: us_east }
+  - { name: "The Boldt Group",                     region: us_east }
+  - { name: "The Rudolph Libbe Cos.",              region: us_east }
+  - { name: "OHLA USA",                            region: us_east }
+  - { name: "The Cianbro Cos.",                    region: us_east }
+  - { name: "Alston Construction Co.",             region: us_east }
+  - { name: "Vinci Construction USA",              region: us_east }
+  - { name: "Traylor Construction Group",          region: us_east }
+  - { name: "Herzog Enterprises",                  region: us_east }
+  - { name: "Hunter Roberts Construction Group",   region: us_east }
+  - { name: "Jingoli - DCO",                       region: us_east }
+  - { name: "James G. Davis Construction Corp.",   region: us_east }
+  - { name: "The McShane Cos.",                    region: us_east }
+  - { name: "FCL Builders",                        region: us_east }
+  - { name: "F.H. Paschen",                        region: us_east }
+  - { name: "James R. Vannoy & Sons Construction", region: us_east }
+  - { name: "RailWorks Corp.",                     region: us_east }
+  - { name: "J.P. Cullen & Sons",                  region: us_east }
+  - { name: "LEMOINE",                             region: us_east }
+  - { name: "Bulley & Andrews",                    region: us_east }
+  - { name: "Branch Group",                        region: us_east }
+  - { name: "Weis Builders",                       region: us_east }
+  - { name: "O&G Industries",                      region: us_east }
+  - { name: "Samet Corp.",                         region: us_east }
+  - { name: "PARIC Holdings Group",                region: us_east }
+  - { name: "Graycor",                             region: us_east }
+  - { name: "C D Smith Construction",              region: us_east }
+  - { name: "Summit Contracting Group",            region: us_east }
+  - { name: "Keeley Construction Group",           region: us_east }
+  - { name: "Cajun Industries",                    region: us_east }
+  - { name: "Landmark Construction",               region: us_east }
+  - { name: "H&M Co.",                             region: us_east }
+  - { name: "DeAngelis Diamond",                   region: us_east }
+  - { name: "KAST Construction",                   region: us_east }
+  - { name: "Crowder Constructors",                region: us_east }
+  - { name: "Batson-Cook Construction",            region: us_east }
+
+  # ── US Tier 2 (us_west) ──────────────────────────────────────
+  - { name: "Ferrovial Construction",              region: us_west }
+  - { name: "CORE Construction Group",             region: us_west }
+  - { name: "Okland Construction",                 region: us_west }
+  - { name: "The PENTA Building Group",            region: us_west }
+  - { name: "Manhattan Construction Group",        region: us_west }
+  - { name: "E. E. Reed Construction",             region: us_west }
+  - { name: "Harvey Cleary",                       region: us_west }
+  - { name: "Rogers-O'Brien Construction",         region: us_west }
+  - { name: "Devcon Construction",                 region: us_west }
+  - { name: "ESI Construction",                    region: us_west }
+  - { name: "BNBuilders",                          region: us_west }
+  - { name: "Webcor",                              region: us_west }
+  - { name: "Hawaiian Dredging Construction Co.",  region: us_west }
+  - { name: "Teichert Construction",               region: us_west }
+  - { name: "Hathaway Dinwiddie Construction Co.", region: us_west }
+  - { name: "Barnard Construction Co.",            region: us_west }
+  - { name: "KPRS Construction Group",             region: us_west }
+  - { name: "Goodfellow Bros.",                    region: us_west }
+  - { name: "The Beck Group",                      region: us_west }
+  - { name: "Jacobsen Construction Co.",           region: us_west }
+  - { name: "Las Vegas Paving Corp.",              region: us_west }
+  - { name: "MWH Constructors",                    region: us_west }
+  - { name: "Nan Inc.",                            region: us_west }
+  - { name: "Great Lakes Dredge & Dock Corp.",     region: us_west }
+  - { name: "Orion Group Holdings",                region: us_west }
+  - { name: "C.W. Driver Cos.",                    region: us_west }
+  - { name: "Sletten Cos.",                        region: us_west }
+  - { name: "Williams Brothers Construction",      region: us_west }
+  - { name: "Southland Holdings",                  region: us_west }
+  - { name: "Lease Crutcher Lewis",                region: us_west }
+  - { name: "Peinado Construction",                region: us_west }
+  - { name: "XL Construction",                     region: us_west }
+  - { name: "Hanover Co.",                         region: us_west }
+  - { name: "Zachry Construction Corp.",           region: us_west }
+  - { name: "Oltmans Construction Co.",            region: us_west }
 
   # ── Canada Tier 1s ─────────────────────────────────────────────────────────
   - { name: "PCL Construction",      region: ca }

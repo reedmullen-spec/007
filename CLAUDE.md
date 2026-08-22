@@ -22,9 +22,9 @@ ask Reed before changing architecture, not just code.
   `src/sources/canada.py` — a static, unauthenticated CSV refreshed every 2
   hours, not a live-query API like the others, so no historical/pagination
   mode; needs a browser-like User-Agent or canadabuys.canada.ca 403s the
-  default `requests` one) + news RSS (trade press + ~84 generated Google
+  default `requests` one) + news RSS (trade press + ~329 generated Google
   News contractor queries from `watchlist.yaml`; all of them keyword-gated
-  — see rule 21). CanadaBuys' tender
+  — see rule 21, and rule 22 for where the contractor list comes from). CanadaBuys' tender
   notices carry no disclosed estimated value at all (verified live) — value
   only appears once awarded, via `recheck_awards.py`'s Canada reconciliation.
   Filter → dedup → qualify
@@ -534,6 +534,49 @@ ask Reed before changing architecture, not just code.
     Awards 2026" failure), and a gate miss counts only when NEITHER the
     full nor the stripped title hits the gate (so a bad strip can't
     disqualify a row that would pass). Don't "simplify" that to one check.
+
+22. **The UK/Europe/US contractor list in `watchlist.yaml` is generated, and
+    the generator is additive on purpose.** `data/gc_tiers_uk_eu_us_2026-08-22.csv`
+    is the flattened Tier 1 & Tier 2 GC document (406 rows: 147 Tier 1, 259
+    Tier 2, compiled 22 Aug 2026 from The Construction Index / Building Top
+    150 / Barbour ABI for the UK, Deloitte GPoC + CE100 for Europe, and ENR
+    2026 Top 400 ranks 1-200 for the US). `build_watchlist_from_gc_doc.py`
+    merges it in and took the watchlist from 84 feeds to 329.
+    - **It never rewrites or deletes an existing entry.** Several watchlist
+      names are tuned queries, not legal company names — "Multiplex
+      construction", "Careys construction", "RG Group construction", "NCC
+      construction" carry a disambiguating word so the query doesn't drown
+      in unrelated hits. The name is also stored as `NewsItem.entity` and
+      seeds the `[Contractor] — …` HubSpot deal name. The script reports
+      near-duplicates for a human to judge instead of merging them.
+    - **Inclusion is Tier 1 + Tier 2 scored High concrete fit, minus
+      anything scored Low.** Tier 2 High is where the self-perform frame and
+      groundworks contractors sit (Careys, JRL, Byrne, J Coffey, O'Keefe,
+      Garney) — the highest concrete-intensity buyers in the document. The
+      17 Low-fit rows are steel-led, interiors, or utility/telecom (Cimolai,
+      William Hare, JRM, MasTec, SOLV Energy); 80 Tier 2 Medium rows are
+      also held back. Relax `included()` to widen.
+    - **Locales are English everywhere** (`hl: en`), with `gl`/`ceid` still
+      country-targeted. Measured across six major EU contractors: the
+      local-language feeds returned 27 raw entries between them against 242
+      for the identical English query, and only the English ones produced a
+      gate pass. This follows from rule 21 — the gate keywords are English,
+      so "VINCI remporte un contrat" can never pass. The 21 pre-existing
+      local-language EU entries were switched to English for the same
+      reason; today's gate change had silently muted them. **Don't set `hl`
+      back to a local language without adding local-language gate
+      keywords.**
+    - **Punctuation in an entity name degrades the query.** "Byrne Group
+      (Byrne Bros)" returns 0 entries where "Byrne Bros" returns 3;
+      "Careys / Carey Group" returns 0 where "Carey Group" returns 9. So
+      `clean_name()` drops parentheticals and cuts slash-alternatives to the
+      first form. A Google News RSS 302 is just how the endpoint answers —
+      it is NOT rate limiting: all 23 zero-entry 302s in a 330-feed sweep
+      still returned 0 when retried individually after a cool-off.
+    - Cost of the bigger list: ~0.47s per feed, so news collection went from
+      ~33s to ~155s. Both `news.yml` and `ingest.yml` allow 30 minutes.
+      `news.max_cards_per_run` (25) has not started binding — a live run on
+      329 feeds produced 16 gated items, 9 after dedup.
 
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage
