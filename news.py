@@ -1,7 +1,8 @@
 """007 news radar — scan RSS feeds, keyword-gate, route by region, post cards.
 
-Google News search feeds (pre-filtered by their query) bypass the keyword
-gate; whole-site trade feeds are gated. Cards carry the same 007 metadata as
+Every feed is keyword-gated, trade press and Google News search alike — the
+search queries' AND clause is advisory only, see watchlist_feeds(). Cards
+carry the same 007 metadata as
 tender cards, so a ✅ reaction on a news card creates a HubSpot deal too.
 
 Usage:
@@ -42,8 +43,13 @@ def watchlist_feeds() -> list[dict]:
     """One Google News signal feed per watchlist contractor/project.
 
     Each query is '"{entity}" AND (awarded OR breaking ground OR …)' via the
-    template in watchlist.yaml, so these feeds are pre-filtered and bypass
-    the keyword gate.
+    template in watchlist.yaml. That AND is ADVISORY ONLY — Google News
+    ranks by relevance and returns items matching none of the required
+    phrases (measured 2026-08-22: 4 of 9 in-date items carried no signal
+    term at all, e.g. "Bouygues UK bosses say strategy is 'foundation for
+    growth'"). So these feeds are gated like every other feed; the query
+    just biases the ranking. Do not set keyword_gate False here again
+    without re-measuring.
     """
     from pathlib import Path
     from urllib.parse import quote
@@ -69,20 +75,49 @@ def watchlist_feeds() -> list[dict]:
                 "entity": entry["name"],
                 "url": (f"https://news.google.com/rss/search?"
                         f"q={quote(query)}&hl={hl}&gl={gl}&ceid={quote(ceid)}"),
-                "keyword_gate": False,
+                "keyword_gate": True,
             })
     return feeds
 
 
-def _too_old(entry, max_age_days: int) -> bool:
-    """Drop entries with no parseable date or older than the cutoff."""
-    import calendar, time
+def _match_title(entry, title: str) -> str:
+    """`title` with Google News' trailing " - Publisher" removed, for keyword
+    matching ONLY.
+
+    Google News RSS appends the outlet name to every headline, and it poisons
+    both gates in both directions. Measured 2026-08-22: "BAM wins £55.9
+    million Huddersfield museum contract ... - Fit Out Awards 2026" — a real
+    contract award — was killed by the awards-ceremony exclusion matching the
+    publication, not the story. A publisher whose name contains a gate verb
+    would let junk through the same way.
+
+    The STORED title deliberately keeps the suffix: NewsItem.dedup_key is
+    derived from it (rule 6), so rewriting it would reset every news dedup
+    key and resurface anything already seen inside max_age_days.
+    """
+    src = getattr(entry, "source", None)
+    name = (src.get("title") if hasattr(src, "get") else getattr(src, "title", None)) or ""
+    suffix = f" - {name}"
+    if name and title.endswith(suffix):
+        return title[: -len(suffix)]
+    return title
+
+
+def _entry_ts(entry) -> float | None:
+    """Epoch seconds for an entry's published/updated date, None if absent."""
+    import calendar
     parsed = getattr(entry, "published_parsed", None) or \
              getattr(entry, "updated_parsed", None)
-    if not parsed:
+    return calendar.timegm(parsed) if parsed else None
+
+
+def _too_old(entry, max_age_days: int) -> bool:
+    """Drop entries with no parseable date or older than the cutoff."""
+    import time
+    ts = _entry_ts(entry)
+    if ts is None:
         return True
-    age_secs = time.time() - calendar.timegm(parsed)
-    return age_secs > max_age_days * 86400
+    return time.time() - ts > max_age_days * 86400
 
 
 def collect(cfg: dict) -> list[NewsItem]:
@@ -97,16 +132,25 @@ def collect(cfg: dict) -> list[NewsItem]:
         except Exception as exc:
             print(f"WARNING: feed failed {feed.get('entity')}: {exc}", file=sys.stderr)
             continue
-        for entry in parsed.entries[:MAX_ITEMS_PER_FEED]:
+        # Age-filter BEFORE the cap, not after. Google News search feeds are
+        # relevance-ranked, not chronological, so slicing the first N raw
+        # entries discarded real award stories while keeping years-old ones
+        # that _too_old then dropped anyway (measured 2026-08-22: 1568
+        # entries across the 84 watchlist feeds, 9 in date, two of those at
+        # positions 13 and 32 — a PCL housing award and a $2.4bn tram
+        # contract, both invisible under the old ordering).
+        recent = sorted((e for e in parsed.entries if not _too_old(e, max_age)),
+                        key=lambda e: _entry_ts(e) or 0.0, reverse=True)
+        for entry in recent[:MAX_ITEMS_PER_FEED]:
             title = getattr(entry, "title", "") or ""
             link = getattr(entry, "link", "") or ""
             if not title or not link:
                 continue
-            if _too_old(entry, max_age):
+            gate_text = _match_title(entry, title)
+            if _word_hit(gate_text, excludes):
                 continue
-            if _word_hit(title, excludes):
-                continue
-            if feed.get("keyword_gate") and not _word_hit(title, cfg["news"]["gate_keywords"]):
+            if feed.get("keyword_gate") and not _word_hit(
+                    gate_text, cfg["news"]["gate_keywords"]):
                 continue
             items.append(NewsItem(
                 region=feed["region"],

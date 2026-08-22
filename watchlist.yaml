@@ -16,6 +16,10 @@
 # hl/gl/ceid override the Google News locale when the region default is wrong.
 # ============================================================================
 
+# NOTE: the AND clause below is ADVISORY. Google News ranks by relevance and
+# returns items matching none of the required phrases, so news.py gates these
+# feeds on config.yaml news.gate_keywords like any other feed (rule 21).
+# "when:7d" here does nothing either — tested 2026-08-22, identical results.
 signal_query_template: >-
   "{entity}" AND ("awarded" OR "contract award" OR "breaking ground" OR
   "breaks ground" OR "starting construction" OR "construction begins" OR
