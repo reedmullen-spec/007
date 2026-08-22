@@ -4,6 +4,8 @@ Responsibilities:
   * ensure the tender_notice_id custom deal property exists (one-off bootstrap)
   * dedup pre-check: search deals on tender_notice_id (CRM = source of truth)
   * create deals in Sales Pipeline / Identified with the notice id stamped
+  * create leads against the general contractor's company record, same
+    notice-id dedup key as deals
   * company owner lookup for tier 1 of the AE resolver
   * push the Amplemarket buying group (contacts.py) into HubSpot as
     contacts, associated to the deal that gated the build
@@ -16,6 +18,14 @@ Private-app scopes needed:
   crm.objects.companies.read (owner lookup),
   crm.objects.contacts.read, crm.objects.contacts.write,
   crm.schemas.contacts.write (linkedin_url property bootstrap)
+
+Extra scopes the Create lead action needs, and ONLY that action (see
+actions.py's _run_create_lead for why they are never touched by a run that
+doesn't use them):
+  crm.objects.leads.read, crm.objects.leads.write,
+  crm.schemas.leads.write (notice-id property bootstrap on the lead object),
+  crm.objects.companies.write (find_or_create_company — the rest of the
+  client only ever reads companies)
 """
 from __future__ import annotations
 
@@ -84,6 +94,29 @@ class HubSpotClient:
                               "stamped by 007 tender-radar.",
                               object_type="contacts", group_name="contactinformation")
 
+    def ensure_lead_notice_property(self) -> None:
+        """Create the notice-id property on the LEAD object if it's missing.
+
+        Same name and same job as the deal property (rule #2: HubSpot is
+        dedup truth, keyed on the notice id) but a genuinely separate
+        property — HubSpot property definitions do not span object types.
+
+        Deliberately NOT called from actions.py's preamble like its deal
+        sibling: a portal without the leads scopes would raise here and take
+        down Enrich/Create deal/Build contacts too. Bootstrapped lazily by
+        the one action that needs it instead.
+
+        `lead_property_group` is a config knob because the leads object's
+        default property-group name could not be read back from the portal
+        (the token has no leads scope yet) — a 400 naming groupName here is
+        that guess being wrong, not a scope problem.
+        """
+        self._ensure_property(
+            self.cfg["notice_id_property"], "Tender notice ID",
+            "Stable dedup key stamped by 007 tender-radar.",
+            object_type="leads",
+            group_name=self.cfg.get("lead_property_group", "leadinformation"))
+
     # --------------------------------------------------------------- dedup
     def find_deal_by_notice_id(self, notice_id: str) -> dict | None:
         """Return the existing deal (id + name) for this notice, or None."""
@@ -104,13 +137,20 @@ class HubSpotClient:
         return results[0] if results else None
 
     # -------------------------------------------------------------- create
-    def create_deal(self, name: str, notice_id: str, ae: str | None,
-                    summary: str | None = None) -> dict:
+    def _owner_id(self, ae: str | None) -> str:
+        """Owner for a newly created object: the resolved AE when
+        deal_owner_mode says so and they're a known owner, else reed.
+        Shared by create_deal/create_lead — an AE who owns the deal but not
+        the lead on the same project is exactly the kind of split this
+        codebase keeps getting bitten by (see the GC/JV drift, rule #14)."""
         owners = self.cfg["owners"]
         if self.cfg.get("deal_owner_mode") == "ae" and ae and ae in owners:
-            owner_id = owners[ae]
-        else:
-            owner_id = owners["reed"]
+            return owners[ae]
+        return owners["reed"]
+
+    def create_deal(self, name: str, notice_id: str, ae: str | None,
+                    summary: str | None = None) -> dict:
+        owner_id = self._owner_id(ae)
 
         properties = {
             "dealname": name[:250],
@@ -158,6 +198,73 @@ class HubSpotClient:
         if r.status_code != 200:
             raise RuntimeError(f"Deal fetch failed ({r.status_code}): {r.text[:300]}")
         return r.json()
+
+    # --------------------------------------------------------------- leads
+    def find_lead_by_notice_id(self, notice_id: str) -> dict | None:
+        """The existing lead for this notice, or None — the lead-side twin of
+        find_deal_by_notice_id, so a re-ticked Create lead box is a no-op
+        rather than a second lead (rule #2 applied to the lead object)."""
+        body = {
+            "filterGroups": [{
+                "filters": [{
+                    "propertyName": self.cfg["notice_id_property"],
+                    "operator": "EQ",
+                    "value": notice_id,
+                }]
+            }],
+            "properties": ["hs_lead_name", self.cfg["notice_id_property"]],
+            "limit": 1,
+        }
+        r = self.session.post(f"{BASE}/crm/v3/objects/leads/search", json=body, timeout=30)
+        r.raise_for_status()
+        results = r.json().get("results", [])
+        return results[0] if results else None
+
+    def create_lead(self, name: str, notice_id: str, ae: str | None,
+                    company_id: str) -> dict:
+        """Create a lead against the general contractor's company record.
+
+        `company_id` is required, not optional: HubSpot refuses a lead with
+        no primary contact or company association, so there is no useful
+        "just make the lead" fallback to offer — the caller resolves the
+        company first (find_or_create_company).
+
+        hs_pipeline/hs_pipeline_stage/hs_lead_type are sent only when
+        configured. The portal's lead pipeline IDs could not be read (no
+        leads scope on the token as of Aug 2026), so the default is to let
+        HubSpot drop the lead in its own default pipeline stage rather than
+        POST a guessed ID and fail the whole action on it. Pin them in
+        config.yaml once they're known.
+        """
+        properties = {
+            "hs_lead_name": name[:250],
+            "hubspot_owner_id": self._owner_id(ae),
+            self.cfg["notice_id_property"]: notice_id,
+        }
+        for key, cfg_key in (("hs_pipeline", "lead_pipeline_id"),
+                             ("hs_pipeline_stage", "lead_stage_id"),
+                             ("hs_lead_type", "lead_type")):
+            if self.cfg.get(cfg_key):
+                properties[key] = self.cfg[cfg_key]
+
+        r = self.session.post(
+            f"{BASE}/crm/v3/objects/leads",
+            json={"properties": properties,
+                  "associations": [{
+                      "to": {"id": company_id},
+                      "types": [{"associationCategory": "HUBSPOT_DEFINED",
+                                 "associationTypeId": 610}],  # lead -> company
+                  }]},
+            timeout=30,
+        )
+        if r.status_code not in (200, 201):
+            raise RuntimeError(f"Lead creation failed ({r.status_code}): {r.text[:400]}")
+        lead = r.json()
+        lead["portal_url"] = (
+            f"https://app.hubspot.com/contacts/{self.cfg['portal_id']}"
+            f"/record/0-136/{lead.get('id')}"
+        )
+        return lead
 
     # --------------------------------------------------------------- notes
     def add_note(self, deal_id: str, body_html: str, pin: bool = True) -> str:
@@ -309,3 +416,57 @@ class HubSpotClient:
                 break
         cache[key] = found
         return found
+
+    def find_or_create_company(self, name: str) -> dict:
+        """The company record for a contractor name, creating it if absent.
+
+        Name is the only key available here — the GC comes off a Notion row
+        as text, with no domain — so this cannot use HubSpot's own
+        domain-based company dedup. That matters more than it looks: the
+        same contractor (Bouygues, Balfour Beatty) is the GC on dozens of
+        tender rows, and a name search that misses would mint a company per
+        row. Hence two attempts before creating anything: an exact EQ on
+        `name`, then the fuzzy `query` search accepting only a
+        case-insensitive exact name hit (the same search find_company_owner
+        uses, whose scoring can return the right record where EQ's exact
+        string match doesn't).
+
+        Pass the primary contractor, not the raw 'General contractor/JV'
+        field — src/deal_naming.primary_contractor() strips the '(JV: ...)'
+        parenthetical that would otherwise become part of the company name.
+        """
+        name = (name or "").strip()
+        if not name:
+            raise RuntimeError("Cannot resolve a HubSpot company from a blank name.")
+
+        body = {
+            "filterGroups": [{"filters": [
+                {"propertyName": "name", "operator": "EQ", "value": name}]}],
+            "properties": ["name"],
+            "limit": 1,
+        }
+        r = self.session.post(f"{BASE}/crm/v3/objects/companies/search",
+                              json=body, timeout=30)
+        r.raise_for_status()
+        results = r.json().get("results", [])
+        if results:
+            return results[0]
+
+        r = self.session.post(f"{BASE}/crm/v3/objects/companies/search",
+                              json={"query": name, "properties": ["name"],
+                                    "limit": 5}, timeout=30)
+        if r.status_code == 200:
+            for result in r.json().get("results", []):
+                found = ((result.get("properties") or {}).get("name") or "").strip()
+                if found.lower() == name.lower():
+                    return result
+
+        r = self.session.post(f"{BASE}/crm/v3/objects/companies",
+                              json={"properties": {"name": name[:200]}}, timeout=30)
+        if r.status_code not in (200, 201):
+            raise RuntimeError(f"Company creation failed ({r.status_code}): "
+                               f"{r.text[:300]}. Needs crm.objects.companies.write "
+                               f"on the private app.")
+        company = r.json()
+        print(f"Created HubSpot company {company.get('id')} for '{name}'.")
+        return company

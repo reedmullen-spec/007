@@ -30,3 +30,16 @@ def split_deal_name(name: str) -> tuple[str, str]:
     if len(parts) >= 2:
         return parts[0], parts[1]
     return name, name
+
+
+def primary_contractor(gc_jv: str) -> str:
+    """The lead contractor out of a stored 'General contractor/JV' value.
+
+    Inverse of NotionClient._gc_jv_text: that helper stores a JV as
+    '[Entity] (JV: [Parent], [Parent])', so the raw field is the right
+    thing to hand Amplemarket (contacts.py wants every parent name in the
+    search) but the wrong thing to name a HubSpot company record. Anything
+    needing ONE company — the Create lead action's find_or_create_company —
+    takes the entity before the parenthetical.
+    """
+    return (gc_jv or "").split("(JV:")[0].strip().rstrip(",").strip()
