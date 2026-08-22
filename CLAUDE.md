@@ -397,7 +397,8 @@ ask Reed before changing architecture, not just code.
     tag means `cleanup_low_value.py`/`cleanup_filters.py` disqualified it
     on a criterion — value floor, keyword filters — that `score_project()`
     never checks, so a clean rescore can't tell whether that separate
-    reason still applies). New `--include-disqualified` flag sweeps
+    reason still applies — `cleanup_news_filters.py` is a third such
+    source, and the news gate is likewise invisible to `score_project()`). New `--include-disqualified` flag sweeps
     Status=Disqualified rows too, not just Status=New — run this
     periodically (not just after ingest) so a stale Disqualified Status
     doesn't silently outlive whatever originally caused it.
@@ -519,6 +520,20 @@ ask Reed before changing architecture, not just code.
     -> 13 kept, +6 genuine awards recovered, -5 fluff dropped (a
     slip-and-fall verdict, an awards shortlist, two sets of company
     financials, one corporate-strategy piece).
+    **A news-gate change only affects future ingest** — for rows already in
+    the master, `cleanup_news_filters.py` (dispatch-only, `--dry-run`
+    defaulted ON in the workflow) is the retroactive path. It cannot share
+    `cleanup_filters.py`, which gates TED/FTS/AUSTENDER/SAM through
+    `filter_projects()` and skips NEWS on purpose, for two reasons: the news
+    gate is word-boundary matched (`news._word_hit`) while
+    `filtering._keyword_hit` is a plain substring test, and a stored NEWS
+    title still carries its " - Publisher" suffix with no `source.title`
+    left to strip it by. Its two checks are therefore deliberately
+    asymmetric — an exclude hit counts only on the publisher-stripped
+    title (so an outlet name can never disqualify a row, the "Fit Out
+    Awards 2026" failure), and a gate miss counts only when NEITHER the
+    full nor the stripped title hits the gate (so a bad strip can't
+    disqualify a row that would pass). Don't "simplify" that to one check.
 
 ## Confirmed IDs (do not guess)
 - HubSpot: portal 2061231, Sales Pipeline 21257366, Identified stage
